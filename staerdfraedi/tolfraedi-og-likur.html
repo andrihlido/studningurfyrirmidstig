@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="is">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tölfræði og líkur</title>
+<link rel="stylesheet" href="../sameiginlegt.css">
+<style>
+.wrap{max-width:900px}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.start-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px}
+.topics{display:flex;flex-wrap:wrap;gap:10px}
+.topic{font:inherit;font-weight:700;min-height:44px;padding:8px 16px;border-radius:999px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.topic[aria-pressed="true"]{border-color:var(--acc);background:var(--acc-bg);color:var(--acc-dark)}
+.howto{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.tip{font-size:16px;color:var(--muted)}
+
+.bar{height:10px;background:var(--line);border-radius:999px;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--acc);border-radius:999px;transition:width .3s}
+.tag{align-self:flex-start;background:var(--acc-bg);color:var(--acc-dark);border-radius:999px;padding:4px 12px;font-size:15px;font-weight:700}
+.question{margin:0;font-size:26px;line-height:1.4}
+.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.opt{font:inherit;font-size:20px;text-align:left;min-height:60px;padding:12px 18px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.opt:hover:not(:disabled){border-color:var(--acc)}
+.opt:disabled{cursor:default}
+.opt.wrong{border-color:var(--acc-line);background:var(--acc-bg);color:var(--acc-dark);text-decoration:line-through}
+.opt.right{border-color:var(--ok);background:var(--ok-bg);color:#14532D;font-weight:700}
+.opt.faded{opacity:.5}
+.mark{font-weight:700;flex:none}
+.answer-row{display:flex;gap:10px;flex-wrap:wrap}
+.answer-row input{font-family:'Andika',sans-serif;font-size:26px;font-weight:700;width:220px;padding:8px 14px;border:2px solid var(--line);border-radius:12px;color:var(--ink);min-height:56px}
+.answer-row input.right{border-color:var(--ok);background:var(--ok-bg)}
+.answer-row input.wrong{border-color:var(--acc-line);background:var(--acc-bg)}
+.err{font-size:15px;color:var(--acc-dark);min-height:20px}
+
+.fb{border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:12px}
+.fb.hint{background:var(--card);border:2px dashed var(--acc-line)}
+.fb.good{background:var(--ok-bg);border:1.5px solid var(--ok-line)}
+.fb.bad{background:var(--acc-bg);border:1.5px solid var(--acc-line)}
+.fb-title{margin:0;font-size:22px;font-weight:700}
+.fb.good .fb-title{color:#14532D}
+.fb.bad .fb-title,.fb.hint .fb-title{color:var(--acc-dark)}
+.fb-lines{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.visual{background:#fff;border:1px solid #E1E4EA;border-radius:12px;padding:14px;overflow-x:auto;display:flex;flex-direction:column;gap:14px;align-items:center}
+.visual svg{display:block;max-width:100%;height:auto}
+
+/* Almenn brot */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;margin:0 2px;font-size:.85em}
+.frac span:first-child{border-bottom:2px solid currentColor;padding:0 3px 2px}
+.frac span:last-child{padding:2px 3px 0}
+
+/* Talnaspjöld (miðgildi) */
+.cards{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.card-n{min-width:56px;min-height:56px;padding:6px 10px;border:2px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:#fff}
+.card-n.out{color:#AEB5C2;border-color:#E5E8EE;text-decoration:line-through}
+.card-n.hl{border-color:var(--acc);background:var(--acc-bg);color:var(--acc-dark)}
+.cards-cap{font-size:15px;color:var(--muted);text-align:center}
+
+/* Tíðnitafla */
+.ft{border-collapse:collapse;font-size:20px}
+.ft th{font-size:15px;color:var(--muted);text-align:left;padding:8px 14px;border-bottom:2px solid var(--line)}
+.ft td{padding:6px 14px;border-bottom:1px solid var(--line);font-weight:700}
+.ft tr.hl td{background:var(--acc-bg);color:var(--acc-dark)}
+.ft tr.sum td{border-top:2px solid var(--ink);border-bottom:0}
+.ft td.q{color:var(--acc)}
+
+/* Poki og teningur */
+.bag{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:300px;padding:18px 22px;border:3px solid #8B6F47;border-radius:24px 24px 60px 60px;background:#F7F1E8}
+.ball{width:40px;height:40px;border-radius:50%;border:2px solid rgba(0,0,0,.15)}
+.ball.dim{opacity:.3}
+.ball.on{outline:4px solid var(--acc);outline-offset:2px}
+.dice{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+
+.next-row{display:flex;justify-content:flex-end}
+table.res-table{border-collapse:collapse;width:100%;font-size:17px}
+.res-table th,.res-table td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+.res-table th{font-size:15px;color:var(--muted)}
+.status{font-weight:700;border-radius:999px;padding:3px 10px;font-size:14px;white-space:nowrap}
+.s1{background:var(--ok-bg);color:#14532D}
+.s2{background:#FEF6DD;color:#7A5200}
+.s3{background:var(--acc-bg);color:var(--acc-dark)}
+.table-wrap{overflow-x:auto}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.stat{border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.stat b{font-size:32px;line-height:1.1}
+
+@media (max-width:760px){
+  .start-grid,.options{grid-template-columns:minmax(0,1fr)}
+  .question{font-size:22px}
+  .stats{grid-template-columns:minmax(0,1fr)}
+}
+</style>
+</head>
+<body class="fag-staerdfraedi">
+<div class="wrap">
+<a class="heim" href="../index.html">← Forsíða</a>
+
+<!-- Upphafsskjár -->
+<section id="start">
+  <div class="top">
+    <div class="stack" style="gap:6px">
+      <h1>Tölfræði og líkur</h1>
+      <p class="muted">Upprifjun úr 2. kafla í Stiku 3a.</p>
+    </div>
+  </div>
+  <div class="start-grid">
+    <div class="card stack">
+      <h2 style="margin:0">Veldu efni</h2>
+      <div class="topics" id="topics" role="group" aria-label="Efni"></div>
+      <p class="tip" id="countText"></p>
+      <p class="err" id="startErr" role="status"></p>
+      <div class="row"><button class="btn acc" id="btnStart">Byrja</button></div>
+    </div>
+    <div class="card stack">
+      <h2 style="margin:0">Svona virkar þetta</h2>
+      <ol class="howto">
+        <li>Svaraðu spurningunni.</li>
+        <li>Ertu óviss? Smelltu á <b>Fá ábendingu</b>.</li>
+        <li>Ef svarið er rangt færðu ábendingu og aðra tilraun.</li>
+        <li>Eftir hverja spurningu sérðu útskýringu með mynd.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- Leikjaskjár -->
+<section id="play" class="hidden">
+  <div class="stack">
+    <div class="row" style="justify-content:space-between">
+      <p class="muted" id="progress"></p>
+      <button class="btn ghost" id="btnQuit">Hætta</button>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="barFill" style="width:0%"></span></div>
+    <div class="card stack recap hidden" id="recapCard">
+      <span class="tag" id="recapTag"></span>
+      <ul class="recap-list" id="recapList"></ul>
+      <div id="recapVisual"></div>
+      <div class="row"><button class="btn acc" id="btnRecapGo">Byrja á spurningunum</button></div>
+    </div>
+    <div class="card stack" id="qCard">
+      <span class="tag" id="qTopic"></span>
+      <p class="question" id="qText"></p>
+      <div id="qVisual"></div>
+      <div class="options" id="options"></div>
+      <form class="answer-row hidden" id="answerForm" autocomplete="off">
+        <label for="answer" class="sr-only">Svar</label>
+        <input id="answer" inputmode="decimal" autocomplete="off">
+        <button class="btn acc" type="submit">Athuga</button>
+      </form>
+      <p class="err" id="inputErr" role="status"></p>
+      <div class="row"><button class="btn ghost" id="btnHint">Fá ábendingu</button><button class="btn ghost" id="btnRecap">Upprifjun</button></div>
+    </div>
+    <div id="feedback" aria-live="polite"></div>
+    <div class="next-row hidden" id="nextRow"><button class="btn acc" id="btnNext">Næsta spurning</button></div>
+  </div>
+</section>
+
+<!-- Niðurstöður -->
+<section id="end" class="hidden">
+  <div class="top">
+    <div class="stack" style="gap:6px">
+      <h1>Niðurstöður</h1>
+      <p class="muted" id="endSummary"></p>
+    </div>
+  </div>
+  <div class="stack">
+    <div class="stats" id="stats"></div>
+    <div class="card stack">
+      <div class="table-wrap">
+        <table class="res-table">
+          <thead><tr><th>Efni</th><th>Spurning</th><th>Niðurstaða</th></tr></thead>
+          <tbody id="endRows"></tbody>
+        </table>
+      </div>
+      <div class="row">
+        <button class="btn acc" id="btnRetry">Æfa aftur það sem var erfitt</button>
+        <button class="btn ghost" id="btnAgain">Spila aftur</button>
+        <button class="btn ghost" id="btnHome">Velja efni</button>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ================= GÖGN SEM FLEIRI SPURNINGAR NOTA ================= */
+  var TENINGAKOST = {teg:"tidnitafla", haus:["Gildi","Talning"], rodir:[["1",3],["2",4],["3",2],["4",5],["5",2],["6",4]], talning:true};
+  var SKOLALEID = [{texti:"Ganga", hluti:0.5, merki:"½"},{texti:"Hjól", hluti:0.25, merki:"¼"},{texti:"Bíll", hluti:0.25, merki:"¼"}];
+  var ARSTIDIR = [{texti:"Sumar", hluti:0.5, merki:"50%"},{texti:"Vetur", hluti:0.25, merki:"25%"},{texti:"Vor", hluti:0.15, merki:"15%"},{texti:"Haust", hluti:0.1, merki:"10%"}];
+
+  /* ================= SPURNINGABANKI =================
+     tegund: "val" (fjölval) eða "skrifa" (nemandi skrifar svar)
+     syna: mynd sem fylgir spurningunni sjálfri
+     abMynd: mynd í ábendingu · mynd: mynd í útskýringu (má vera listi)
+     {1/2} í texta verður að almennu broti */
+  var EFNI = ["Meðaltal","Miðgildi","Tíðasta gildi","Tíðnitafla","Súlurit","Skífurit","Líkur"];
+
+  var SPURNINGAR = [
+    /* ---------- Meðaltal ---------- */
+    { efni:"Meðaltal", tegund:"skrifa",
+      texti:"Finndu meðaltal talnanna 4, 8, 5 og 3.",
+      tekid:["5"],
+      abending:"Leggðu allar tölurnar saman og deildu svo með fjölda talnanna.",
+      abMynd:{teg:"jofnun", hopar:[{gildi:[4,8,5,3]}]},
+      utskyring:["Summan: 4 + 8 + 5 + 3 = 20","Tölurnar eru fjórar, svo 20 : 4 = 5.","Á myndinni fyllir það sem er fyrir ofan línuna upp í það sem vantar fyrir neðan hana."],
+      mynd:{teg:"jofnun", hopar:[{gildi:[4,8,5,3]}], medal:true} },
+
+    { efni:"Meðaltal", tegund:"val",
+      texti:"Jón fékk 4, 6 og 8 í einkunn. Gunna fékk 5, 5 og 5. Hvort þeirra er með hærra meðaltal?",
+      svor:["Jón","Gunna","Þau eru með jafn hátt meðaltal"], rett:0,
+      abending:"Reiknaðu meðaltal hvors um sig og berðu þau svo saman.",
+      abMynd:{teg:"jofnun", hopar:[{titill:"Jón", gildi:[4,6,8]},{titill:"Gunna", gildi:[5,5,5]}]},
+      utskyring:["Jón: (4 + 6 + 8) : 3 = 18 : 3 = 6","Gunna: (5 + 5 + 5) : 3 = 15 : 3 = 5","6 er hærra en 5, svo Jón er með hærra meðaltal."],
+      mynd:{teg:"jofnun", hopar:[{titill:"Jón", gildi:[4,6,8]},{titill:"Gunna", gildi:[5,5,5]}], medal:true} },
+
+    { efni:"Meðaltal", tegund:"skrifa",
+      texti:"Meðaltal þriggja talna er 6. Tvær þeirra eru 4 og 5. Hver er þriðja talan?",
+      tekid:["9"],
+      abending:"Ef meðaltal þriggja talna er 6, hver er þá summa þeirra?",
+      utskyring:["Summa talnanna er 3 · 6 = 18.","18 − 4 − 5 = 9","Prófun: (4 + 5 + 9) : 3 = 18 : 3 = 6"],
+      mynd:{teg:"jofnun", hopar:[{gildi:[4,5,9]}], medal:true} },
+
+    /* ---------- Miðgildi ---------- */
+    { efni:"Miðgildi", tegund:"val",
+      texti:"Hvert er miðgildi talnanna 2, 5, 9, 1 og 6?",
+      svor:["5","9","4,6","6"], rett:0,
+      abending:"Byrjaðu á að raða tölunum frá minnstu til stærstu.",
+      abMynd:{teg:"midgildi", tolur:[2,5,9,1,6]},
+      utskyring:["Í röð: 1, 2, 5, 6, 9","Strikaðu yfir eina tölu í einu frá báðum endum. Talan sem stendur eftir í miðjunni er 5.","Athugaðu að 4,6 er meðaltalið, ekki miðgildið."],
+      mynd:{teg:"midgildi", tolur:[2,5,9,1,6], radad:true} },
+
+    { efni:"Miðgildi", tegund:"skrifa",
+      texti:"Finndu miðgildi talnanna 3, 8, 4 og 6.",
+      tekid:["5"],
+      abending:"Raðaðu tölunum. Fjöldinn er sléttur, svo tvær tölur eru í miðjunni.",
+      abMynd:{teg:"midgildi", tolur:[3,8,4,6]},
+      utskyring:["Í röð: 3, 4, 6, 8","Í miðjunni eru tvær tölur: 4 og 6.","Miðgildið er meðaltal þeirra: (4 + 6) : 2 = 5"],
+      mynd:{teg:"midgildi", tolur:[3,8,4,6], radad:true} },
+
+    { efni:"Miðgildi", tegund:"val",
+      texti:"Hvert er miðgildi talnanna 7, 2, 10, 4, 9 og 1?",
+      svor:["5,5","11","4","7"], rett:0,
+      abending:"Raðaðu tölunum fyrst. Hve margar tölur eru í miðjunni?",
+      abMynd:{teg:"midgildi", tolur:[7,2,10,4,9,1]},
+      utskyring:["Í röð: 1, 2, 4, 7, 9, 10","Í miðjunni eru 4 og 7.","(4 + 7) : 2 = 11 : 2 = 5,5","Ef þú fékkst 11 gleymdirðu að deila með 2."],
+      mynd:{teg:"midgildi", tolur:[7,2,10,4,9,1], radad:true} },
+
+    /* ---------- Tíðasta gildi ---------- */
+    { efni:"Tíðasta gildi", tegund:"val",
+      texti:"Hvert er tíðasta gildi talnanna 3, 5, 3, 2, 3, 5, 1?",
+      svor:["3","5","2","1"], rett:0,
+      abending:"Teldu hve oft hver tala kemur fyrir. Gott er að setja einn punkt fyrir hverja tölu.",
+      utskyring:["Tíðasta gildið er sú tala sem kemur oftast fyrir.","3 kemur þrisvar fyrir, 5 tvisvar og 1 og 2 einu sinni hvor."],
+      mynd:{teg:"punktarit", flokkar:["1","2","3","4","5"], fjoldi:[1,1,3,0,2], merkt:2} },
+
+    { efni:"Tíðasta gildi", tegund:"val",
+      texti:"Í bekknum eiga 5 nemendur hund, 8 eiga kött og 2 eiga páfagauk. Hvert er tíðasta gildið?",
+      svor:["Köttur","8","Hundur","Páfagaukur"], rett:0,
+      abending:"Tíðasta gildið er það sem kemur oftast fyrir. Er spurt um dýr eða fjölda?",
+      utskyring:["Flestir eiga kött, eða 8 nemendur.","Tíðasta gildið er því köttur. Talan 8 er tíðnin, þ.e. hve oft köttur kemur fyrir."],
+      mynd:{teg:"surlurit", flokkar:["Hundur","Köttur","Páfagaukur"], gildi:[5,8,2], skref:1, max:10, merkt:1, gildiSyna:true} },
+
+    { efni:"Tíðasta gildi", tegund:"val",
+      texti:"Tíðnitaflan sýnir uppáhaldslit nemenda. Hvert er tíðasta gildið?",
+      syna:{teg:"tidnitafla", haus:["Litur","Tíðni"], rodir:[["Rauður",6],["Blár",9],["Grænn",4],["Gulur",3]], tidni:true},
+      svor:["Blár","9","Rauður","Gulur"], rett:0,
+      abending:"Finndu línuna með hæstu tíðnina. Hvaða litur stendur í þeirri línu?",
+      utskyring:["Hæsta tíðnin er 9.","Hún er í línunni fyrir bláan, svo blár er tíðasta gildið.","Ef þú svaraðir 9 gafstu upp tíðnina en ekki gildið."],
+      mynd:{teg:"tidnitafla", haus:["Litur","Tíðni"], rodir:[["Rauður",6],["Blár",9],["Grænn",4],["Gulur",3]], tidni:true, merkt:1} },
+
+    /* ---------- Tíðnitafla ---------- */
+    { efni:"Tíðnitafla", tegund:"val",
+      texti:"Nemendur köstuðu teningi 20 sinnum og skráðu niðurstöðurnar með strikum. Hve oft kom upp 4?",
+      syna:TENINGAKOST,
+      svor:["5","4","6","20"], rett:0,
+      abending:"Teldu strikin í línunni fyrir 4. Fimmta strikið liggur þvert yfir hin fjögur.",
+      abMynd:{teg:"tidnitafla", haus:TENINGAKOST.haus, rodir:TENINGAKOST.rodir, talning:true, merkt:3},
+      utskyring:["Í línunni fyrir 4 eru fjögur lóðrétt strik og eitt þvert yfir þau.","Það gera 5 strik, svo tíðnin er 5."],
+      mynd:{teg:"tidnitafla", haus:["Gildi","Talning","Tíðni"], rodir:TENINGAKOST.rodir, talning:true, tidni:true, merkt:3} },
+
+    { efni:"Tíðnitafla", tegund:"skrifa",
+      texti:"Hver er tíðni tölunnar 3 í talnarununni 2, 3, 3, 1, 2, 3, 4, 3?",
+      tekid:["4"],
+      abending:"Tíðni er hve oft talan kemur fyrir. Teldu og strikaðu yfir um leið.",
+      utskyring:["3 kemur fyrir fjórum sinnum, svo tíðnin er 4.","Tíðnitaflan sýnir alla rununa: 1 kemur einu sinni, 2 tvisvar, 3 fjórum sinnum og 4 einu sinni.","Samtals 1 + 2 + 4 + 1 = 8, jafnmargar tölur og í rununni."],
+      mynd:{teg:"tidnitafla", haus:["Gildi","Talning","Tíðni"], rodir:[["1",1],["2",2],["3",4],["4",1]], talning:true, tidni:true, merkt:2, samtals:true} },
+
+    { efni:"Tíðnitafla", tegund:"skrifa",
+      texti:"Tíðnitaflan sýnir hve mörg systkini nemendur í einum bekk eiga. Hve margir nemendur eru í bekknum?",
+      syna:{teg:"tidnitafla", haus:["Fjöldi systkina","Tíðni"], rodir:[["0",3],["1",9],["2",7],["3",2],["4",1]], tidni:true},
+      tekid:["22"],
+      abending:"Hver nemandi er talinn einu sinni í töflunni. Leggðu saman tíðnina.",
+      utskyring:["3 + 9 + 7 + 2 + 1 = 22","Það eru 22 nemendur í bekknum.","Athugaðu að ekki á að leggja saman fjölda systkina (0 + 1 + 2 + 3 + 4)."],
+      mynd:{teg:"tidnitafla", haus:["Fjöldi systkina","Tíðni"], rodir:[["0",3],["1",9],["2",7],["3",2],["4",1]], tidni:true, samtals:true} },
+
+    /* ---------- Súlurit ---------- */
+    { efni:"Súlurit", tegund:"val",
+      texti:"Súluritið sýnir uppáhaldsávexti nemenda. Hve margir völdu epli?",
+      syna:{teg:"surlurit", flokkar:["Epli","Bananar","Perur"], gildi:[8,5,3], skref:1, max:10},
+      svor:["8","5","3","16"], rett:0,
+      abending:"Fylgdu toppi súlunnar fyrir epli beint til vinstri að ásnum.",
+      abMynd:{teg:"surlurit", flokkar:["Epli","Bananar","Perur"], gildi:[8,5,3], skref:1, max:10, merkt:0, lina:true},
+      utskyring:["Toppur súlunnar fyrir epli er í hæð 8 á ásnum.","8 nemendur völdu epli."],
+      mynd:{teg:"surlurit", flokkar:["Epli","Bananar","Perur"], gildi:[8,5,3], skref:1, max:10, merkt:0, lina:true, gildiSyna:true} },
+
+    { efni:"Súlurit", tegund:"val",
+      texti:"Súluritið sýnir uppáhaldsíþrótt nemenda. Hve margir nemendur tóku þátt í könnuninni?",
+      syna:{teg:"surlurit", flokkar:["Fótbolti","Handbolti","Sund"], gildi:[10,6,4], skref:2, max:12},
+      svor:["20","10","16","24"], rett:0,
+      abending:"Kvarðinn hækkar um 2. Lestu hæð hverrar súlu og leggðu saman.",
+      utskyring:["Fótbolti 10, handbolti 6 og sund 4.","10 + 6 + 4 = 20"],
+      mynd:{teg:"surlurit", flokkar:["Fótbolti","Handbolti","Sund"], gildi:[10,6,4], skref:2, max:12, gildiSyna:true} },
+
+    { efni:"Súlurit", tegund:"skrifa",
+      texti:"Súluritið sýnir hve margar bækur fjórir nemendur lásu í október. Hve margar bækur las Sara?",
+      syna:{teg:"surlurit", flokkar:["Ari","Sara","Dísa","Óli"], gildi:[6,9,4,12], skref:2, max:14},
+      tekid:["9"],
+      abending:"Kvarðinn hækkar um 2 í hverju bili. Súlan hennar Söru endar mitt á milli tveggja lína.",
+      abMynd:{teg:"surlurit", flokkar:["Ari","Sara","Dísa","Óli"], gildi:[6,9,4,12], skref:2, max:14, merkt:1, lina:true},
+      utskyring:["Súlan endar mitt á milli 8 og 10.","Mitt á milli 8 og 10 er 9, svo Sara las 9 bækur."],
+      mynd:{teg:"surlurit", flokkar:["Ari","Sara","Dísa","Óli"], gildi:[6,9,4,12], skref:2, max:14, merkt:1, lina:true, gildiSyna:true} },
+
+    /* ---------- Skífurit ---------- */
+    { efni:"Skífurit", tegund:"val",
+      texti:"Skífuritið sýnir hvernig 20 nemendur koma í skólann. Hve stór hluti nemendanna gengur?",
+      syna:{teg:"skifurit", sneidar:SKOLALEID},
+      svor:["{1/2}","{1/4}","{1/3}","{3/4}"], rett:0,
+      abending:"Berðu sneiðina saman við hringinn allan. Nær hún yfir helming hans?",
+      abMynd:{teg:"skifurit", sneidar:SKOLALEID, merkt:0, helmingur:true},
+      utskyring:["Sneiðin fyrir þá sem ganga nær yfir hálfan hringinn.","{1/2} nemendanna gengur, eða 10 af 20."],
+      mynd:{teg:"skifurit", sneidar:SKOLALEID, merkt:0, merki:true} },
+
+    { efni:"Skífurit", tegund:"skrifa",
+      texti:"Skífuritið sýnir hvernig 20 nemendur koma í skólann. Hve margir koma á hjóli?",
+      syna:{teg:"skifurit", sneidar:SKOLALEID},
+      tekid:["5"],
+      abending:"Hjólasneiðin er fjórðungur hringsins. Hvað er fjórðungur af 20?",
+      utskyring:["Hjólasneiðin er {1/4} af hringnum.","{1/4} af 20 = 20 : 4 = 5"],
+      mynd:{teg:"skifurit", sneidar:SKOLALEID, merkt:1, merki:true} },
+
+    { efni:"Skífurit", tegund:"val",
+      texti:"Skífuritið sýnir uppáhaldsárstíð 40 nemenda. Hve margir völdu vetur?",
+      syna:{teg:"skifurit", sneidar:ARSTIDIR, merki:true},
+      svor:["10","25","15","20"], rett:0,
+      abending:"25% er það sama og {1/4}. Hvað er fjórðungur af 40?",
+      utskyring:["25% = {1/4}","{1/4} af 40 = 40 : 4 = 10","10 nemendur völdu vetur."],
+      mynd:{teg:"skifurit", sneidar:ARSTIDIR, merkt:1, merki:true} },
+
+    /* ---------- Líkur ---------- */
+    { efni:"Líkur", tegund:"val",
+      texti:"Þú kastar venjulegum teningi. Hverjar eru líkurnar á að fá slétta tölu?",
+      svor:["{3/6} = {1/2}","{1/6}","{2/6}","{4/6}"], rett:0,
+      abending:"Hvaða tölur á teningnum eru sléttar? Hve margar hliðar eru alls?",
+      abMynd:{teg:"teningur"},
+      utskyring:["Sléttu tölurnar eru 2, 4 og 6. Það eru 3 hagstæðar útkomur.","Teningurinn hefur 6 hliðar, svo útkomurnar eru 6 alls.","Líkurnar eru {3/6} = {1/2}."],
+      mynd:{teg:"teningur", merkt:[2,4,6]} },
+
+    { efni:"Líkur", tegund:"val",
+      texti:"Í poka eru 3 rauðar kúlur og 1 blá. Þú dregur eina kúlu án þess að horfa. Hverjar eru líkurnar á að draga bláa kúlu?",
+      syna:{teg:"poki", kulur:["r","r","r","b"]},
+      svor:["{1/4} = 25%","{1/2} = 50%","{3/4} = 75%","{1/3}"], rett:0,
+      abending:"Hve margar bláar kúlur eru í pokanum? Hve margar kúlur eru alls?",
+      utskyring:["1 kúla er blá og kúlurnar eru 4 alls.","Líkurnar eru {1/4} = 25%.","{1/3} er hlutfallið milli bláu og rauðu kúlnanna, ekki líkurnar."],
+      mynd:{teg:"poki", kulur:["r","r","r","b"], merkt:"b"} },
+
+    { efni:"Líkur", tegund:"val",
+      texti:"Þú kastar venjulegum teningi. Hverjar eru líkurnar á að fá tölu stærri en 4?",
+      svor:["{2/6}","{3/6}","{4/6}","{1/6}"], rett:0,
+      abending:"Hvaða tölur eru stærri en 4? Er 4 sjálf með?",
+      abMynd:{teg:"teningur"},
+      utskyring:["Tölurnar 5 og 6 eru stærri en 4. Talan 4 er ekki með.","Líkurnar eru {2/6} = {1/3}."],
+      mynd:{teg:"teningur", merkt:[5,6]} },
+
+    { efni:"Líkur", tegund:"val",
+      texti:"Í poka eru eingöngu grænar kúlur. Hverjar eru líkurnar á að draga græna kúlu?",
+      syna:{teg:"poki", kulur:["g","g","g","g","g","g"]},
+      svor:["Öruggt (1)","Jafnar líkur ({1/2})","Ómögulegt (0)"], rett:0,
+      abending:"Getur gerst að þú dragir kúlu sem er ekki græn?",
+      utskyring:["Allar kúlurnar eru grænar, svo þú færð alltaf græna kúlu.","Atburður sem gerist alltaf er öruggur. Líkurnar eru 1, eða 100%."],
+      mynd:{teg:"kvardi", punktur:1, texti:"Græn kúla"} },
+
+    { efni:"Líkur", tegund:"val",
+      texti:"Í poka eru 9 rauðar kúlur og 1 gul. Hvernig er best að lýsa líkunum á að draga rauða kúlu?",
+      syna:{teg:"poki", kulur:["r","r","r","r","r","r","r","r","r","y"]},
+      svor:["Líklegt","Ólíklegt","Jafnar líkur","Öruggt","Ómögulegt"], rett:0,
+      abending:"Eru rauðu kúlurnar fleiri eða færri en helmingur kúlnanna? Getur gula kúlan komið upp?",
+      abMynd:{teg:"kvardi"},
+      utskyring:["9 af 10 kúlum eru rauðar, svo líkurnar eru {9/10}.","Það er meira en {1/2} en minna en 1. Atburðurinn er líklegur en ekki öruggur, því gula kúlan getur komið upp."],
+      mynd:{teg:"kvardi", punktur:0.9, texti:"Rauð kúla"} },
+
+    { efni:"Líkur", tegund:"val",
+      texti:"Hverjar eru líkurnar á að fá 7 þegar þú kastar venjulegum teningi?",
+      svor:["Ómögulegt (0)","Ólíklegt","{1/6}","{1/7}"], rett:0,
+      abending:"Hvaða tölur eru á teningnum?",
+      abMynd:{teg:"teningur"},
+      utskyring:["Á teningnum eru tölurnar 1 til 6. Talan 7 er ekki á honum.","Atburður sem getur ekki gerst er ómögulegur. Líkurnar eru 0."],
+      mynd:[{teg:"teningur"},{teg:"kvardi", punktur:0, texti:"Fá 7"}] }
+  ];
+
+  /* Röð spurninga: efni fyrir efni, auðveldast fyrst og erfiðast síðast */
+  var ROD = [0,1,2,3,4,5,6,7,8,10,9,11,12,13,14,15,16,17,21,23,22,18,19,20];
+  SPURNINGAR = ROD.map(function(i){ return SPURNINGAR[i]; });
+
+  /* ================= HJÁLPARFÖLL ================= */
+  var HROS = ["Rétt!","Vel gert!","Flott hjá þér!","Rétt svar!"];
+  function ein(n){ return (n % 10 === 1 && n % 100 !== 11); }
+  function shuffle(a){ a = a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  function norm(s){ return String(s).toLowerCase().replace(/\s/g, "").replace(/\./g, ",").replace(/−/g, "-"); }
+  function fmt(s){ return String(s).replace(/\{(\d+)\/(\d+)\}/g, "<span class=\"frac\"><span>$1</span><span>$2</span></span>"); }
+  function plain(s){ return String(s).replace(/\{(\d+)\/(\d+)\}/g, "$1/$2"); }
+  function talaStr(v){ return String(v).replace(".", ","); }
+  var F = "font-family:Andika,sans-serif;";
+
+  /* ================= MYNDIR ================= */
+
+  /* Meðaltal: súlur jafnaðar út að meðaltalinu */
+  function myndJofnun(m){
+    var all = [];
+    m.hopar.forEach(function(h){ all = all.concat(h.gildi); });
+    var maxV = Math.max.apply(null, all);
+    var BW = 44, GAP = 14, GG = 50, base = 190, scale = 140 / maxV;
+    var widths = m.hopar.map(function(h){ return h.gildi.length * (BW + GAP) - GAP; });
+    var W = widths.reduce(function(a,b){ return a + b; }, 0) + GG * (m.hopar.length - 1) + 40;
+    var s = "<svg viewBox=\"0 0 " + W + " 230\" width=\"" + W + "\" role=\"img\" aria-label=\"Súlur og meðaltal\">";
+    var x0 = 20;
+    m.hopar.forEach(function(h, gi){
+      var sum = h.gildi.reduce(function(a,b){ return a + b; }, 0), mean = sum / h.gildi.length;
+      var my = base - mean * scale;
+      if(h.titill) s += "<text x=\"" + (x0 + widths[gi]/2) + "\" y=\"18\" text-anchor=\"middle\" style=\"" + F + "font-size:16px;font-weight:700;fill:var(--ink)\">" + h.titill + "</text>";
+      h.gildi.forEach(function(v, i){
+        var x = x0 + i * (BW + GAP), top = base - v * scale;
+        if(m.medal && v > mean){
+          s += "<rect x=\"" + x + "\" y=\"" + my + "\" width=\"" + BW + "\" height=\"" + (base - my) + "\" style=\"fill:#C9D1E3\"/>";
+          s += "<rect x=\"" + x + "\" y=\"" + top + "\" width=\"" + BW + "\" height=\"" + (my - top) + "\" style=\"fill:var(--acc)\"/>";
+        } else {
+          s += "<rect x=\"" + x + "\" y=\"" + top + "\" width=\"" + BW + "\" height=\"" + (base - top) + "\" style=\"fill:#C9D1E3\"/>";
+          if(m.medal && v < mean) s += "<rect x=\"" + (x+1.5) + "\" y=\"" + my + "\" width=\"" + (BW-3) + "\" height=\"" + (top - my) + "\" style=\"fill:var(--acc-bg);stroke:var(--acc);stroke-width:2;stroke-dasharray:5 4\"/>";
+        }
+        var ly = Math.min(top, m.medal ? my : top) - 8;
+        s += "<text x=\"" + (x + BW/2) + "\" y=\"" + ly + "\" text-anchor=\"middle\" style=\"" + F + "font-size:18px;font-weight:700;fill:var(--ink)\">" + v + "</text>";
+      });
+      s += "<line x1=\"" + (x0 - 8) + "\" y1=\"" + base + "\" x2=\"" + (x0 + widths[gi] + 8) + "\" y2=\"" + base + "\" style=\"stroke:var(--ink);stroke-width:2\"/>";
+      if(m.medal){
+        s += "<line x1=\"" + (x0 - 8) + "\" y1=\"" + my + "\" x2=\"" + (x0 + widths[gi] + 8) + "\" y2=\"" + my + "\" style=\"stroke:var(--acc-dark);stroke-width:2.5;stroke-dasharray:8 5\"/>";
+        s += "<text x=\"" + (x0 + widths[gi]/2) + "\" y=\"" + (base + 26) + "\" text-anchor=\"middle\" style=\"" + F + "font-size:15px;font-weight:700;fill:var(--acc-dark)\">Meðaltal = " + talaStr(Math.round(mean*100)/100) + "</text>";
+      }
+      x0 += widths[gi] + GG;
+    });
+    return s + "</svg>";
+  }
+
+  /* Miðgildi: talnaspjöld, raðað og strikað yfir frá báðum endum */
+  function myndMidgildi(m){
+    var t = m.radad ? m.tolur.slice().sort(function(a,b){ return a - b; }) : m.tolur;
+    var n = t.length, mid = n % 2 ? [ (n-1)/2 ] : [ n/2 - 1, n/2 ];
+    var h = "<div class=\"cards\">";
+    t.forEach(function(v, i){
+      var cls = m.radad ? (mid.indexOf(i) !== -1 ? " hl" : " out") : "";
+      h += "<span class=\"card-n" + cls + "\">" + talaStr(v) + "</span>";
+    });
+    h += "</div>";
+    h += "<p class=\"cards-cap\">" + (m.radad ? (n % 2 ? "Raðað frá minnstu til stærstu. Ein tala er í miðjunni." : "Raðað frá minnstu til stærstu. Tvær tölur eru í miðjunni.") : "Tölurnar eins og þær koma fyrir. Raðaðu þeim.") + "</p>";
+    return h;
+  }
+
+  /* Tíðasta gildi: punktarit */
+  function myndPunktarit(m){
+    var CW = 70, R = 11, base = 40 + Math.max.apply(null, m.fjoldi) * 26 + 10;
+    var W = m.flokkar.length * CW + 40, H = base + 40;
+    var s = "<svg viewBox=\"0 0 " + W + " " + H + "\" width=\"" + W + "\" role=\"img\" aria-label=\"Punktarit\">";
+    m.flokkar.forEach(function(f, i){
+      var cx = 20 + i * CW + CW/2, on = m.merkt === i;
+      for(var k = 0; k < m.fjoldi[i]; k++){
+        s += "<circle cx=\"" + cx + "\" cy=\"" + (base - 16 - k*26) + "\" r=\"" + R + "\" style=\"fill:" + (on ? "var(--acc)" : "#7C8DB5") + "\"/>";
+      }
+      s += "<text x=\"" + cx + "\" y=\"" + (base + 26) + "\" text-anchor=\"middle\" style=\"" + F + "font-size:18px;font-weight:700;fill:" + (on ? "var(--acc-dark)" : "var(--ink)") + "\">" + f + "</text>";
+    });
+    s += "<line x1=\"14\" y1=\"" + base + "\" x2=\"" + (W - 14) + "\" y2=\"" + base + "\" style=\"stroke:var(--ink);stroke-width:2\"/>";
+    return s + "</svg>";
+  }
+
+  /* Súlurit með ás og línum */
+  function mySurlurit(m){
+    var L = 56, T = 24, PH = 220, BW = 64, GAP = 40;
+    var W = L + m.flokkar.length * (BW + GAP) + 20, base = T + PH, H = base + 40;
+    function y(v){ return base - v / m.max * PH; }
+    var s = "<svg viewBox=\"0 0 " + W + " " + H + "\" width=\"" + W + "\" role=\"img\" aria-label=\"Súlurit\">";
+    for(var v = 0; v <= m.max; v += m.skref){
+      s += "<line x1=\"" + L + "\" y1=\"" + y(v) + "\" x2=\"" + (W - 10) + "\" y2=\"" + y(v) + "\" style=\"stroke:" + (v === 0 ? "var(--ink)" : "#E1E4EA") + ";stroke-width:" + (v === 0 ? 2 : 1) + "\"/>";
+      s += "<text x=\"" + (L - 10) + "\" y=\"" + (y(v) + 5) + "\" text-anchor=\"end\" style=\"" + F + "font-size:15px;fill:var(--muted)\">" + v + "</text>";
+    }
+    s += "<line x1=\"" + L + "\" y1=\"" + T + "\" x2=\"" + L + "\" y2=\"" + base + "\" style=\"stroke:var(--ink);stroke-width:2\"/>";
+    m.flokkar.forEach(function(f, i){
+      var x = L + GAP/2 + i * (BW + GAP), val = m.gildi[i], on = m.merkt === i;
+      s += "<rect x=\"" + x + "\" y=\"" + y(val) + "\" width=\"" + BW + "\" height=\"" + (base - y(val)) + "\" rx=\"4\" style=\"fill:" + (on ? "var(--acc)" : "#7C8DB5") + "\"/>";
+      s += "<text x=\"" + (x + BW/2) + "\" y=\"" + (base + 24) + "\" text-anchor=\"middle\" style=\"" + F + "font-size:16px;font-weight:700;fill:var(--ink)\">" + f + "</text>";
+      if(m.lina && on) s += "<line x1=\"" + L + "\" y1=\"" + y(val) + "\" x2=\"" + x + "\" y2=\"" + y(val) + "\" style=\"stroke:var(--acc-dark);stroke-width:2.5;stroke-dasharray:6 4\"/>";
+      if(m.gildiSyna) s += "<text x=\"" + (x + BW/2) + "\" y=\"" + (y(val) - 8) + "\" text-anchor=\"middle\" style=\"" + F + "font-size:18px;font-weight:700;fill:" + (on ? "var(--acc-dark)" : "var(--ink)") + "\">" + val + "</text>";
+    });
+    return s + "</svg>";
+  }
+
+  /* Talningarstrik: fjögur lóðrétt og það fimmta þvert yfir */
+  function strik(n){
+    var groups = Math.ceil(n / 5), W = Math.max(1, groups) * 46, s = "<svg viewBox=\"0 0 " + W + " 30\" width=\"" + W + "\" height=\"30\" aria-label=\"" + n + " strik\">";
+    for(var g = 0; g < groups; g++){
+      var k = Math.min(5, n - g*5), x0 = g * 46 + 4;
+      for(var i = 0; i < Math.min(4, k); i++) s += "<line x1=\"" + (x0 + i*8) + "\" y1=\"4\" x2=\"" + (x0 + i*8) + "\" y2=\"26\" style=\"stroke:currentColor;stroke-width:2.5;stroke-linecap:round\"/>";
+      if(k === 5) s += "<line x1=\"" + (x0 - 4) + "\" y1=\"22\" x2=\"" + (x0 + 28) + "\" y2=\"8\" style=\"stroke:currentColor;stroke-width:2.5;stroke-linecap:round\"/>";
+    }
+    return s + "</svg>";
+  }
+
+  function myndTidnitafla(m){
+    var h = "<table class=\"ft\"><thead><tr><th>" + m.haus[0] + "</th>";
+    if(m.talning) h += "<th>Talning</th>";
+    if(m.tidni) h += "<th>Tíðni</th>";
+    h += "</tr></thead><tbody>";
+    var sum = 0;
+    m.rodir.forEach(function(r, i){
+      sum += r[1];
+      h += "<tr class=\"" + (m.merkt === i ? "hl" : "") + "\"><td>" + r[0] + "</td>";
+      if(m.talning) h += "<td>" + strik(r[1]) + "</td>";
+      if(m.tidni) h += "<td>" + r[1] + "</td>";
+      h += "</tr>";
+    });
+    if(m.samtals) h += "<tr class=\"sum\"><td>Samtals</td>" + (m.talning ? "<td></td>" : "") + "<td>" + sum + "</td></tr>";
+    return h + "</tbody></table>";
+  }
+
+  /* Skífurit */
+  var LITIR = ["#5B6B8F","#9AA6BF","#C9D1E3","#E3E8F2"];
+  var TEXTI = ["#FFFFFF","#1F2A44","#1F2A44","#1F2A44"];
+  function myndSkifurit(m){
+    var cx = 120, cy = 120, r = 100, a = -Math.PI/2;
+    var s = "<svg viewBox=\"0 0 420 240\" width=\"420\" role=\"img\" aria-label=\"Skífurit\">";
+    m.sneidar.forEach(function(sn, i){
+      var a2 = a + sn.hluti * 2 * Math.PI, on = m.merkt === i;
+      var x1 = cx + r*Math.cos(a), y1 = cy + r*Math.sin(a), x2 = cx + r*Math.cos(a2), y2 = cy + r*Math.sin(a2);
+      var big = sn.hluti > 0.5 ? 1 : 0, fill = on ? "var(--acc)" : LITIR[i % 4];
+      s += "<path d=\"M" + cx + " " + cy + " L" + x1 + " " + y1 + " A" + r + " " + r + " 0 " + big + " 1 " + x2 + " " + y2 + " Z\" style=\"fill:" + fill + ";stroke:#fff;stroke-width:3\"/>";
+      if(m.merki){
+        var am = (a + a2)/2, tx = cx + r*0.62*Math.cos(am), ty = cy + r*0.62*Math.sin(am);
+        s += "<text x=\"" + tx + "\" y=\"" + (ty + 7) + "\" text-anchor=\"middle\" style=\"" + F + "font-size:20px;font-weight:700;fill:" + (on ? "#fff" : TEXTI[i % 4]) + "\">" + sn.merki + "</text>";
+      }
+      var ly = 40 + i * 40;
+      s += "<rect x=\"262\" y=\"" + (ly - 16) + "\" width=\"22\" height=\"22\" rx=\"4\" style=\"fill:" + fill + "\"/>";
+      s += "<text x=\"294\" y=\"" + ly + "\" style=\"" + F + "font-size:18px;font-weight:700;fill:" + (on ? "var(--acc-dark)" : "var(--ink)") + "\">" + sn.texti + "</text>";
+      a = a2;
+    });
+    if(m.helmingur) s += "<line x1=\"" + cx + "\" y1=\"" + (cy - r - 10) + "\" x2=\"" + cx + "\" y2=\"" + (cy + r + 10) + "\" style=\"stroke:var(--acc-dark);stroke-width:2.5;stroke-dasharray:6 4\"/>";
+    return s + "</svg>";
+  }
+
+  /* Poki með kúlum */
+  var KULULITIR = {r:["#DC2626","rauð"], b:["#2563EB","blá"], g:["#16A34A","græn"], y:["#EAB308","gul"]};
+  function myndPoki(m){
+    var h = "<div class=\"bag\" role=\"img\" aria-label=\"Poki með kúlum\">";
+    m.kulur.forEach(function(k){
+      var cls = m.merkt ? (k === m.merkt ? " on" : " dim") : "";
+      h += "<span class=\"ball" + cls + "\" style=\"background:" + KULULITIR[k][0] + "\" title=\"" + KULULITIR[k][1] + "\"></span>";
+    });
+    return h + "</div>";
+  }
+
+  /* Teningur */
+  var PIPS = {1:[[2,2]],2:[[1,1],[3,3]],3:[[1,1],[2,2],[3,3]],4:[[1,1],[3,1],[1,3],[3,3]],5:[[1,1],[3,1],[2,2],[1,3],[3,3]],6:[[1,1],[3,1],[1,2],[3,2],[1,3],[3,3]]};
+  function myndTeningur(m){
+    var on = m.merkt || [], h = "<div class=\"dice\">";
+    for(var n = 1; n <= 6; n++){
+      var hl = on.indexOf(n) !== -1;
+      var s = "<svg viewBox=\"0 0 64 64\" width=\"64\" height=\"64\" role=\"img\" aria-label=\"" + n + "\"><rect x=\"3\" y=\"3\" width=\"58\" height=\"58\" rx=\"12\" style=\"fill:" + (hl ? "var(--acc-bg)" : "#fff") + ";stroke:" + (hl ? "var(--acc)" : "#9AA6BF") + ";stroke-width:" + (hl ? 4 : 2) + "\"/>";
+      PIPS[n].forEach(function(p){ s += "<circle cx=\"" + (p[0]*16) + "\" cy=\"" + (p[1]*16) + "\" r=\"5.5\" style=\"fill:" + (hl ? "var(--acc-dark)" : "var(--ink)") + "\"/>"; });
+      h += s + "</svg>";
+    }
+    return h + "</div>";
+  }
+
+  /* Líkindakvarði frá 0 upp í 1 */
+  function myndKvardi(m){
+    var L = 60, R = 580, Y = 70;
+    function x(v){ return L + v * (R - L); }
+    var merki = [[0,"Ómögulegt","0"],[0.25,"Ólíklegt",""],[0.5,"Jafnar líkur","½"],[0.75,"Líklegt",""],[1,"Öruggt","1"]];
+    var s = "<svg viewBox=\"0 0 640 140\" width=\"640\" role=\"img\" aria-label=\"Líkindakvarði\">";
+    s += "<line x1=\"" + L + "\" y1=\"" + Y + "\" x2=\"" + R + "\" y2=\"" + Y + "\" style=\"stroke:var(--ink);stroke-width:3\"/>";
+    merki.forEach(function(k){
+      var big = k[2] !== "";
+      s += "<line x1=\"" + x(k[0]) + "\" y1=\"" + (Y - (big ? 10 : 6)) + "\" x2=\"" + x(k[0]) + "\" y2=\"" + (Y + (big ? 10 : 6)) + "\" style=\"stroke:var(--ink);stroke-width:2\"/>";
+      if(big) s += "<text x=\"" + x(k[0]) + "\" y=\"" + (Y + 32) + "\" text-anchor=\"middle\" style=\"" + F + "font-size:18px;font-weight:700;fill:var(--ink)\">" + k[2] + "</text>";
+      s += "<text x=\"" + x(k[0]) + "\" y=\"" + (Y + 56) + "\" text-anchor=\"middle\" style=\"" + F + "font-size:14px;fill:var(--muted)\">" + k[1] + "</text>";
+    });
+    if(typeof m.punktur === "number"){
+      s += "<circle cx=\"" + x(m.punktur) + "\" cy=\"" + Y + "\" r=\"10\" style=\"fill:var(--acc);stroke:#fff;stroke-width:2\"/>";
+      s += "<text x=\"" + x(m.punktur) + "\" y=\"" + (Y - 22) + "\" text-anchor=\"middle\" style=\"" + F + "font-size:16px;font-weight:700;fill:var(--acc-dark)\">" + m.texti + "</text>";
+    }
+    return s + "</svg>";
+  }
+
+  function teikna(m){
+    if(!m) return "";
+    var list = Array.isArray(m) ? m : [m];
+    var map = {jofnun:myndJofnun, midgildi:myndMidgildi, punktarit:myndPunktarit, surlurit:mySurlurit, tidnitafla:myndTidnitafla, skifurit:myndSkifurit, poki:myndPoki, teningur:myndTeningur, kvardi:myndKvardi};
+    return "<div class=\"visual\">" + list.map(function(x){ return map[x.teg] ? map[x.teg](x) : ""; }).join("") + "</div>";
+  }
+
+  /* ================= UPPRIFJUN =================
+     Birtist á undan fyrstu spurningu í hverju efni. Nemandinn getur opnað hana aftur. */
+  var UPPRIFJUN = {
+    "Meðaltal":{atridi:["Leggðu allar tölurnar saman.","Deildu summunni með fjölda talnanna.","Meðaltalið er eins og að jafna súlurnar út: það sem er fyrir ofan línuna fyllir upp í það sem vantar."],
+      mynd:{teg:"jofnun", hopar:[{gildi:[2,6,4]}], medal:true}},
+    "Miðgildi":{atridi:["Raðaðu tölunum frá minnstu til stærstu.","Miðgildið er talan í miðjunni.","Ef tvær tölur eru í miðjunni er miðgildið meðaltal þeirra."],
+      mynd:{teg:"midgildi", tolur:[7,1,4,9,3], radad:true}},
+    "Tíðasta gildi":{atridi:["Tíðasta gildið er það gildi sem kemur oftast fyrir.","Það getur líka verið orð, t.d. litur eða dýr.","Ekki rugla því saman við tíðnina, sem segir hve oft gildið kemur fyrir."],
+      mynd:{teg:"punktarit", flokkar:["1","2","3","4"], fjoldi:[1,3,2,1], merkt:1}},
+    "Tíðnitafla":{atridi:["Tíðni segir hve oft gildi kemur fyrir.","Talningarstrik eru skráð í hópum af fimm: fjögur lóðrétt og það fimmta þvert yfir.","Summa tíðninnar er fjöldi allra svaranna."],
+      mynd:{teg:"tidnitafla", haus:["Svar","Talning","Tíðni"], rodir:[["Já",7],["Nei",5]], talning:true, tidni:true, samtals:true}},
+    "Súlurit":{atridi:["Hæð súlunnar sýnir fjöldann.","Lestu kvarðann á lóðrétta ásnum. Hann getur hækkað um 1, 2, 5 eða meira í hverju bili.","Ef súla endar á milli lína er gildið mitt á milli."],
+      mynd:{teg:"surlurit", flokkar:["A","B","C"], gildi:[4,7,2], skref:2, max:8, merkt:1, lina:true, gildiSyna:true}},
+    "Skífurit":{atridi:["Allur hringurinn er allur hópurinn.","Hálfur hringur er {1/2} eða 50% af hópnum.","Fjórðungur úr hring er {1/4} eða 25% af hópnum."],
+      mynd:{teg:"skifurit", sneidar:SKOLALEID, merki:true}},
+    "Líkur":{atridi:["Líkur = fjöldi hagstæðra útkoma : fjöldi allra útkoma.","Líkur eru frá 0 (ómögulegt) upp í 1 (öruggt). {1/2} eru jafnar líkur.","Líkurnar á að fá 6 á teningi eru {1/6}."],
+      mynd:[{teg:"teningur", merkt:[6]},{teg:"kvardi", punktur:1/6, texti:"Fá 6"}]}
+  };
+  function fmtU(s){ return typeof fmt === "function" ? fmt(s) : s; }
+  function showRecap(efni, hlid){
+    var u = UPPRIFJUN[efni];
+    if(!u) return false;
+    $("recapTag").textContent = "Upprifjun · " + efni;
+    $("recapList").innerHTML = u.atridi.map(function(a){ return "<li>" + fmtU(a) + "</li>"; }).join("");
+    $("recapVisual").innerHTML = teikna(u.mynd);
+    $("recapCard").classList.remove("hidden");
+    if(hlid){ $("qCard").classList.add("hidden"); $("btnRecapGo").textContent = "Byrja á spurningunum"; }
+    else { $("btnRecapGo").textContent = "Loka upprifjun"; }
+    window.scrollTo(0, 0);
+    setTimeout(function(){ $("btnRecapGo").focus(); }, 30);
+    return true;
+  }
+  function hideRecap(){ $("recapCard").classList.add("hidden"); $("qCard").classList.remove("hidden"); }
+  $("btnRecapGo").addEventListener("click", function(){
+    hideRecap();
+    if(game && game.cur && game.cur.q.tegund === "skrifa" && !game.cur.done) setTimeout(function(){ $("answer").focus(); }, 30);
+  });
+  $("btnRecap").addEventListener("click", function(){ if(game && game.cur) showRecap(game.cur.q.efni, false); });
+
+  /* ================= UPPHAFSSKJÁR ================= */
+  var valin = EFNI.slice();
+  function show(id){
+    ["start","play","end"].forEach(function(s){ $(s).classList.toggle("hidden", s !== id); });
+    window.scrollTo(0, 0);
+  }
+  function renderTopics(){
+    $("topics").innerHTML = "";
+    EFNI.forEach(function(e){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "topic"; b.textContent = e;
+      b.setAttribute("aria-pressed", String(valin.indexOf(e) !== -1));
+      b.addEventListener("click", function(){
+        var i = valin.indexOf(e);
+        if(i === -1) valin.push(e); else valin.splice(i, 1);
+        $("startErr").textContent = "";
+        renderTopics();
+      });
+      $("topics").appendChild(b);
+    });
+    var n = SPURNINGAR.filter(function(q){ return valin.indexOf(q.efni) !== -1; }).length;
+    $("countText").textContent = n === 0 ? "Ekkert efni valið." : (n + (ein(n) ? " spurning" : " spurningar") + " í völdu efni.");
+  }
+
+  /* ================= LEIKUR ================= */
+  var game = null;
+
+  function start(list){
+    game = {list: list.slice(), i: 0, results: []};
+    load();
+    show("play");
+  }
+
+  $("btnStart").addEventListener("click", function(){
+    var list = SPURNINGAR.filter(function(q){ return valin.indexOf(q.efni) !== -1; });
+    if(list.length === 0){ $("startErr").textContent = "Veldu að minnsta kosti eitt efni."; return; }
+    start(list);
+  });
+
+  function load(){
+    var q = game.list[game.i];
+    if(!game.seen) game.seen = {};
+    hideRecap();
+    if(!game.seen[q.efni]){ game.seen[q.efni] = true; showRecap(q.efni, true); }
+    game.cur = {q:q, tries:0, hint:false, done:false};
+    var n = game.list.length;
+    $("progress").textContent = "Spurning " + (game.i + 1) + " af " + n;
+    $("barFill").style.width = (game.i / n * 100) + "%";
+    $("qTopic").textContent = q.efni;
+    $("qText").innerHTML = fmt(q.texti);
+    $("qVisual").innerHTML = teikna(q.syna);
+    $("feedback").innerHTML = "";
+    $("nextRow").classList.add("hidden");
+    $("inputErr").textContent = "";
+    $("btnHint").classList.remove("hidden");
+    if(q.tegund === "val"){
+      $("answerForm").classList.add("hidden");
+      $("options").classList.remove("hidden");
+      $("options").innerHTML = "";
+      shuffle(q.svor.map(function(_, k){ return k; })).forEach(function(k){
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "opt"; b.dataset.k = k;
+        b.innerHTML = "<span>" + fmt(q.svor[k]) + "</span><span class=\"mark\"></span>";
+        b.setAttribute("aria-label", plain(q.svor[k]));
+        b.addEventListener("click", function(){ answer(k === q.rett, b); });
+        $("options").appendChild(b);
+      });
+    } else {
+      $("options").classList.add("hidden");
+      $("answerForm").classList.remove("hidden");
+      var a = $("answer");
+      a.value = ""; a.disabled = false; a.className = "";
+      setTimeout(function(){ a.focus(); }, 30);
+    }
+  }
+
+  function showHint(prefix){
+    var q = game.cur.q;
+    game.cur.hint = true;
+    $("btnHint").classList.add("hidden");
+    $("feedback").innerHTML = "<div class=\"fb " + (prefix ? "bad" : "hint") + "\">" +
+      "<p class=\"fb-title\">" + (prefix || "Ábending") + "</p>" +
+      "<p>" + fmt(q.abending) + "</p>" + teikna(q.abMynd) + "</div>";
+  }
+  $("btnHint").addEventListener("click", function(){ showHint(""); });
+
+  $("answerForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var v = $("answer").value.trim();
+    if(v === ""){ $("inputErr").textContent = "Skrifaðu svar fyrst."; return; }
+    $("inputErr").textContent = "";
+    var ok = game.cur.q.tekid.some(function(t){ return norm(t) === norm(v); });
+    answer(ok, null);
+  });
+  $("answer").addEventListener("input", function(){ $("inputErr").textContent = ""; $("answer").className = ""; });
+
+  function answer(ok, btn){
+    var c = game.cur;
+    if(c.done) return;
+    c.tries++;
+    if(ok){ finish(true, btn); return; }
+    if(c.tries < 2){
+      if(btn){ btn.classList.add("wrong"); btn.disabled = true; btn.querySelector(".mark").textContent = "✗"; }
+      else { $("answer").className = "wrong"; $("answer").select(); }
+      showHint("Ekki alveg. Reyndu aftur!");
+      return;
+    }
+    finish(false, btn);
+  }
+
+  function finish(ok, btn){
+    var c = game.cur, q = c.q;
+    c.done = true;
+    var status = ok ? ((c.tries === 1 && !c.hint) ? 1 : 2) : 3;
+    game.results.push({q:q, status:status});
+    var rett = q.tegund === "val" ? q.svor[q.rett] : q.tekid[0];
+    if(q.tegund === "val"){
+      Array.prototype.forEach.call($("options").children, function(b){
+        var k = Number(b.dataset.k);
+        b.disabled = true;
+        if(k === q.rett){ b.classList.add("right"); b.querySelector(".mark").textContent = "✓"; }
+        else if(b === btn){ b.classList.add("wrong"); b.querySelector(".mark").textContent = "✗"; }
+        else if(!b.classList.contains("wrong")) b.classList.add("faded");
+      });
+    } else {
+      var a = $("answer");
+      a.disabled = true;
+      a.className = ok ? "right" : "wrong";
+    }
+    $("btnHint").classList.add("hidden");
+    var title = ok ? HROS[Math.floor(Math.random() * HROS.length)] : "Ekki rétt. Rétta svarið er " + fmt(rett) + (/\.$/.test(rett) ? "" : ".");
+    var sub = ok ? (status === 2 ? "<p>Ábendingin hjálpaði. Svona hugsum við:</p>" : "<p>Svona hugsum við:</p>") : "<p>Skoðaðu útskýringuna:</p>";
+    $("feedback").innerHTML = "<div class=\"fb " + (ok ? "good" : "bad") + "\">" +
+      "<p class=\"fb-title\">" + title + "</p>" + sub +
+      "<ul class=\"fb-lines\">" + q.utskyring.map(function(l){ return "<li>" + fmt(l) + "</li>"; }).join("") + "</ul>" +
+      teikna(q.mynd) + "</div>";
+    $("barFill").style.width = ((game.i + 1) / game.list.length * 100) + "%";
+    $("btnNext").textContent = game.i < game.list.length - 1 ? "Næsta spurning" : "Sjá niðurstöður";
+    $("nextRow").classList.remove("hidden");
+    setTimeout(function(){ $("btnNext").focus(); }, 30);
+  }
+
+  $("btnNext").addEventListener("click", function(){
+    if(game.i < game.list.length - 1){ game.i++; load(); }
+    else showEnd();
+  });
+  $("btnQuit").addEventListener("click", function(){ renderTopics(); show("start"); });
+
+  /* ================= NIÐURSTÖÐUR ================= */
+  var STATUS = {1:["Rétt í fyrstu tilraun","s1"], 2:["Rétt með hjálp","s2"], 3:["Ekki rétt","s3"]};
+  function showEnd(){
+    var r = game.results, c = {1:0, 2:0, 3:0};
+    r.forEach(function(x){ c[x.status]++; });
+    $("endSummary").textContent = "Þú svaraðir " + r.length + (ein(r.length) ? " spurningu." : " spurningum.");
+    $("stats").innerHTML = [1,2,3].map(function(s){
+      return "<div class=\"stat " + STATUS[s][1] + "\"><b>" + c[s] + "</b><span>" + STATUS[s][0] + "</span></div>";
+    }).join("");
+    $("endRows").innerHTML = r.map(function(x){
+      return "<tr><td>" + x.q.efni + "</td><td>" + fmt(x.q.texti) + "</td><td><span class=\"status " + STATUS[x.status][1] + "\">" + STATUS[x.status][0] + "</span></td></tr>";
+    }).join("");
+    $("btnRetry").classList.toggle("hidden", c[2] + c[3] === 0);
+    show("end");
+  }
+  $("btnRetry").addEventListener("click", function(){
+    start(game.results.filter(function(x){ return x.status > 1; }).map(function(x){ return x.q; }));
+  });
+  $("btnAgain").addEventListener("click", function(){ start(game.results.map(function(x){ return x.q; })); });
+  $("btnHome").addEventListener("click", function(){ renderTopics(); show("start"); });
+
+  renderTopics();
+})();
+</script>
+</body>
+</html>

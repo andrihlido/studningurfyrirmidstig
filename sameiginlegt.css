@@ -1,0 +1,46 @@
+/* Sameiginlegt útlit fyrir Stuðning fyrir miðstig.
+   Hver síða tengir þessa skrá og setur fag á <body>, t.d. <body class="fag-staerdfraedi">. */
+@import url("https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap");
+
+:root{
+  --ink:#1F2A44;--muted:#4B5568;--bg:#F4F5F8;--card:#FFFFFF;--line:#D9DCE3;
+  --soft:#F1F3F7;--grid:#ECEEF3;
+  --ok:#15803D;--ok-bg:#ECFDF3;--ok-line:#A7E3BD;
+  /* Litur fags (sjálfgefið dökkblár) */
+  --acc:#1F2A44;--acc-dark:#141B2D;--acc-bg:#EEF0F5;--acc-line:#C9CEDA;
+}
+/* Litir faga */
+.fag-staerdfraedi{--acc:#C2410C;--acc-dark:#9A3412;--acc-bg:#FFF4ED;--acc-line:#F3C3A6}
+.fag-islenska{--acc:#0F766E;--acc-dark:#115E59;--acc-bg:#EEF9F7;--acc-line:#A7DCD3}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Andika',system-ui,sans-serif;font-size:18px;line-height:1.45;font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 20px 48px}
+h1{margin:0;font-size:36px;line-height:1.15}
+h2{margin:0 0 12px;font-size:22px;line-height:1.25}
+p{margin:0}
+.muted{color:var(--muted)}
+.mono{font-family:'Andika',sans-serif;font-weight:700}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:22px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.hidden{display:none !important}
+.sr-only{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+.btn{font:inherit;font-weight:700;border:0;border-radius:12px;padding:12px 22px;min-height:48px;cursor:pointer;background:var(--ink);color:#fff}
+.btn.acc{background:var(--acc)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn:hover{filter:brightness(1.1)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #2563EB;outline-offset:2px}
+
+/* Hlekkur til baka á forsíðu */
+.heim{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-bottom:8px;color:var(--muted);font-weight:700;text-decoration:none}
+.heim:hover{color:var(--ink)}
+
+@media (max-width:860px){ h1{font-size:30px} }
+
+/* Upprifjun á undan hverju efni í kaflaleikjunum */
+.recap{border:2px solid var(--acc-line)}
+.recap-list{margin:0;padding-left:24px;display:flex;flex-direction:column;gap:8px;font-size:19px;line-height:1.45}
+.recap-list li::marker{color:var(--acc)}
+.recap-list a{color:var(--acc-dark);font-weight:700}
