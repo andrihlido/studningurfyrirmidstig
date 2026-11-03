@@ -1,36 +1,19 @@
 # Stuðningur fyrir miðstig
 
-Æfingar og leikir í kjarnafögum, birt með GitHub Pages.
+Stærðfræðiefni eftir köflum í Stiku 3a: veggspjöld, leikir, æfing fyrir kaflapróf og hugtakasafn.
 
-## Uppbygging
+## Skipulag
 
-```
-index.html          forsíða, les efni.js sjálfkrafa
-efni.js             efnisyfirlit, ein færsla fyrir hvert efni
-sameiginlegt.css    útlit sem allar síður deila
-staerdfraedi/       efni í stærðfræði
-islenska/           efni í íslensku
-```
+- `index.html` – forsíðan. Hún les `efni.js` og raðar efninu eftir köflum í *Skilja* og *Æfa*.
+- `efni.js` – efnisyfirlitið. Ný lína hér birtist sjálfkrafa á forsíðunni.
+- `sameiginlegt.css` – sameiginlegt útlit.
+- `staerdfraedi/` – leikirnir, veggspjöldin og hugtakasafnið.
+  - `veggspjald.html?v=…` – opnar veggspjald. Efnið er í `veggspjold.js`.
+  - `myndir.js` – myndirnar sem veggspjöldin og hugtakasafnið nota.
+  - `hugtakasafn.html` – hugtök úr öllum köflum. `#kafli-3` opnar 3. kafla.
+  - Leikirnir bjóða upp á *Æfingu fyrir kaflapróf*. `#kaflaprof` aftan við slóðina opnar hana beint.
 
 ## Nýtt efni
 
-1. Settu HTML-skrána í möppu fagsins, t.d. `staerdfraedi/nyr-leikur.html`.
-2. Bættu við einni færslu í `EFNI` í `efni.js`:
-
-```js
-{
-  titill: "Heiti",
-  fag: "staerdfraedi",
-  vidfangsefni: "Viðfangsefni",
-  lysing: "Ein lína um hvað er æft.",
-  slod: "staerdfraedi/nyr-leikur.html"
-}
-```
-
-## Nýtt fag
-
-Bættu faginu við `FOG` í `efni.js`, búðu til möppu fyrir það og settu lit fagsins í `sameiginlegt.css` (t.d. `.fag-enska{...}`).
-
-## Persónuvernd
-
-Síðan er opin öllum. Engin nöfn nemenda, innskráning eða vistaðar niðurstöður.
+1. Settu skrána í `staerdfraedi/`.
+2. Bættu við einni línu í `EFNI` í `efni.js` með `tegund` ("utskyring" eða "leikur") og `flokkar`.

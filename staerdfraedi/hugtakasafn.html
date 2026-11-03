@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="is">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hugtakasafn</title>
+<link rel="stylesheet" href="../sameiginlegt.css">
+<style>
+.wrap{max-width:1180px}
+.hero{display:flex;flex-direction:column;gap:6px;margin:4px 0 20px}
+.hero p{font-size:19px}
+.tools{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:22px}
+.filter{font:inherit;font-weight:700;min-height:44px;padding:8px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.filter[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:#fff}
+.search{font:inherit;min-height:44px;padding:8px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);flex:1 1 220px;max-width:340px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.hugtak{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:10px}
+.hugtak h2{margin:0;font-size:22px}
+.hugtak .tag{align-self:flex-start;background:var(--acc-bg);color:var(--acc-dark);border-radius:999px;padding:3px 10px;font-size:13px;font-weight:700}
+.hugtak .s{font-size:17px}
+.hugtak .d{background:var(--soft);border-radius:10px;padding:8px 12px;font-weight:700;font-size:17px}
+.myndir{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+.myndir .mynd svg{max-height:150px;width:auto;max-width:100%}
+.hugtak a{color:var(--acc-dark);font-weight:700;margin-top:auto}
+.tomt{color:var(--muted)}
+</style>
+</head>
+<body class="fag-staerdfraedi">
+<div class="wrap">
+  <a class="heim" href="../index.html">← Forsíða</a>
+  <header class="hero">
+    <h1>Hugtakasafn</h1>
+    <p class="muted">Orð og hugtök úr Stiku 3a með skýringu, dæmi og mynd.</p>
+  </header>
+  <div class="tools">
+    <div class="row" id="filters" role="group" aria-label="Velja kafla"></div>
+    <label for="leit" class="sr-only">Leita</label>
+    <input class="search" id="leit" type="search" placeholder="Leita, t.d. geisli" autocomplete="off">
+  </div>
+  <main class="grid" id="listi"></main>
+</div>
+<script src="myndir.js"></script>
+<script>
+(function(){
+  "use strict";
+  var KAFLAR = {1:"Tölur", 2:"Tölfræði og líkur", 3:"Margföldun og deiling", 4:"Rúmfræði"};
+  var H = [
+    /* 1. kafli */
+    {o:"Sætisgildi", k:1, s:"Gildi tölustafs fer eftir því í hvaða sæti hann er.", d:"Í tölunni 25 308 táknar tölustafurinn 5 töluna 5 000 vegna þess að hann er í þúsundasætinu.", m:{teg:"saeti", tala:"25308", merkt:[1]}, v:"tugakerfid"},
+    {o:"Að leysa tölu upp eftir sætum", k:1, s:"Að skrá hvað hver tölustafur táknar.", d:"78 412,564 = 70 000 + 8 000 + 400 + 10 + 2 + 0,5 + 0,06 + 0,004", v:"tugakerfid"},
+    {o:"Tugabrot", k:1, s:"Tala með kommu. Aftan við kommuna koma tíundu hlutar, hundraðshlutar og þúsundustu hlutar.", d:"0,1 = 0,10: 1 tíundi hluti = 10 hundraðshlutar", m:{teg:"saeti", tala:"3,25"}, v:"tugakerfid"},
+    {o:"Negatífar tölur", k:1, s:"Tölur sem eru minni en 0. Tölur sem eru stærri en 0 kallast pósitífar tölur.", d:"Mismunurinn á −20 og 15 er 35.", m:{teg:"talnalina", fra:-5, til:5, merki:[-5,-2]}, v:"negatifar"},
+    {o:"Námundun og slumpreikningur", k:1, s:"Að námunda er að finna nálæga tölu sem er þægilegri, t.d. að næstu heilu tölu, næsta tíunda hluta eða næsta hundraði. Í slumpreikningi er reiknað með námunduðum tölum.", d:"17,48 kg námundað að næsta tíunda hluta er 17,5 kg."},
+    {o:"Talnaruna", k:1, s:"Tölur í röð sem fylgja ákveðinni reglu.", d:"0,001 – 0,004 – 0,007 – 0,010 … Reglan er að leggja 0,003 við."},
+    {o:"Summa", k:1, s:"Svarið þegar tölur eru lagðar saman.", d:"6 + 4 = 10. Summan er 10."},
+    {o:"Mismunur", k:1, s:"Svarið þegar tala er dregin frá annarri tölu.", d:"10 − 4 = 6. Mismunurinn er 6."},
+    {o:"Svigar í reikningi", k:1, s:"Það sem er inni í sviga er reiknað fyrst.", d:"65 − (32 − 17) = 65 − 15 = 50", v:"forgangsrod"},
+    {o:"Milljón og milljarður", k:1, s:"Milljón er þúsund þúsund. Milljarður er þúsund milljónir.", d:"1 milljón = 1 000 000 og 1 milljarður = 1 000 000 000"},
+    /* 2. kafli */
+    {o:"Gögn", k:2, s:"Upplýsingar sem er safnað í tölfræðilegri könnun. Þeim er safnað með athugunum, spurningakönnunum eða tilraunum."},
+    {o:"Tíðasta gildi", k:2, s:"Talan sem kemur oftast fyrir.", d:"5,42 – 5,42 – 5,43 – 5,46 – 5,47: tíðasta gildið er 5,42.", v:"midsaekni"},
+    {o:"Miðgildi", k:2, s:"Talan í miðjunni þegar tölunum er raðað í stækkandi röð. Ef tvær tölur eru í miðjunni er miðgildið talan mitt á milli þeirra.", d:"5,42 – 5,42 – 5,43 – 5,46 – 5,47: miðgildið er 5,43.", v:"midsaekni"},
+    {o:"Meðaltal", k:2, s:"Gildið sem fæst ef öllum tölunum í safni er skipt jafnt. Leggðu allar tölurnar saman og deildu með fjölda talnanna.", d:"4, 3 og 8: (4 + 3 + 8) : 3 = 15 : 3 = 5", m:{teg:"sulurit", gildi:[4,3,8], max:8, lina:5}, v:"midsaekni"},
+    {o:"Miðsækni", k:2, s:"Tíðasta gildi, miðgildi og meðaltal eru gildi sem lýsa miðsækni. Þau segja til um hvar „miðjan“ er í safni gagna.", v:"midsaekni"},
+    {o:"Tíðnitafla", k:2, s:"Tafla sem sýnir hve oft hvert gildi kemur fyrir. Oft eru talningarstrik skráð fyrst og svo talin.", m:{teg:"tafla", haus:["Litur","Fjöldi"], radir:[["Rauður","4"],["Blár","7"],["Grænn","2"]]}},
+    {o:"Súlurit", k:2, s:"Í súluriti eru rétthyrndar súlur, ein súla fyrir hvern flokk. Hæð súlunnar sýnir fjöldann.", m:{teg:"sulurit", gildi:[4,2,5,3]}},
+    {o:"Línurit", k:2, s:"Líkt súluriti, en ferill er dreginn á milli punktanna þar sem miðjan á toppi súlnanna hefði verið."},
+    {o:"Skífurit", k:2, s:"Stundum kallað kökurit. Hring eða skífu er skipt í geira og táknar hver geiri sinn flokk.", m:{teg:"skifurit", hlutar:[180,90,90]}},
+    {o:"Líkur", k:2, s:"Líkur segja til um möguleikana á því að atburður eigi sér stað. Þær eru skráðar með tölu frá 0 upp í 1.", d:"4 af 10 plómum eru gular. Líkurnar á að fá gula plómu eru {4/10} = {2/5}.", m:{teg:"plomur", gular:4, raudar:6, merkja:true}, v:"likur"},
+    /* 3. kafli */
+    {o:"Hlutfall", k:3, s:"Hlutfall sýnir samanburð á tveimur söfnum, t.d. 3 : 2. Röðin skiptir máli.", d:"12 : 8 fullstytt er 3 : 2."},
+    {o:"Hraði", k:3, s:"Hraði segir hve langt er farið á ákveðnum tíma.", d:"50 m á 5 sekúndum: 50 : 5 = 10. Hraðinn er 10 m/sek."},
+    {o:"Fjöldi möguleika", k:3, s:"Þegar pör eru mynduð úr tveimur hópum er fjöldi mismunandi para fundinn með því að margfalda saman fjöldann í hópunum.", d:"3 stelpur og 2 strákar: 3 · 2 = 6 pör."},
+    {o:"Þáttur og margfeldi", k:3, s:"Tölurnar sem eru margfaldaðar saman kallast þættir. Svarið kallast margfeldi.", d:"þáttur · þáttur = margfeldi: 4 · 6 = 24"},
+    {o:"Þættir tölu", k:3, s:"Tölurnar sem ganga upp í töluna án afgangs.", d:"Þættir tölunnar 12 eru 1, 2, 3, 4, 6 og 12."},
+    {o:"Frumtala", k:3, s:"Tala sem er stærri en 1 og hefur aðeins tvo þætti: 1 og töluna sjálfa.", d:"2, 3, 5, 7, 11, 13 …"},
+    {o:"Samsett tala", k:3, s:"Tala sem hefur fleiri en tvo þætti.", d:"12 = 3 · 4"},
+    {o:"Rúðunet", k:3, s:"Tölunum er skipt í hluta og hver reitur margfaldaður. Svo er allt lagt saman.", d:"22 · 12 = 200 + 20 + 40 + 4 = 264", m:{teg:"rudunet", a:[20,2], b:[10,2]}, v:"margfoldun"},
+    {o:"Afgangur", k:3, s:"Það sem er eftir þegar deilingu er lokið. Afgangurinn er alltaf minni en talan sem deilt er með.", d:"447 : 6 = 74 og 3 afgangs.", v:"deiling"},
+    {o:"Forgangsröð reikniaðgerða", k:3, s:"Svigar fyrst, síðan margföldun og deiling, síðast samlagning og frádráttur.", d:"60 + 5 · 4 = 60 + 20 = 80", v:"forgangsrod"},
+    /* 4. kafli */
+    {o:"Horn", k:4, s:"Horn myndast af tveimur strikum með sameiginlegan upphafspunkt.", m:{teg:"horn", horn:50}},
+    {o:"Rétt horn", k:4, s:"Horn sem er 90°. Það er merkt með litlum ferningi.", m:{teg:"horn", horn:90}},
+    {o:"Hvasst horn", k:4, s:"Horn sem er minna en 90°.", m:{teg:"horn", horn:40, merki:"40°"}},
+    {o:"Gleitt horn", k:4, s:"Horn sem er stærra en 90°.", m:{teg:"horn", horn:130, merki:"130°"}},
+    {o:"Gráðubogi", k:4, s:"Áhald til að mæla og teikna horn. Á honum eru tveir kvarðar. Lestu af þeim sem byrjar á 0 við annan arm hornsins."},
+    {o:"Grannhorn", k:4, s:"Tvö horn hlið við hlið á beinu striki. Þau eru samtals 180°.", m:{teg:"grannhorn", t:60}},
+    {o:"Topphorn", k:4, s:"Þegar tvö bein strik skerast myndast fjögur horn. Horn sem snúa hvort á móti öðru kallast topphorn og eru jafn stór.", d:"∠a = ∠c og ∠b = ∠d", m:{teg:"topphorn", t:50}},
+    {o:"Hornréttar línur", k:4, s:"Tvær línur sem skerast þannig að rétt horn, 90°, myndast eru hornréttar hvor á aðra.", m:{teg:"hornrett"}},
+    {o:"Samsíða línur", k:4, s:"Strik eða línur sem skerast aldrei.", m:{teg:"samsida"}},
+    {o:"Hornalína", k:4, s:"Strik milli tveggja gagnstæðra horna í marghyrningi, þó ekki strik sem mynda hliðar hans.", m:{teg:"form", w:230, h:160, pts:[[25,130],[155,130],[205,40],[75,40]], hornalina:[0,2], nofn:["A","B","C","D"]}},
+    {o:"Réttsælis og rangsælis", k:4, s:"Réttsælis er í sömu átt og vísarnir á klukku. Rangsælis er í öfuga átt. Snúningur er mældur í gráðum.", m:{teg:"att"}},
+    {o:"Hringferill", k:4, s:"Línan sem afmarkar hringinn. Alls staðar er jafn langt frá miðju hringsins að hringferlinum.", m:{teg:"hringur", merkt:"ferill"}},
+    {o:"Miðja hrings", k:4, s:"Punkturinn sem er jafn langt frá öllum punktum á hringferlinum.", m:{teg:"hringur", merkt:"midja"}},
+    {o:"Geisli", k:4, s:"Fjarlægðin frá miðju hrings að hringferlinum.", d:"Þvermálið er tvöfalt lengra en geislinn.", m:{teg:"hringur", merkt:"geisli"}},
+    {o:"Þvermál", k:4, s:"Lengd striks sem liggur frá hringferlinum gegnum miðjuna yfir á hringferilinn hinum megin. Slíkt strik kallast miðstrengur.", d:"Geisli 15 cm: þvermál 2 · 15 cm = 30 cm", m:{teg:"hringur", merkt:"thvermal"}},
+    {o:"Geiri", k:4, s:"Hluti af hringfleti. Hann markast af tveimur geislum og hringferlinum.", d:"Ef hring er skipt í 4 jafn stóra geira er hver geiri 360° : 4 = 90°.", m:{teg:"hringur", merkt:"geiri"}},
+    {o:"Bogi", k:4, s:"Bogi eða hringbogi er hluti af hringferli.", m:{teg:"hringur", merkt:"bogi"}},
+    {o:"Hringfari", k:4, s:"Áhald til að teikna hringi og boga. Bilið milli armanna er geisli hringsins."},
+    {o:"Miðþverill", k:4, s:"Strik sem er mitt á milli A og B og hornrétt á strikið AB.", m:{teg:"midthverill"}},
+    {o:"Marghyrningur", k:4, s:"Flatarmynd sem afmarkast af beinum strikum, t.d. þríhyrningur, ferhyrningur og fimmhyrningur.", m:{teg:"form", w:220, h:150, pts:[[45,135],[165,135],[195,70],[105,15],[15,70]]}},
+    {o:"Hornasumma", k:4, s:"Summa allra hornanna í marghyrningi. Í þríhyrningi er hún 180° og í ferhyrningi 360°.", d:"∠A + ∠B + ∠C = 180°", m:{teg:"thri", A:50, B:70, merki:{A:"50°", B:"70°", C:"60°"}, w:260, h:170, pad:34}, v:"hornasumma"},
+    {o:"Rétthyrndur þríhyrningur", k:4, s:"Þríhyrningur með eitt rétt horn.", d:"∠A = 90°", m:{teg:"thri", A:90, B:35, rett:"A", w:240, h:160, pad:30}},
+    {o:"Jafnhliða þríhyrningur", k:4, s:"Allar hliðar eru jafn langar og öll hornin eru 60°.", d:"∠A = ∠B = ∠C og AB = BC = AC", m:{teg:"thri", A:60, B:60, jafnar:[0,1,2], w:240, h:170, pad:30}},
+    {o:"Jafnarma þríhyrningur", k:4, s:"Tvær hliðar eru jafn langar og tvö horn eru jafn stór.", d:"∠A = ∠B og AC = BC", m:{teg:"thri", A:70, B:70, jafnar:[1,2], w:240, h:170, pad:30}},
+    {o:"Rétthyrningur", k:4, s:"Ferhyrningur með fjögur rétt horn.", m:{teg:"form", w:220, h:150, pts:[[25,125],[195,125],[195,35],[25,35]], rett:[0,1,2,3]}},
+    {o:"Ferningur", k:4, s:"Rétthyrningur þar sem allar hliðar eru jafn langar.", m:{teg:"form", w:220, h:150, pts:[[60,135],[160,135],[160,35],[60,35]], rett:[0,1,2,3], jafnar:[[0,1],[1,1],[2,1],[3,1]]}},
+    {o:"Samsíðungur", k:4, s:"Ferhyrningur með tvö pör af samsíða hliðum. Gagnstæð horn eru jafn stór og gagnstæðar hliðar jafn langar.", d:"∠A = ∠C og ∠B = ∠D", m:{teg:"form", w:230, h:160, pts:[[25,130],[155,130],[205,40],[75,40]], samsida:[[0,1],[2,1],[1,2],[3,2]], nofn:["A","B","C","D"]}},
+    {o:"Tígull", k:4, s:"Samsíðungur þar sem allar hliðar eru jafn langar.", m:{teg:"form", w:220, h:170, pts:[[110,150],[170,95],[110,40],[50,95]], jafnar:[[0,1],[1,1],[2,1],[3,1]]}},
+    {o:"Trapisa", k:4, s:"Ferhyrningur með eitt par af samsíða hliðum.", m:{teg:"form", w:230, h:150, pts:[[20,125],[210,125],[165,45],[65,45]], samsida:[[0,1],[2,1]]}},
+    {o:"Eins form", k:4, s:"Myndir sem hafa sama form og eru af sömu stærð. Þær hafa jafn langar hliðar og jafn stór horn.", m:[{teg:"form", w:118, h:100, pts:[[12,84],[104,84],[44,18]]},{teg:"form", w:118, h:100, pts:[[12,84],[104,84],[44,18]]}]},
+    {o:"Einslaga form", k:4, s:"Myndir sem hafa sama form en eru misstórar. Hornin eru jafn stór og allar hliðarnar margfaldaðar með sömu tölu.", m:{teg:"einslaga", a:[2,3,"2 cm","3 cm"], b:[4,6,"4 cm","6 cm"], sc:16}, v:"maelikvardi"},
+    {o:"Mælikvarði", k:4, s:"Segir hve mörgum sinnum lengdir hafa verið stækkaðar eða minnkaðar. Fyrri talan á við teikninguna og seinni talan raunveruleikann.", d:"1 : 100 er minnkun og 2 : 1 er stækkun.", v:"maelikvardi"}
+  ];
+  var VEGG = {tugakerfid:"Tugakerfið og sætisgildi", negatifar:"Negatífar tölur", midsaekni:"Tíðasta gildi, miðgildi og meðaltal", likur:"Líkur", deiling:"Deiling – Stikuaðferð", margfoldun:"Margföldun – rúðuaðferð", tugabrot:"Tugabrot – margföldun og deiling", forgangsrod:"Forgangsröð reikniaðgerða", hornasumma:"Hornasumma", maelikvardi:"Mælikvarði og einslaga myndir"};
+
+  var m0 = /kafli-(\d)/.exec(location.hash), state = {k: m0 ? Number(m0[1]) : 0, leit:""};
+  function filters(){
+    var box = document.getElementById("filters"); box.innerHTML = "";
+    [[0, "Allir kaflar"], [1, "1. kafli"], [2, "2. kafli"], [3, "3. kafli"], [4, "4. kafli"]].forEach(function(f){
+      var b = document.createElement("button"); b.type = "button"; b.className = "filter"; b.textContent = f[1];
+      if(f[0]) b.title = KAFLAR[f[0]];
+      b.setAttribute("aria-pressed", String(state.k === f[0]));
+      b.addEventListener("click", function(){ state.k = f[0]; history.replaceState(null, "", f[0] ? "#kafli-" + f[0] : location.pathname); filters(); listi(); });
+      box.appendChild(b);
+    });
+  }
+  function listi(){
+    var fmt = MYNDIR.fmt, h = "";
+    H.filter(function(x){
+      if(state.k && x.k !== state.k) return false;
+      if(!state.leit) return true;
+      return (x.o + " " + x.s + " " + (x.d || "")).toLowerCase().indexOf(state.leit) !== -1;
+    }).forEach(function(x){
+      h += "<article class=\"hugtak\"><span class=\"tag\">" + x.k + ". kafli · " + KAFLAR[x.k] + "</span><h2>" + x.o + "</h2><p class=\"s\">" + fmt(x.s) + "</p>" +
+           (x.d ? "<p class=\"d\">" + fmt(x.d) + "</p>" : "") + (x.m ? "<div class=\"myndir\">" + MYNDIR.teikna(x.m) + "</div>" : "") +
+           (x.v ? "<a href=\"veggspjald.html?v=" + x.v + "\">Veggspjald: " + VEGG[x.v] + " →</a>" : "") + "</article>";
+    });
+    document.getElementById("listi").innerHTML = h || "<p class=\"tomt\">Ekkert fannst. Prófaðu annað leitarorð.</p>";
+  }
+  document.getElementById("leit").addEventListener("input", function(e){ state.leit = e.target.value.trim().toLowerCase(); listi(); });
+  filters(); listi();
+})();
+</script>
+</body>
+</html>

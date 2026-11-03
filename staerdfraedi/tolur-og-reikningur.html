@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tölur og reikningur</title>
+<title>Tölur</title>
 <link rel="stylesheet" href="../sameiginlegt.css">
 <style>
 .wrap{max-width:900px}
@@ -110,7 +110,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
 <section id="start">
   <div class="top">
     <div class="stack" style="gap:6px">
-      <h1>Tölur og reikningur</h1>
+      <h1>Tölur</h1>
       <p class="muted">Upprifjun úr 1. kafla í Stiku 3a.</p>
     </div>
   </div>
@@ -120,7 +120,8 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
       <div class="topics" id="topics" role="group" aria-label="Efni"></div>
       <p class="tip" id="countText"></p>
       <p class="err" id="startErr" role="status"></p>
-      <div class="row"><button class="btn acc" id="btnStart">Byrja</button></div>
+      <div class="row"><button class="btn acc" id="btnStart">Byrja</button><button class="btn ghost" id="btnProf">Æfing fyrir kaflapróf</button></div>
+      <p class="tip">Æfing fyrir kaflapróf: spurningar úr öllum efnum kaflans, án upprifjunar.</p>
     </div>
     <div class="card stack">
       <h2 style="margin:0">Svona virkar þetta</h2>
@@ -174,6 +175,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
     </div>
   </div>
   <div class="stack">
+    <div class="card stack hidden" id="profBox"></div>
     <div class="stats" id="stats"></div>
     <div class="card stack">
       <div class="table-wrap">
@@ -200,7 +202,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
   /* ================= SPURNINGABANKI =================
      tegund: "val" (fjölval) eða "skrifa" (nemandi skrifar svar)
      mynd: lýsing á mynd sem birtist í ábendingu (abMynd) og útskýringu (mynd) */
-  var EFNI = ["Sætisgildi","Tugabrot","Neikvæðar tölur","Námundun","Forgangsröð","Talnarunur","Orðadæmi","Stórar tölur"];
+  var EFNI = ["Sætisgildi","Tugabrot","Negatífar tölur","Námundun","Forgangsröð","Talnarunur","Orðadæmi","Stórar tölur"];
 
   var SPURNINGAR = [
     { efni:"Sætisgildi", tegund:"val",
@@ -275,7 +277,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
       utskyring:["Bættu við núlli svo tölurnar hafi jafn marga aukastafi: 3,40 og 3,39.","Einingarnar eru jafnar (3). Í tíundasætinu er 4 stærra en 3.","Þess vegna er 3,4 stærri."],
       mynd:{teg:"saeti", tolur:["3,4","3,39"], fylla:true, merkt:"Tíundu"} },
 
-    { efni:"Neikvæðar tölur", tegund:"val",
+    { efni:"Negatífar tölur", tegund:"val",
       texti:"Um morguninn var hitinn 4 °C. Um kvöldið hafði kólnað um 7 °C. Hver var hitinn þá?",
       svor:["3 °C","−3 °C","−4 °C","11 °C"],
       rett:1,
@@ -284,7 +286,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
       utskyring:["Við byrjum á 4 og förum 7 skref niður.","4 − 7 = −3"],
       mynd:{teg:"talnalina", min:-6, max:6, punktar:[{v:4, texti:"Morgunn"},{v:-3, texti:"Kvöld", merkt:true}], stokk:[{fra:4, til:-3, texti:"−7"}]} },
 
-    { efni:"Neikvæðar tölur", tegund:"skrifa",
+    { efni:"Negatífar tölur", tegund:"skrifa",
       texti:"Hver er mismunurinn á tölunum 5 og −3?",
       tekid:["8"],
       abending:"Mismunur er fjarlægðin á milli talnanna. Teldu skrefin frá −3 upp í 5.",
@@ -292,13 +294,13 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
       utskyring:["Frá −3 upp í 0 eru 3 skref og frá 0 upp í 5 eru 5 skref.","Samtals 3 + 5 = 8 skref.","Sem reikningsdæmi: 5 − (−3) = 5 + 3 = 8"],
       mynd:{teg:"talnalina", min:-5, max:7, punktar:[{v:-3, texti:""},{v:5, texti:""}], bil:{fra:-3, til:5, texti:"8 skref"}} },
 
-    { efni:"Neikvæðar tölur", tegund:"val",
+    { efni:"Negatífar tölur", tegund:"val",
       texti:"Í hvaða röð er tölunum raðað frá minnstu til stærstu?",
       svor:["−5, −2, 0, 3","−2, −5, 0, 3","0, −2, −5, 3","3, 0, −2, −5"],
       rett:0,
       abending:"Hugsaðu þér tölurnar á talnalínu. Talan lengst til vinstri er minnst.",
       abMynd:{teg:"talnalina", min:-6, max:4, punktar:[]},
-      utskyring:["Á talnalínunni eru tölurnar í röðinni −5, −2, 0, 3.","Því lengra sem neikvæð tala er frá núlli, því minni er hún: −5 er minna en −2."],
+      utskyring:["Á talnalínunni eru tölurnar í röðinni −5, −2, 0, 3.","Því lengra sem negatíf tala er frá núlli, því minni er hún: −5 er minna en −2."],
       mynd:{teg:"talnalina", min:-6, max:4, punktar:[{v:-5, texti:"−5", merkt:true},{v:-2, texti:"−2", merkt:true},{v:0, texti:"0", merkt:true},{v:3, texti:"3", merkt:true}]} },
 
     { efni:"Námundun", tegund:"val",
@@ -451,7 +453,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
     function x(v){ return P + (v - m.min) / (m.max - m.min) * (W - 2*P); }
     function lab(v){ return minus(v.toFixed(dec).replace(".", ",")); }
     var s = "<svg viewBox=\"0 0 " + W + " " + H + "\" width=\"100%\" style=\"max-width:640px;display:block;margin:0 auto\" role=\"img\" aria-label=\"Talnalína\">";
-    s += "<defs><marker id=\"ah\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M1 1L9 5L1 9z\" style=\"fill:var(--acc)\"/></marker></defs>";
+    s += "<defs><marker id=\"" + (window.__ahN = (window.__ahN || 0) + 1, "ah" + window.__ahN) + "\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M1 1L9 5L1 9z\" style=\"fill:var(--acc)\"/></marker></defs>";
     s += "<line x1=\"" + (P-14) + "\" y1=\"" + Y + "\" x2=\"" + (W-P+14) + "\" y2=\"" + Y + "\" style=\"stroke:var(--ink);stroke-width:2\"/>";
     for(var i = 0; i <= n; i++){
       var v = m.min + i*step, big = (i % every === 0);
@@ -460,7 +462,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
     }
     (m.stokk || []).forEach(function(a){
       var x1 = x(a.fra), x2 = x(a.til), mid = (x1 + x2)/2;
-      s += "<path d=\"M" + x1 + " " + (Y-12) + " Q" + mid + " " + (Y-80) + " " + x2 + " " + (Y-12) + "\" fill=\"none\" style=\"stroke:var(--acc);stroke-width:3\" marker-end=\"url(#ah)\"/>";
+      s += "<path d=\"M" + x1 + " " + (Y-12) + " Q" + mid + " " + (Y-80) + " " + x2 + " " + (Y-12) + "\" fill=\"none\" style=\"stroke:var(--acc);stroke-width:3\" marker-end=\"url(#ah" + window.__ahN + ")\"/>";
       s += "<text x=\"" + mid + "\" y=\"" + (Y-52) + "\" text-anchor=\"middle\" style=\"font:700 18px 'Andika',monospace;fill:var(--acc-dark)\">" + a.texti + "</text>";
     });
     if(m.bil){
@@ -521,7 +523,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
       mynd:{teg:"saeti", tolur:["5307,24"], gildi:true, merkt:"Hundruð"}},
     "Tugabrot":{atridi:["Þegar tugabrot eru lögð saman eða dregin frá er komma sett beint undir kommu.","Það má bæta núlli aftast við aukastafina án þess að talan breytist: 3,7 = 3,70.","Þegar tugabrot eru borin saman er byrjað vinstra megin og borið saman sæti fyrir sæti."],
       mynd:{teg:"uppsetning", blokkir:[{linur:["3,7","1,25"], adgerd:"+", svar:"4,95", fylla:true}]}},
-    "Neikvæðar tölur":{atridi:["Neikvæðar tölur eru vinstra megin við 0 á talnalínunni.","Því lengra til vinstri, því minni er talan: −5 er minna en −2.","Að draga frá er að fara til vinstri á talnalínunni: 2 − 5 = −3."],
+    "Negatífar tölur":{atridi:["Negatífar tölur eru vinstra megin við 0 á talnalínunni.","Því lengra til vinstri, því minni er talan: −5 er minna en −2.","Að draga frá er að fara til vinstri á talnalínunni: 2 − 5 = −3."],
       mynd:{teg:"talnalina", min:-5, max:5, punktar:[{v:2, texti:""},{v:-3, texti:"", merkt:true}], stokk:[{fra:2, til:-3, texti:"−5"}]}},
     "Námundun":{atridi:["Skoðaðu stafinn strax á eftir sætinu sem á að námunda að.","Ef hann er 0, 1, 2, 3 eða 4 er námundað niður.","Ef hann er 5, 6, 7, 8 eða 9 er námundað upp. Dæmi: 3,46 verður 3,5."],
       mynd:{teg:"talnalina", min:3.4, max:3.5, skref:0.01, merkiHvert:5, aukastafir:2, punktar:[{v:3.46, texti:"3,46", merkt:true}]}},
@@ -539,7 +541,8 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
     var u = UPPRIFJUN[efni];
     if(!u) return false;
     $("recapTag").textContent = "Upprifjun · " + efni;
-    $("recapList").innerHTML = u.atridi.map(function(a){ return "<li>" + fmtU(a) + "</li>"; }).join("");
+    $("recapList").innerHTML = u.atridi.map(function(a){ return "<li>" + fmtU(a) + "</li>"; }).join("") +
+      (VS_TENGLAR[efni] ? "<li><a href=\"veggspjald.html?v=" + VS_TENGLAR[efni][0] + "\">Skoðaðu veggspjaldið „" + VS_TENGLAR[efni][1] + "“</a></li>" : "");
     $("recapVisual").innerHTML = teikna(u.mynd);
     $("recapCard").classList.remove("hidden");
     if(hlid){ $("qCard").classList.add("hidden"); $("btnRecapGo").textContent = "Byrja á spurningunum"; }
@@ -582,8 +585,9 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
   /* ================= LEIKUR ================= */
   var game = null;
 
-  function start(list){
-    game = {list: list.slice(), i: 0, results: []};
+  function start(list, prof){
+    game = {list: list.slice(), i: 0, results: [], prof: !!prof, seen: {}};
+    if(prof) EFNI.forEach(function(e){ game.seen[e] = true; });
     load();
     show("play");
   }
@@ -602,7 +606,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
     game.cur = {q:q, tries:0, hint:false, done:false,
                 order: q.tegund === "val" ? shuffle(q.svor.map(function(_, k){ return k; })) : null};
     var n = game.list.length;
-    $("progress").textContent = "Spurning " + (game.i + 1) + " af " + n;
+    $("progress").textContent = (game.prof ? "Æfing fyrir kaflapróf · " : "") + "Spurning " + (game.i + 1) + " af " + n;
     $("barFill").style.width = (game.i / n * 100) + "%";
     $("qTopic").textContent = q.efni;
     $("qText").textContent = q.texti;
@@ -708,6 +712,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
   /* ================= NIÐURSTÖÐUR ================= */
   var STATUS = {1:["Rétt í fyrstu tilraun","s1"], 2:["Rétt með hjálp","s2"], 3:["Ekki rétt","s3"]};
   function showEnd(){
+    profNidurstodur();
     var r = game.results;
     var c = {1:0, 2:0, 3:0};
     r.forEach(function(x){ c[x.status]++; });
@@ -724,12 +729,39 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
   $("btnRetry").addEventListener("click", function(){
     start(game.results.filter(function(x){ return x.status > 1; }).map(function(x){ return x.q; }));
   });
-  $("btnAgain").addEventListener("click", function(){
-    start(game.results.map(function(x){ return x.q; }));
-  });
+  $("btnAgain").addEventListener("click", function(){ if(game.prof) start(profList(), true); else start(game.results.map(function(x){ return x.q; })); });
   $("btnHome").addEventListener("click", function(){ renderTopics(); show("start"); });
 
+  /* ================= ÆFING FYRIR KAFLAPRÓF =================
+     Ein til tvær spurningar úr hverju efni, í sömu röð og í kaflanum, án upprifjunar. */
+  var VS_TENGLAR = {"Forgangsröð": ["forgangsrod", "Forgangsröð reikniaðgerða"]};
+  function profList(){
+    var out = [];
+    EFNI.forEach(function(e){
+      var qs = SPURNINGAR.filter(function(q){ return q.efni === e; });
+      shuffle(qs.map(function(_, i){ return i; })).slice(0, 2).sort(function(a, b){ return a - b; }).forEach(function(i){ out.push(qs[i]); });
+    });
+    return out;
+  }
+  function profNidurstodur(){
+    var box = $("profBox");
+    if(!game.prof){ box.classList.add("hidden"); return; }
+    var veik = EFNI.filter(function(e){ return game.results.some(function(x){ return x.q.efni === e && x.status > 1; }); });
+    var h;
+    if(veik.length){
+      h = "<h2 style=\"margin:0\">Efni sem þú ættir að rifja upp</h2><div class=\"row\">" + veik.map(function(e){ return "<span class=\"tag\">" + e + "</span>"; }).join("") + "</div>" +
+          "<p class=\"muted\">Æfðu öll dæmin í þessum efnum. Upprifjunin birtist á undan hverju efni.</p><div class=\"row\"><button class=\"btn acc\" id=\"btnVeik\">Æfa þessi efni</button></div>";
+    } else {
+      h = "<h2 style=\"margin:0\">Vel gert!</h2><p>Þú svaraðir öllum spurningunum rétt í fyrstu tilraun.</p>";
+    }
+    box.innerHTML = h; box.classList.remove("hidden");
+    var b = $("btnVeik");
+    if(b) b.addEventListener("click", function(){ start(SPURNINGAR.filter(function(q){ return veik.indexOf(q.efni) !== -1; })); });
+  }
+  $("btnProf").addEventListener("click", function(){ start(profList(), true); });
+
   renderTopics();
+  if(location.hash === "#kaflaprof") start(profList(), true);
 })();
 </script>
 </body>

@@ -76,6 +76,7 @@ th{font-size:15px;color:var(--muted)}
     <div class="stack" style="gap:6px">
       <h1>Deiling – Stikuaðferð</h1>
       <p class="muted">Æfðu þig að deila með margföldun sem þú kannt.</p>
+      <p><a href="veggspjald.html?v=deiling" style="color:var(--acc-dark);font-weight:700">Skoðaðu veggspjaldið: aðferðin skref fyrir skref →</a></p>
     </div>
   </div>
   <div class="start-grid">
@@ -104,7 +105,7 @@ th{font-size:15px;color:var(--muted)}
         <li>Veldu tölu sem þú kannt að margfalda með.</li>
         <li>Margfaldaðu.</li>
         <li>Dragðu frá.</li>
-        <li>Endurtaktu þar til talan sem er eftir er minni en deilirinn.</li>
+        <li>Endurtaktu þar til talan sem er eftir er minni en talan sem þú deilir með.</li>
         <li>Leggðu saman tölurnar hægra megin línunnar.</li>
       </ol>
       <p class="tip">Ef 0 er eftir gengur dæmið upp. Ef önnur tala er eftir er hún afgangurinn.</p>
@@ -276,7 +277,7 @@ th{font-size:15px;color:var(--muted)}
     if(n === null || d === null){ msg.textContent = "Skrifaðu báðar tölurnar."; return; }
     if(d < 2 || d > 99){ msg.textContent = "Deilirinn þarf að vera á bilinu 2–99."; return; }
     if(n < 10 || n > 99999){ msg.textContent = "Talan sem á að deila þarf að vera á bilinu 10–99999."; return; }
-    if(n < d){ msg.textContent = "Talan sem á að deila þarf að vera stærri en deilirinn."; return; }
+    if(n < d){ msg.textContent = "Talan sem á að deila þarf að vera stærri en talan sem deilt er með."; return; }
     msg.textContent = "";
     startGame([{dividend:n, divisor:d, quotient:Math.floor(n/d), rest:n % d}]);
   });

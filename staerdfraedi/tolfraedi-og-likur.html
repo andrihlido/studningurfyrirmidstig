@@ -109,7 +109,8 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
       <div class="topics" id="topics" role="group" aria-label="Efni"></div>
       <p class="tip" id="countText"></p>
       <p class="err" id="startErr" role="status"></p>
-      <div class="row"><button class="btn acc" id="btnStart">Byrja</button></div>
+      <div class="row"><button class="btn acc" id="btnStart">Byrja</button><button class="btn ghost" id="btnProf">Æfing fyrir kaflapróf</button></div>
+      <p class="tip">Æfing fyrir kaflapróf: spurningar úr öllum efnum kaflans, án upprifjunar.</p>
     </div>
     <div class="card stack">
       <h2 style="margin:0">Svona virkar þetta</h2>
@@ -164,6 +165,7 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
     </div>
   </div>
   <div class="stack">
+    <div class="card stack hidden" id="profBox"></div>
     <div class="stats" id="stats"></div>
     <div class="card stack">
       <div class="table-wrap">
@@ -238,7 +240,7 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
       tekid:["5"],
       abending:"Raðaðu tölunum. Fjöldinn er sléttur, svo tvær tölur eru í miðjunni.",
       abMynd:{teg:"midgildi", tolur:[3,8,4,6]},
-      utskyring:["Í röð: 3, 4, 6, 8","Í miðjunni eru tvær tölur: 4 og 6.","Miðgildið er meðaltal þeirra: (4 + 6) : 2 = 5"],
+      utskyring:["Í röð: 3, 4, 6, 8","Í miðjunni eru tvær tölur: 4 og 6.","Miðgildið er talan mitt á milli þeirra: (4 + 6) : 2 = 5"],
       mynd:{teg:"midgildi", tolur:[3,8,4,6], radad:true} },
 
     { efni:"Miðgildi", tegund:"val",
@@ -356,7 +358,7 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
       svor:["{3/6} = {1/2}","{1/6}","{2/6}","{4/6}"], rett:0,
       abending:"Hvaða tölur á teningnum eru sléttar? Hve margar hliðar eru alls?",
       abMynd:{teg:"teningur"},
-      utskyring:["Sléttu tölurnar eru 2, 4 og 6. Það eru 3 hagstæðar útkomur.","Teningurinn hefur 6 hliðar, svo útkomurnar eru 6 alls.","Líkurnar eru {3/6} = {1/2}."],
+      utskyring:["Sléttu tölurnar eru 2, 4 og 6. Þrjár af sex útkomum passa.","Teningurinn hefur 6 hliðar, svo útkomurnar eru 6 alls.","Líkurnar eru {3/6} = {1/2}."],
       mynd:{teg:"teningur", merkt:[2,4,6]} },
 
     { efni:"Líkur", tegund:"val",
@@ -612,7 +614,7 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
   var UPPRIFJUN = {
     "Meðaltal":{atridi:["Leggðu allar tölurnar saman.","Deildu summunni með fjölda talnanna.","Meðaltalið er eins og að jafna súlurnar út: það sem er fyrir ofan línuna fyllir upp í það sem vantar."],
       mynd:{teg:"jofnun", hopar:[{gildi:[2,6,4]}], medal:true}},
-    "Miðgildi":{atridi:["Raðaðu tölunum frá minnstu til stærstu.","Miðgildið er talan í miðjunni.","Ef tvær tölur eru í miðjunni er miðgildið meðaltal þeirra."],
+    "Miðgildi":{atridi:["Raðaðu tölunum frá minnstu til stærstu.","Miðgildið er talan í miðjunni.","Ef tvær tölur eru í miðjunni er miðgildið talan mitt á milli þeirra."],
       mynd:{teg:"midgildi", tolur:[7,1,4,9,3], radad:true}},
     "Tíðasta gildi":{atridi:["Tíðasta gildið er það gildi sem kemur oftast fyrir.","Það getur líka verið orð, t.d. litur eða dýr.","Ekki rugla því saman við tíðnina, sem segir hve oft gildið kemur fyrir."],
       mynd:{teg:"punktarit", flokkar:["1","2","3","4"], fjoldi:[1,3,2,1], merkt:1}},
@@ -622,7 +624,7 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
       mynd:{teg:"surlurit", flokkar:["A","B","C"], gildi:[4,7,2], skref:2, max:8, merkt:1, lina:true, gildiSyna:true}},
     "Skífurit":{atridi:["Allur hringurinn er allur hópurinn.","Hálfur hringur er {1/2} eða 50% af hópnum.","Fjórðungur úr hring er {1/4} eða 25% af hópnum."],
       mynd:{teg:"skifurit", sneidar:SKOLALEID, merki:true}},
-    "Líkur":{atridi:["Líkur = fjöldi hagstæðra útkoma : fjöldi allra útkoma.","Líkur eru frá 0 (ómögulegt) upp í 1 (öruggt). {1/2} eru jafnar líkur.","Líkurnar á að fá 6 á teningi eru {1/6}."],
+    "Líkur":{atridi:["Líkur segja til um möguleikana á því að atburður eigi sér stað. Þær eru skráðar með tölu frá 0 (ómögulegt) upp í 1 (öruggt).","Ef 4 af 10 plómum eru gular eru líkurnar á að fá gula plómu {4/10} = {2/5}.","Líkurnar á að fá 6 á teningi eru {1/6}."],
       mynd:[{teg:"teningur", merkt:[6]},{teg:"kvardi", punktur:1/6, texti:"Fá 6"}]}
   };
   function fmtU(s){ return typeof fmt === "function" ? fmt(s) : s; }
@@ -630,7 +632,8 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
     var u = UPPRIFJUN[efni];
     if(!u) return false;
     $("recapTag").textContent = "Upprifjun · " + efni;
-    $("recapList").innerHTML = u.atridi.map(function(a){ return "<li>" + fmtU(a) + "</li>"; }).join("");
+    $("recapList").innerHTML = u.atridi.map(function(a){ return "<li>" + fmtU(a) + "</li>"; }).join("") +
+      (VS_TENGLAR[efni] ? "<li><a href=\"veggspjald.html?v=" + VS_TENGLAR[efni][0] + "\">Skoðaðu veggspjaldið „" + VS_TENGLAR[efni][1] + "“</a></li>" : "");
     $("recapVisual").innerHTML = teikna(u.mynd);
     $("recapCard").classList.remove("hidden");
     if(hlid){ $("qCard").classList.add("hidden"); $("btnRecapGo").textContent = "Byrja á spurningunum"; }
@@ -673,8 +676,9 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
   /* ================= LEIKUR ================= */
   var game = null;
 
-  function start(list){
-    game = {list: list.slice(), i: 0, results: []};
+  function start(list, prof){
+    game = {list: list.slice(), i: 0, results: [], prof: !!prof, seen: {}};
+    if(prof) EFNI.forEach(function(e){ game.seen[e] = true; });
     load();
     show("play");
   }
@@ -692,7 +696,7 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
     if(!game.seen[q.efni]){ game.seen[q.efni] = true; showRecap(q.efni, true); }
     game.cur = {q:q, tries:0, hint:false, done:false};
     var n = game.list.length;
-    $("progress").textContent = "Spurning " + (game.i + 1) + " af " + n;
+    $("progress").textContent = (game.prof ? "Æfing fyrir kaflapróf · " : "") + "Spurning " + (game.i + 1) + " af " + n;
     $("barFill").style.width = (game.i / n * 100) + "%";
     $("qTopic").textContent = q.efni;
     $("qText").innerHTML = fmt(q.texti);
@@ -797,6 +801,7 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
   /* ================= NIÐURSTÖÐUR ================= */
   var STATUS = {1:["Rétt í fyrstu tilraun","s1"], 2:["Rétt með hjálp","s2"], 3:["Ekki rétt","s3"]};
   function showEnd(){
+    profNidurstodur();
     var r = game.results, c = {1:0, 2:0, 3:0};
     r.forEach(function(x){ c[x.status]++; });
     $("endSummary").textContent = "Þú svaraðir " + r.length + (ein(r.length) ? " spurningu." : " spurningum.");
@@ -812,10 +817,39 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
   $("btnRetry").addEventListener("click", function(){
     start(game.results.filter(function(x){ return x.status > 1; }).map(function(x){ return x.q; }));
   });
-  $("btnAgain").addEventListener("click", function(){ start(game.results.map(function(x){ return x.q; })); });
+  $("btnAgain").addEventListener("click", function(){ if(game.prof) start(profList(), true); else start(game.results.map(function(x){ return x.q; })); });
   $("btnHome").addEventListener("click", function(){ renderTopics(); show("start"); });
 
+  /* ================= ÆFING FYRIR KAFLAPRÓF =================
+     Ein til tvær spurningar úr hverju efni, í sömu röð og í kaflanum, án upprifjunar. */
+  var VS_TENGLAR = {};
+  function profList(){
+    var out = [];
+    EFNI.forEach(function(e){
+      var qs = SPURNINGAR.filter(function(q){ return q.efni === e; });
+      shuffle(qs.map(function(_, i){ return i; })).slice(0, 2).sort(function(a, b){ return a - b; }).forEach(function(i){ out.push(qs[i]); });
+    });
+    return out;
+  }
+  function profNidurstodur(){
+    var box = $("profBox");
+    if(!game.prof){ box.classList.add("hidden"); return; }
+    var veik = EFNI.filter(function(e){ return game.results.some(function(x){ return x.q.efni === e && x.status > 1; }); });
+    var h;
+    if(veik.length){
+      h = "<h2 style=\"margin:0\">Efni sem þú ættir að rifja upp</h2><div class=\"row\">" + veik.map(function(e){ return "<span class=\"tag\">" + e + "</span>"; }).join("") + "</div>" +
+          "<p class=\"muted\">Æfðu öll dæmin í þessum efnum. Upprifjunin birtist á undan hverju efni.</p><div class=\"row\"><button class=\"btn acc\" id=\"btnVeik\">Æfa þessi efni</button></div>";
+    } else {
+      h = "<h2 style=\"margin:0\">Vel gert!</h2><p>Þú svaraðir öllum spurningunum rétt í fyrstu tilraun.</p>";
+    }
+    box.innerHTML = h; box.classList.remove("hidden");
+    var b = $("btnVeik");
+    if(b) b.addEventListener("click", function(){ start(SPURNINGAR.filter(function(q){ return veik.indexOf(q.efni) !== -1; })); });
+  }
+  $("btnProf").addEventListener("click", function(){ start(profList(), true); });
+
   renderTopics();
+  if(location.hash === "#kaflaprof") start(profList(), true);
 })();
 </script>
 </body>

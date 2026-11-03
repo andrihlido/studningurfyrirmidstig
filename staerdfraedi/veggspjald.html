@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="is">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veggspjald</title>
+<link rel="stylesheet" href="../sameiginlegt.css">
+<style>
+.wrap{max-width:1100px}
+.vs-head{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
+.vs-head .tag{align-self:flex-start;background:var(--acc-bg);color:var(--acc-dark);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:700}
+.vs-head p{font-size:20px;color:var(--muted);max-width:760px}
+.vs-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+a.btn{display:inline-flex;align-items:center;text-decoration:none}
+.kafli{margin:30px 0 14px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.kafli h2{margin:0;font-size:26px}
+.kafli p{color:var(--muted)}
+.daemi{font-size:22px;font-weight:700;background:var(--acc-bg);color:var(--acc-dark);border-radius:12px;padding:10px 16px;display:inline-block;margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid-auto{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.spjald{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;break-inside:avoid}
+.spjald h3{margin:0;font-size:20px;line-height:1.3;display:flex;gap:10px;align-items:center}
+.nr{flex:none;width:32px;height:32px;border-radius:50%;background:var(--acc);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:17px}
+.leid-tag{align-self:flex-start;font-size:14px;font-weight:700;color:var(--acc-dark);background:var(--acc-bg);border-radius:999px;padding:3px 10px}
+.spjald .x{color:var(--ink);font-size:17px}
+.svar{margin-top:auto;font-weight:700;font-size:18px;border-top:1.5px dashed var(--line);padding-top:10px}
+.svar b{color:var(--acc)}
+.nidur{margin-top:14px;font-size:18px;font-weight:700;color:var(--acc-dark)}
+.villa-box{border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:2px;font-size:18px;font-weight:700}
+.villa-box .h{font-size:14px;font-weight:700;letter-spacing:.02em}
+.rangt{background:#FDECEC;color:#8A1C1C}
+.samhengi{font-weight:700;font-size:18px}
+.rett{background:var(--ok-bg);color:#14532D}
+.aefa{margin-top:30px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;background:var(--acc-bg);border:2px solid var(--acc-line);border-radius:16px;padding:18px 22px}
+.aefa h2{margin:0}
+.listi{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.listi a{display:flex;flex-direction:column;gap:8px;background:var(--card);border:1.5px solid var(--line);border-top:6px solid var(--acc);border-radius:16px;padding:18px 20px;color:var(--ink);text-decoration:none}
+.listi a:hover{border-color:var(--acc)}
+.listi h3{margin:0;font-size:21px}
+.listi p{color:var(--muted);font-size:16px}
+@media (max-width:760px){ .grid2{grid-template-columns:minmax(0,1fr)} .vs-head p{font-size:18px} }
+
+@page{size:A4;margin:10mm}
+@media print{
+  body{background:#fff;font-size:14px}
+  .wrap{max-width:none;padding:0}
+  .heim,.vs-actions,.aefa{display:none !important}
+  html{zoom:.62}
+  .spjald{border-width:1px;padding:12px 14px;gap:8px}
+  .kafli{margin:18px 0 10px}
+  .grid2,.grid-auto{gap:10px}
+  .grid-auto{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .grid2{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .kafli,.daemi{break-after:avoid}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body class="fag-staerdfraedi">
+<div class="wrap">
+  <a class="heim" href="../index.html">← Forsíða</a>
+  <main id="efni"></main>
+</div>
+<script src="myndir.js"></script>
+<script src="veggspjold.js"></script>
+<script>
+(function(){
+  "use strict";
+  var V = window.VEGGSPJOLD || {}, MY = window.MYNDIR, fmt = MY.fmt;
+  var BOKSTAFIR = "ABCDEFGH";
+  function merkja(s){ return fmt(s).replace(/\[/g, "<b>").replace(/\]/g, "</b>"); }
+  function linur(arr){ return arr.map(function(l){ return "<span class=\"l\">" + fmt(l) + "</span>"; }).join(""); }
+
+  var id = new URLSearchParams(location.search).get("v");
+  var v = V[id], out = "";
+
+  if(!v){
+    document.title = "Veggspjöld";
+    out += "<header class=\"vs-head\"><h1>Veggspjöld</h1><p>Aðferðir skref fyrir skref og ólíkar leiðir að sama svari.</p></header><div class=\"listi\">";
+    Object.keys(V).forEach(function(k){ out += "<a href=\"veggspjald.html?v=" + k + "\"><h3>" + V[k].titill + "</h3><p>" + V[k].inngangur + "</p></a>"; });
+    document.getElementById("efni").innerHTML = out + "</div>";
+    return;
+  }
+
+  document.title = v.titill;
+  out += "<header class=\"vs-head\"><span class=\"tag\">Veggspjald</span><h1>" + v.titill + "</h1><p>" + fmt(v.inngangur) + "</p>" +
+         "<div class=\"vs-actions\">" + (v.aefa && v.aefa[0] ? "<a class=\"btn acc\" href=\"" + v.aefa[0].slod + "\">Æfðu þig</a>" : "") +
+         "<button class=\"btn ghost\" type=\"button\" id=\"btnPrenta\">Prenta</button></div></header>";
+
+  out += "<div class=\"kafli\"><h2>Skref fyrir skref</h2></div>";
+  if(v.skref.daemi) out += "<div class=\"daemi\">" + fmt(v.skref.daemi) + "</div>";
+  out += "<div class=\"grid2\">";
+  v.skref.lidir.forEach(function(s, i){
+    out += "<section class=\"spjald\"><h3><span class=\"nr\">" + (i + 1) + "</span>" + s.t + "</h3><p class=\"x\">" + fmt(s.x) + "</p>" + MY.teikna(s.m) + "</section>";
+  });
+  out += "</div>";
+
+  if(v.auka){
+    out += "<div class=\"kafli\"><h2>" + v.auka.titill + "</h2></div>";
+    out += "<section class=\"spjald\"><p class=\"x\">" + fmt(v.auka.x) + "</p><div class=\"grid-auto\">" + MY.teikna(v.auka.m) + "</div></section>";
+  }
+
+  out += "<div class=\"kafli\"><h2>Ólíkar leiðir að sama svari</h2><p>" + fmt(v.leidir.x) + "</p></div><div class=\"grid-auto\">";
+  v.leidir.lidir.forEach(function(l, i){
+    out += "<section class=\"spjald\"><span class=\"leid-tag\">Leið " + BOKSTAFIR[i] + "</span><h3>" + l.t + "</h3><p class=\"x\">" + fmt(l.x) + "</p>" + MY.teikna(l.m) +
+           "<p class=\"svar\">" + merkja(l.svar.replace(/(= )?([^=]+)$/, function(m0, eq, last){ return (eq || "") + "[" + last + "]"; })) + "</p></section>";
+  });
+  out += "</div>";
+  if(v.leidir.nidur) out += "<p class=\"nidur\">" + fmt(v.leidir.nidur) + "</p>";
+
+  out += "<div class=\"kafli\"><h2>Algengar villur</h2></div><div class=\"grid-auto\">";
+  v.villur.forEach(function(w){
+    out += "<section class=\"spjald\"><h3>" + w.t + "</h3>" + (w.samhengi ? "<p class=\"samhengi\">" + fmt(w.samhengi) + "</p>" : "") +
+           "<div class=\"villa-box rangt\"><span class=\"h\">✗ Rangt</span>" + linur(w.rangt) + "</div>" +
+           "<div class=\"villa-box rett\"><span class=\"h\">✓ Rétt</span>" + w.rett.map(function(l){ return "<span>" + fmt(l) + "</span>"; }).join("") + "</div>" +
+           (w.m ? MY.teikna(w.m) : "") + "<p class=\"x\">" + fmt(w.x) + "</p></section>";
+  });
+  out += "</div>";
+
+  if(v.aefa && v.aefa.length){
+    out += "<div class=\"aefa\"><h2>Æfðu þig</h2><div class=\"row\">" + v.aefa.map(function(a){ return "<a class=\"btn acc\" href=\"" + a.slod + "\">" + a.heiti + "</a>"; }).join("") + "</div></div>";
+  }
+  document.getElementById("efni").innerHTML = out;
+  document.getElementById("btnPrenta").addEventListener("click", function(){ window.print(); });
+})();
+</script>
+</body>
+</html>

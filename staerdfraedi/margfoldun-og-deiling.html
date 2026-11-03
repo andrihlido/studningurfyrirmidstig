@@ -154,7 +154,8 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
       <div class="topics" id="topics" role="group" aria-label="Efni"></div>
       <p class="tip" id="countText"></p>
       <p class="err" id="startErr" role="status"></p>
-      <div class="row"><button class="btn acc" id="btnStart">Byrja</button></div>
+      <div class="row"><button class="btn acc" id="btnStart">Byrja</button><button class="btn ghost" id="btnProf">Æfing fyrir kaflapróf</button></div>
+      <p class="tip">Æfing fyrir kaflapróf: spurningar úr öllum efnum kaflans, án upprifjunar.</p>
     </div>
     <div class="card stack">
       <h2 style="margin:0">Svona virkar þetta</h2>
@@ -209,6 +210,7 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
     </div>
   </div>
   <div class="stack">
+    <div class="card stack hidden" id="profBox"></div>
     <div class="stats" id="stats"></div>
     <div class="card stack">
       <div class="table-wrap">
@@ -369,6 +371,14 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
       abending:"Hugsaðu 8 · 300 = 8 · 3 · 100.",
       utskyring:["8 · 3 = 24","24 · 100 = 2 400"],
       mynd:{teg:"skref", linur:[{s:"8 · 300"},{s:"[8 · 3] · 100", a:"Fyrst 8 · 3"},{s:"24 · 100"},{s:"2 400"}]} },
+
+    { efni:"Margföldun", tegund:"skrifa",
+      texti:"Reiknaðu: 22 · 12",
+      tekid:["264"],
+      abending:"Bútaðu 12 niður í 10 + 2. Reiknaðu 22 · 10 og 22 · 2 og leggðu svo saman.",
+      abMynd:{teg:"rudunet", a:[22], b:[10,2]},
+      utskyring:["12 = 10 + 2","22 · 10 = 220 og 22 · 2 = 44","220 + 44 = 264"],
+      mynd:{teg:"rudunet", a:[22], b:[10,2], afurdir:true} },
 
     { efni:"Margföldun", tegund:"skrifa",
       texti:"Reiknaðu: 17 · 35",
@@ -532,7 +542,7 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
   ];
 
   /* Röð spurninga: efni fyrir efni, auðveldast fyrst og erfiðast síðast */
-  var ROD = [0,2,1,3,4,6,5,7,8,9,10,14,12,13,11,15,16,17,18,23,21,19,20,22,25,24,26,27,28,29,32,34,30,31,33,35,36,37];
+  var ROD = [0,2,1,3,4,6,5,7,8,9,10,14,12,13,11,15,16,17,18,19,24,22,20,21,23,26,25,27,28,29,30,33,35,31,32,34,36,37,38];
   SPURNINGAR = ROD.map(function(i){ return SPURNINGAR[i]; });
 
   /* ================= HJÁLPARFÖLL ================= */
@@ -655,16 +665,16 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
 
   /* Rúðunet: margföldun skipt í reiti */
   function myndRudunet(m){
-    var L = 70, T = 40, sumB = m.b[0] + m.b[1], sumA = m.a[0] + m.a[1];
-    var wB = [Math.max(130, 360 * m.b[0] / sumB)], hA = [Math.max(80, 200 * m.a[0] / sumA)];
-    wB.push(Math.max(110, 360 - wB[0])); hA.push(Math.max(70, 200 - hA[0]));
-    var W = L + wB[0] + wB[1] + 20, H = T + hA[0] + hA[1] + 20;
+    var L = 70, T = 40, na = m.a.length, nb = m.b.length, sumB = m.b[0] + (m.b[1] || 0), sumA = m.a[0] + (m.a[1] || 0);
+    var wB = nb === 1 ? [260] : [Math.max(130, 360 * m.b[0] / sumB)], hA = na === 1 ? [100] : [Math.max(80, 200 * m.a[0] / sumA)];
+    if(nb > 1) wB.push(Math.max(110, 360 - wB[0])); if(na > 1) hA.push(Math.max(70, 200 - hA[0]));
+    var W = L + wB.reduce(function(x, y){ return x + y; }, 0) + 20, H = T + hA.reduce(function(x, y){ return x + y; }, 0) + 20;
     var s = "<svg viewBox=\"0 0 " + W + " " + H + "\" width=\"" + W + "\" role=\"img\" aria-label=\"Rúðunet\">";
     var y = T;
-    for(var i = 0; i < 2; i++){
+    for(var i = 0; i < na; i++){
       var x = L;
       s += txt(L - 12, y + hA[i]/2 + 6, m.a[i], {a:"end", s:18, c:"var(--acc-dark)"});
-      for(var j = 0; j < 2; j++){
+      for(var j = 0; j < nb; j++){
         if(i === 0) s += txt(x + wB[j]/2, T - 12, m.b[j], {s:18, c:"var(--acc-dark)"});
         s += "<rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + wB[j] + "\" height=\"" + hA[i] + "\" style=\"fill:" + ((i + j) % 2 ? "#EEF1F7" : "#DCE3F0") + ";stroke:var(--ink);stroke-width:2\"/>";
         s += txt(x + wB[j]/2, y + hA[i]/2 + (m.afurdir ? -4 : 6), m.a[i] + " · " + m.b[j], {s:16, w:400});
@@ -706,7 +716,7 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
     var L = 30, R = 610, Y = 100, W = 640;
     function x(v){ return L + v / m.max * (R - L); }
     var s = "<svg viewBox=\"0 0 " + W + " 150\" width=\"" + W + "\" role=\"img\" aria-label=\"Hopp á talnalínu\">";
-    s += "<defs><marker id=\"ah\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M1 1L9 5L1 9z\" style=\"fill:var(--acc)\"/></marker></defs>";
+    s += "<defs><marker id=\"" + (window.__ahN = (window.__ahN || 0) + 1, "ah" + window.__ahN) + "\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M1 1L9 5L1 9z\" style=\"fill:var(--acc)\"/></marker></defs>";
     s += "<line x1=\"" + (L - 8) + "\" y1=\"" + Y + "\" x2=\"" + (R + 8) + "\" y2=\"" + Y + "\" style=\"stroke:var(--ink);stroke-width:2\"/>";
     for(var v = 0; v <= m.max; v++){
       s += "<line x1=\"" + x(v) + "\" y1=\"" + (Y - 6) + "\" x2=\"" + x(v) + "\" y2=\"" + (Y + 6) + "\" style=\"stroke:var(--ink);stroke-width:1.5\"/>";
@@ -714,7 +724,7 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
     }
     for(var i = 0; i < m.fjoldi; i++){
       var a = x(i * m.skref), b = x((i + 1) * m.skref), mid = (a + b)/2;
-      s += "<path d=\"M" + a + " " + (Y - 8) + " Q" + mid + " " + (Y - 60) + " " + (b - 2) + " " + (Y - 9) + "\" fill=\"none\" style=\"stroke:var(--acc);stroke-width:2.5\" marker-end=\"url(#ah)\"/>";
+      s += "<path d=\"M" + a + " " + (Y - 8) + " Q" + mid + " " + (Y - 60) + " " + (b - 2) + " " + (Y - 9) + "\" fill=\"none\" style=\"stroke:var(--acc);stroke-width:2.5\" marker-end=\"url(#ah" + window.__ahN + ")\"/>";
       if(i === 0) s += txt(mid, Y - 42, "+" + tala(m.skref), {s:14, c:"var(--acc-dark)"});
     }
     var end = m.skref * m.fjoldi;
@@ -766,7 +776,7 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
       mynd:{teg:"moguleikar", radir:["Bolur A","Bolur B"], dalkar:["Buxur 1","Buxur 2","Buxur 3"]}},
     "Frumtölur og þættir":{atridi:["Þættir tölu eru tölurnar sem hægt er að deila með í hana án afgangs.","Frumtala er stærri en 1 og hefur aðeins tvo þætti: 1 og töluna sjálfa.","Samsett tala hefur fleiri þætti."],
       mynd:{teg:"thaettir", tolur:[7,8], listi:true}},
-    "Margföldun":{atridi:["Þegar margfaldað er með 10, 100 eða 1 000 færist hver tölustafur um eitt, tvö eða þrjú sæti til vinstri.","Í rúðuneti er tölunum skipt í tugi og einingar. Hver reitur er reiknaður og svo er allt lagt saman."],
+    "Margföldun":{atridi:["Þegar margfaldað er með 10, 100 eða 1 000 færist hver tölustafur um eitt, tvö eða þrjú sæti til vinstri.","Í rúðuneti er dæminu bútað niður í minni hluta, t.d. 22 · 12 = 22 · 10 + 22 · 2. Hver reitur er reiknaður og svo er allt lagt saman."],
       mynd:{teg:"rudunet", a:[20,3], b:[10,4], afurdir:true}},
     "Deiling":{atridi:["Veldu margföldun sem þú kannt, t.d. með 10 eða 100.","Dragðu frá og haltu áfram með það sem er eftir.","Leggðu saman tölurnar hægra megin. Það sem er eftir í lokin er afgangurinn.", TENGILL_DEILING],
       mynd:{teg:"deiling", tala:"84", deilir:4, skref:[20,1]}},
@@ -782,7 +792,8 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
     var u = UPPRIFJUN[efni];
     if(!u) return false;
     $("recapTag").textContent = "Upprifjun · " + efni;
-    $("recapList").innerHTML = u.atridi.map(function(a){ return "<li>" + fmtU(a) + "</li>"; }).join("");
+    $("recapList").innerHTML = u.atridi.map(function(a){ return "<li>" + fmtU(a) + "</li>"; }).join("") +
+      (VS_TENGLAR[efni] ? "<li><a href=\"veggspjald.html?v=" + VS_TENGLAR[efni][0] + "\">Skoðaðu veggspjaldið „" + VS_TENGLAR[efni][1] + "“</a></li>" : "");
     $("recapVisual").innerHTML = teikna(u.mynd);
     $("recapCard").classList.remove("hidden");
     if(hlid){ $("qCard").classList.add("hidden"); $("btnRecapGo").textContent = "Byrja á spurningunum"; }
@@ -825,8 +836,9 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
   /* ================= LEIKUR ================= */
   var game = null;
 
-  function start(list){
-    game = {list: list.slice(), i: 0, results: []};
+  function start(list, prof){
+    game = {list: list.slice(), i: 0, results: [], prof: !!prof, seen: {}};
+    if(prof) EFNI.forEach(function(e){ game.seen[e] = true; });
     load();
     show("play");
   }
@@ -844,7 +856,7 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
     if(!game.seen[q.efni]){ game.seen[q.efni] = true; showRecap(q.efni, true); }
     game.cur = {q:q, tries:0, hint:false, done:false};
     var n = game.list.length;
-    $("progress").textContent = "Spurning " + (game.i + 1) + " af " + n;
+    $("progress").textContent = (game.prof ? "Æfing fyrir kaflapróf · " : "") + "Spurning " + (game.i + 1) + " af " + n;
     $("barFill").style.width = (game.i / n * 100) + "%";
     $("qTopic").textContent = q.efni;
     $("qText").innerHTML = fmt(q.texti);
@@ -949,6 +961,7 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
   /* ================= NIÐURSTÖÐUR ================= */
   var STATUS = {1:["Rétt í fyrstu tilraun","s1"], 2:["Rétt með hjálp","s2"], 3:["Ekki rétt","s3"]};
   function showEnd(){
+    profNidurstodur();
     var r = game.results, c = {1:0, 2:0, 3:0};
     r.forEach(function(x){ c[x.status]++; });
     $("endSummary").textContent = "Þú svaraðir " + r.length + (ein(r.length) ? " spurningu." : " spurningum.");
@@ -964,10 +977,39 @@ table.res-table{border-collapse:collapse;width:100%;font-size:17px}
   $("btnRetry").addEventListener("click", function(){
     start(game.results.filter(function(x){ return x.status > 1; }).map(function(x){ return x.q; }));
   });
-  $("btnAgain").addEventListener("click", function(){ start(game.results.map(function(x){ return x.q; })); });
+  $("btnAgain").addEventListener("click", function(){ if(game.prof) start(profList(), true); else start(game.results.map(function(x){ return x.q; })); });
   $("btnHome").addEventListener("click", function(){ renderTopics(); show("start"); });
 
+  /* ================= ÆFING FYRIR KAFLAPRÓF =================
+     Ein til tvær spurningar úr hverju efni, í sömu röð og í kaflanum, án upprifjunar. */
+  var VS_TENGLAR = {"Margföldun": ["margfoldun", "Margföldun"], "Deiling": ["deiling", "Deiling – Stikuaðferð"], "Tugabrot": ["tugabrot", "Tugabrot – margföldun og deiling"], "Svigar og forgangsröð": ["forgangsrod", "Forgangsröð reikniaðgerða"]};
+  function profList(){
+    var out = [];
+    EFNI.forEach(function(e){
+      var qs = SPURNINGAR.filter(function(q){ return q.efni === e; });
+      shuffle(qs.map(function(_, i){ return i; })).slice(0, 2).sort(function(a, b){ return a - b; }).forEach(function(i){ out.push(qs[i]); });
+    });
+    return out;
+  }
+  function profNidurstodur(){
+    var box = $("profBox");
+    if(!game.prof){ box.classList.add("hidden"); return; }
+    var veik = EFNI.filter(function(e){ return game.results.some(function(x){ return x.q.efni === e && x.status > 1; }); });
+    var h;
+    if(veik.length){
+      h = "<h2 style=\"margin:0\">Efni sem þú ættir að rifja upp</h2><div class=\"row\">" + veik.map(function(e){ return "<span class=\"tag\">" + e + "</span>"; }).join("") + "</div>" +
+          "<p class=\"muted\">Æfðu öll dæmin í þessum efnum. Upprifjunin birtist á undan hverju efni.</p><div class=\"row\"><button class=\"btn acc\" id=\"btnVeik\">Æfa þessi efni</button></div>";
+    } else {
+      h = "<h2 style=\"margin:0\">Vel gert!</h2><p>Þú svaraðir öllum spurningunum rétt í fyrstu tilraun.</p>";
+    }
+    box.innerHTML = h; box.classList.remove("hidden");
+    var b = $("btnVeik");
+    if(b) b.addEventListener("click", function(){ start(SPURNINGAR.filter(function(q){ return veik.indexOf(q.efni) !== -1; })); });
+  }
+  $("btnProf").addEventListener("click", function(){ start(profList(), true); });
+
   renderTopics();
+  if(location.hash === "#kaflaprof") start(profList(), true);
 })();
 </script>
 </body>
