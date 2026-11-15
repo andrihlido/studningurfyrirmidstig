@@ -40,7 +40,7 @@ a.btn{display:inline-flex;align-items:center;text-decoration:none}
 .listi p{color:var(--muted);font-size:16px}
 @media (max-width:760px){ .grid2{grid-template-columns:minmax(0,1fr)} .vs-head p{font-size:18px} }
 
-@page{size:A4;margin:10mm}
+@page{margin:10mm}
 @media print{
   body{background:#fff;font-size:14px}
   .wrap{max-width:none;padding:0}
@@ -85,7 +85,7 @@ a.btn{display:inline-flex;align-items:center;text-decoration:none}
   document.title = v.titill;
   out += "<header class=\"vs-head\"><span class=\"tag\">Veggspjald</span><h1>" + v.titill + "</h1><p>" + fmt(v.inngangur) + "</p>" +
          "<div class=\"vs-actions\">" + (v.aefa && v.aefa[0] ? "<a class=\"btn acc\" href=\"" + v.aefa[0].slod + "\">Æfðu þig</a>" : "") +
-         "<button class=\"btn ghost\" type=\"button\" id=\"btnPrenta\">Prenta</button></div></header>";
+         "<a class=\"btn ghost\" href=\"prenta.html?v=" + id + "\">Prenta veggspjald</a></div></header>";
 
   out += "<div class=\"kafli\"><h2>Skref fyrir skref</h2></div>";
   if(v.skref.daemi) out += "<div class=\"daemi\">" + fmt(v.skref.daemi) + "</div>";
@@ -108,6 +108,7 @@ a.btn{display:inline-flex;align-items:center;text-decoration:none}
   out += "</div>";
   if(v.leidir.nidur) out += "<p class=\"nidur\">" + fmt(v.leidir.nidur) + "</p>";
 
+  if(v.villur && v.villur.length){
   out += "<div class=\"kafli\"><h2>Algengar villur</h2></div><div class=\"grid-auto\">";
   v.villur.forEach(function(w){
     out += "<section class=\"spjald\"><h3>" + w.t + "</h3>" + (w.samhengi ? "<p class=\"samhengi\">" + fmt(w.samhengi) + "</p>" : "") +
@@ -116,12 +117,12 @@ a.btn{display:inline-flex;align-items:center;text-decoration:none}
            (w.m ? MY.teikna(w.m) : "") + "<p class=\"x\">" + fmt(w.x) + "</p></section>";
   });
   out += "</div>";
+  }
 
   if(v.aefa && v.aefa.length){
     out += "<div class=\"aefa\"><h2>Æfðu þig</h2><div class=\"row\">" + v.aefa.map(function(a){ return "<a class=\"btn acc\" href=\"" + a.slod + "\">" + a.heiti + "</a>"; }).join("") + "</div></div>";
   }
   document.getElementById("efni").innerHTML = out;
-  document.getElementById("btnPrenta").addEventListener("click", function(){ window.print(); });
 })();
 </script>
 </body>

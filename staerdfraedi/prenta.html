@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="is">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prenta veggspjald</title>
+<link rel="stylesheet" href="../sameiginlegt.css">
+<style id="blad-still"></style>
+<style>
+/* ---------- Stjórnborð (sést aðeins á skjá) ---------- */
+.stika{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1.5px solid var(--line);padding:10px 20px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.stika a{color:var(--muted);font-weight:700;text-decoration:none}
+.stika .hopur{display:flex;gap:6px;align-items:center}
+.stika .val{font:inherit;font-weight:700;min-height:40px;padding:6px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.stika .val[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.stika label{display:inline-flex;gap:6px;align-items:center;font-weight:700;font-size:16px;cursor:pointer}
+.stika input{width:18px;height:18px;accent-color:var(--acc)}
+.stika .upplys{color:var(--muted);font-size:15px;flex-basis:100%}
+.forsyn{padding:24px 20px;overflow:hidden}
+.forsyn-innri{transform-origin:top left}
+
+/* ---------- Blaðið ---------- */
+.blad{background:#fff;position:relative;overflow:hidden;box-shadow:0 4px 24px rgba(31,42,68,.18)}
+.innihald{position:absolute;transform-origin:top left;font-size:17px;line-height:1.4;color:var(--ink)}
+.p-haus{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;border-bottom:4px solid var(--acc);padding-bottom:12px;margin-bottom:16px}
+.p-haus h1{font-size:46px;line-height:1.1;margin:0}
+.p-haus p{font-size:20px;color:var(--muted);margin-top:6px;max-width:1000px}
+.p-haus .merki{font-size:15px;font-weight:700;color:var(--acc-dark);white-space:nowrap}
+.p-kafli{display:flex;align-items:baseline;gap:6px 14px;flex-wrap:wrap;margin:16px 0 10px}
+.p-kafli h2{flex:none;margin:0;font-size:26px;padding-left:12px;border-left:6px solid var(--acc)}
+.p-kafli .daemi{font-size:22px;font-weight:700;color:var(--acc-dark);background:var(--acc-bg);border-radius:10px;padding:2px 12px}
+.p-kafli p{color:var(--muted);font-size:17px;flex:1 1 300px}
+.p-grid{display:grid;gap:12px}
+.p-spjald{border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:#fff;min-width:0}
+.p-spjald h3{margin:0;font-size:19px;line-height:1.25;display:flex;gap:8px;align-items:center}
+.p-spjald .x{font-size:16px}
+.nr{flex:none;width:28px;height:28px;border-radius:50%;background:var(--acc);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:16px}
+.leid-tag{align-self:flex-start;font-size:13px;font-weight:700;color:var(--acc-dark);background:var(--acc-bg);border-radius:999px;padding:2px 10px}
+.svar{margin-top:auto;font-weight:700;font-size:17px;border-top:1.5px dashed var(--line);padding-top:8px}
+.svar b{color:var(--acc)}
+.nidur{margin-top:8px;font-size:17px;font-weight:700;color:var(--acc-dark)}
+.samhengi{font-weight:700;font-size:17px}
+.villa-box{border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:2px;font-size:17px;font-weight:700}
+.villa-box .h{font-size:13px}
+.rangt{background:#FDECEC;color:#8A1C1C}
+.rett{background:var(--ok-bg);color:#14532D}
+.p-villur{display:grid;gap:8px}
+.auka-myndir{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;align-items:center}
+.p-fot{margin-top:14px;font-size:13px;color:var(--muted);text-align:right}
+.innihald .mynd{overflow:visible}
+
+@media print{
+  body{background:#fff;margin:0}
+  .stika{display:none !important}
+  .forsyn{padding:0;overflow:visible}
+  .forsyn-innri{transform:none !important;width:auto !important;height:auto !important}
+  .blad{box-shadow:none}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body class="fag-staerdfraedi">
+<div class="stika">
+  <a id="tilbaka" href="veggspjald.html">← Til baka</a>
+  <div class="hopur" role="group" aria-label="Blaðstærð">
+    <button class="val" type="button" data-s="A3">A3</button>
+    <button class="val" type="button" data-s="A4">A4</button>
+  </div>
+  <label><input type="checkbox" id="chVillur">Algengar villur</label>
+  <label id="lbAuka"><input type="checkbox" id="chAuka"><span id="aukaHeiti">Aukaefni</span></label>
+  <button class="btn acc" type="button" id="btnPrenta">Prenta</button>
+  <p class="upplys" id="upplys"></p>
+</div>
+<div class="forsyn" id="forsyn"><div class="forsyn-innri" id="forsynInnri"><div class="blad" id="blad"><div class="innihald" id="innihald"></div></div></div></div>
+
+<script src="myndir.js"></script>
+<script src="veggspjold.js"></script>
+<script>
+(function(){
+  "use strict";
+  var V = window.VEGGSPJOLD || {}, MY = window.MYNDIR, fmt = MY.fmt;
+  var id = new URLSearchParams(location.search).get("v"), v = V[id];
+  if(!v){ location.replace("veggspjald.html"); return; }
+  document.title = "Prenta: " + v.titill;
+  document.getElementById("tilbaka").href = "veggspjald.html?v=" + id;
+
+  var MM = 96 / 25.4, SPASSA = Math.round(9 * MM);
+  var PAPPIR = {A3:[297, 420], A4:[210, 297]};
+  var HAMARKSHAED = 400;  /* Hæsta mynd á blaðinu (í dílum fyrir kvörðun) */
+  var LAGMARK = 0.75;   /* Minnsti kvarði svo meginmálið verði ekki undir 9–10 punktum */
+  var state = {staerd:"A3", villur:null, auka:null};
+  var BOKSTAFIR = "ABCDEFGH";
+  var innihald = document.getElementById("innihald");
+  var hefurVillur = !!(v.villur && v.villur.length);
+
+  function merkja(s){ return fmt(s).replace(/\[/g, "<b>").replace(/\]/g, "</b>"); }
+  function dalkar(n, breidd, minnst){
+    var hamark = Math.max(1, Math.floor(breidd / minnst)), radir = Math.ceil(n / hamark);
+    return Math.ceil(n / radir);
+  }
+
+  /* Byggir blaðið fyrir ákveðna breidd og ákveðið efni */
+  function byggja(L, med){
+    var h = "<div class=\"p-haus\"><div><h1>" + v.titill + "</h1><p>" + fmt(v.inngangur) + "</p></div><span class=\"merki\">Stuðningur fyrir miðstig</span></div>";
+    var n = v.skref.lidir.length;
+    h += "<div class=\"p-kafli\"><h2>Skref fyrir skref</h2>" + (v.skref.daemi ? "<span class=\"daemi\">" + fmt(v.skref.daemi) + "</span>" : "") + "</div>";
+    h += "<div class=\"p-grid\" style=\"grid-template-columns:repeat(" + dalkar(n, L, 250) + ",minmax(0,1fr))\">";
+    v.skref.lidir.forEach(function(s, i){
+      h += "<section class=\"p-spjald\"><h3><span class=\"nr\">" + (i + 1) + "</span>" + s.t + "</h3><p class=\"x\">" + fmt(s.x) + "</p>" + MY.teikna(s.m) + "</section>";
+    });
+    h += "</div>";
+    if(v.auka && med.auka){
+      h += "<div class=\"p-kafli\"><h2>" + v.auka.titill + "</h2><p>" + fmt(v.auka.x) + "</p></div>";
+      h += "<section class=\"p-spjald\"><div class=\"auka-myndir\">" + MY.teikna(v.auka.m) + "</div></section>";
+    }
+    var nl = v.leidir.lidir.length;
+    h += "<div class=\"p-kafli\"><h2>Ólíkar leiðir að sama svari</h2><p>" + fmt(v.leidir.x) + "</p></div>";
+    h += "<div class=\"p-grid\" style=\"grid-template-columns:repeat(" + dalkar(nl, L, 260) + ",minmax(0,1fr))\">";
+    v.leidir.lidir.forEach(function(l, i){
+      h += "<section class=\"p-spjald\"><span class=\"leid-tag\">Leið " + BOKSTAFIR[i] + "</span><h3>" + l.t + "</h3><p class=\"x\">" + fmt(l.x) + "</p>" + MY.teikna(l.m) +
+           "<p class=\"svar\">" + merkja(l.svar.replace(/(= )?([^=]+)$/, function(m0, eq, last){ return (eq || "") + "[" + last + "]"; })) + "</p></section>";
+    });
+    h += "</div>";
+    if(v.leidir.nidur) h += "<p class=\"nidur\">" + fmt(v.leidir.nidur) + "</p>";
+    if(med.villur && hefurVillur){
+      h += "<div class=\"p-kafli\"><h2>Algengar villur</h2></div>";
+      h += "<div class=\"p-grid\" style=\"grid-template-columns:repeat(" + dalkar(v.villur.length, L, 260) + ",minmax(0,1fr))\">";
+      v.villur.forEach(function(w){
+        h += "<section class=\"p-spjald\"><h3>" + w.t + "</h3>" + (w.samhengi ? "<p class=\"samhengi\">" + fmt(w.samhengi) + "</p>" : "") +
+             "<div class=\"p-villur\"><div class=\"villa-box rangt\"><span class=\"h\">✗ Rangt</span>" + w.rangt.map(function(l){ return "<span>" + fmt(l) + "</span>"; }).join("") + "</div>" +
+             "<div class=\"villa-box rett\"><span class=\"h\">✓ Rétt</span>" + w.rett.map(function(l){ return "<span>" + fmt(l) + "</span>"; }).join("") + "</div></div>" +
+             (w.m ? MY.teikna(w.m) : "") + "<p class=\"x\">" + fmt(w.x) + "</p></section>";
+      });
+      h += "</div>";
+    }
+    return h + "<p class=\"p-fot\">Stika 3a</p>";
+  }
+
+  /* Minnkar myndir sem eru breiðari en spjaldið sem þær eru í */
+  function fellaMyndir(){
+    innihald.querySelectorAll(".mynd").forEach(function(el){
+      el.style.zoom = "";
+      var b = el.parentElement.clientWidth - 4, w = 0;
+      Array.prototype.forEach.call(el.children, function(c){ w = Math.max(w, c.getBoundingClientRect().width); });
+      var hh = el.getBoundingClientRect().height, z = 1;
+      if(w > b && b > 0) z = b / w;
+      if(hh * z > HAMARKSHAED) z = HAMARKSHAED / hh;   /* Mjög háar myndir, t.d. löng deiling, eru minnkaðar */
+      if(z < 1) el.style.zoom = String(Math.max(0.4, z));
+    });
+  }
+  function maela(L, med){
+    innihald.style.transform = "none"; innihald.style.width = L + "px";
+    innihald.innerHTML = byggja(L, med);
+    fellaMyndir();
+    return innihald.scrollHeight;
+  }
+
+  /* Finnur stefnu blaðs og breidd sem gefa stærst letur og passa á eina síðu */
+  function besta(med){
+    var p = PAPPIR[state.staerd], best = null;
+    [["liggjandi", p[1], p[0]], ["standandi", p[0], p[1]]].forEach(function(st){
+      var bw = st[1] * MM - 2 * SPASSA, bh = st[2] * MM - 2 * SPASSA;
+      for(var L = 1100; L <= 2300; L += 150){
+        var H = maela(L, med), s = Math.min(bw / L, bh / H);
+        if(!best || s > best.s) best = {s:s, L:L, H:H, stefna:st[0], w:st[1], h:st[2], bw:bw, bh:bh, med:med};
+      }
+    });
+    return best;
+  }
+  function velja(){
+    var hefurAuka = !!v.auka, kostir = [];
+    var villurValkostir = !hefurVillur ? [false] : (state.villur === null ? [true, false] : [state.villur]);
+    var aukaValkostir = !hefurAuka ? [false] : (state.auka === null ? [true, false] : [state.auka]);
+    villurValkostir.forEach(function(vi){ aukaValkostir.forEach(function(au){ kostir.push({villur:vi, auka:au}); }); });
+    var nidurstodur = kostir.map(besta);
+    /* Velja fyrsta kostinn (mest efni) þar sem letrið er nógu stórt, annars þann með stærsta letrið */
+    var val = nidurstodur.filter(function(r){ return r.s >= LAGMARK; })[0];
+    if(!val) val = nidurstodur.reduce(function(a, b){ return b.s > a.s ? b : a; });
+    return val;
+  }
+
+  function teikna(){
+    var r = velja();
+    maela(r.L, r.med);
+    var s = r.s, Wpx = r.w * MM, Hpx = r.h * MM;
+    var blad = document.getElementById("blad");
+    blad.style.width = Wpx + "px"; blad.style.height = (Hpx - 2) + "px";
+    innihald.style.transform = "scale(" + s + ")";
+    innihald.style.left = (SPASSA + (r.bw - r.L * s) / 2) + "px";
+    innihald.style.top = (SPASSA + (r.bh - r.H * s) / 2) + "px";
+    document.getElementById("blad-still").textContent = "@page{size:" + state.staerd + " " + (r.stefna === "liggjandi" ? "landscape" : "portrait") + ";margin:0}";
+    document.getElementById("chVillur").checked = r.med.villur;
+    document.getElementById("chVillur").parentElement.hidden = !hefurVillur;
+    document.getElementById("chAuka").checked = r.med.auka;
+    document.getElementById("lbAuka").hidden = !v.auka;
+    if(v.auka) document.getElementById("aukaHeiti").textContent = v.auka.titill;
+    document.querySelectorAll(".stika .val").forEach(function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-s") === state.staerd)); });
+    var pt = Math.round(17 * s * 0.75 * 10) / 10;
+    var sleppt = [];
+    if(hefurVillur && !r.med.villur) sleppt.push("Algengum villum");
+    if(v.auka && !r.med.auka) sleppt.push("„" + v.auka.titill + "“");
+    document.getElementById("upplys").textContent = state.staerd + " " + r.stefna + " · meginmál um " + String(pt).replace(".", ",") + " pt" +
+      (sleppt.length ? " · " + sleppt.join(" og ") + " sleppt svo letrið verði ekki of smátt" : " · allt efnið kemst fyrir") + ".";
+    forsyn();
+  }
+  function forsyn(){
+    var blad = document.getElementById("blad"), inn = document.getElementById("forsynInnri");
+    var w = blad.offsetWidth, h = blad.offsetHeight, k = Math.min(1, (document.getElementById("forsyn").clientWidth - 4) / w);
+    inn.style.transform = "scale(" + k + ")"; inn.style.width = w + "px"; inn.style.height = (h * k) + "px";
+  }
+
+  document.querySelectorAll(".stika .val").forEach(function(b){
+    b.addEventListener("click", function(){ state.staerd = b.getAttribute("data-s"); state.villur = null; state.auka = null; teikna(); });
+  });
+  document.getElementById("chVillur").addEventListener("change", function(e){ state.villur = e.target.checked; teikna(); });
+  document.getElementById("chAuka").addEventListener("change", function(e){ state.auka = e.target.checked; teikna(); });
+  document.getElementById("btnPrenta").addEventListener("click", function(){ window.print(); });
+  window.addEventListener("resize", forsyn);
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(teikna);
+})();
+</script>
+</body>
+</html>

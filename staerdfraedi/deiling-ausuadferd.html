@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deiling – Ausuaðferð</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --dokkt:#2b1b2e; --appelsina:#e07b2e; --appelsina-ljos:#fde8d6;
+  --graent:#2e9e5b; --graent-ljos:#e1f4e8; --bleikt:#f9d3da;
+  --rautt:#b9403a; --rautt-ljos:#fbe4e2; --bakgrunnur:#fbf7f0; --kort:#ffffff; --grar:#8f8489;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Andika',system-ui,sans-serif;font-variant-numeric:tabular-nums;background:var(--bakgrunnur);color:var(--dokkt);font-size:18px;line-height:1.45}
+header{display:flex;align-items:center;gap:1.2rem;padding:.75rem 1.2rem;background:var(--kort);border-bottom:4px solid var(--appelsina)}
+header a{color:var(--dokkt);text-decoration:none;font-weight:700;white-space:nowrap}
+header a:hover{color:var(--appelsina)}
+header h1{font-size:1.3rem;margin:0}
+main{max-width:1040px;margin:0 auto;padding:1.2rem}
+.kort{background:var(--kort);border-radius:16px;padding:1.2rem 1.4rem;box-shadow:0 2px 10px rgba(43,27,46,.07)}
+h2{margin:.2rem 0 .6rem;font-size:1.4rem}
+h3{margin:1rem 0 .4rem;font-size:1.1rem}
+button{font-family:inherit;font-size:1rem;cursor:pointer;border:none;border-radius:10px;padding:.6rem 1.1rem;color:var(--dokkt)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--appelsina);outline-offset:2px}
+.adal{background:var(--appelsina);color:#fff;font-weight:700}
+.adal:hover{filter:brightness(.94)}
+.auka{background:#f0e9e1}
+.auka:hover{background:#e6ddd3}
+.auka.virkur{background:var(--appelsina-ljos);box-shadow:inset 0 0 0 2px var(--appelsina)}
+.falid{display:none !important}
+
+/* Upphafsskjár */
+.efnalisti{display:grid;gap:.5rem;margin:.4rem 0 1rem}
+.efnalisti label{display:flex;gap:.7rem;align-items:flex-start;padding:.55rem .8rem;border-radius:10px;background:#faf6f1;cursor:pointer}
+.efnalisti label:hover{background:var(--appelsina-ljos)}
+.efnalisti input{width:1.2rem;height:1.2rem;margin-top:.2rem;accent-color:var(--appelsina)}
+.efnalisti .daemi{color:var(--grar);font-size:.92rem}
+.villa-texti{color:var(--rautt);font-weight:700;margin-left:.8rem}
+
+/* Skrefin */
+.skref{display:flex;flex-wrap:wrap;gap:.45rem;margin:.2rem 0 1rem}
+.skref .flis{display:flex;align-items:center;gap:.4rem;padding:.3rem .75rem .3rem .3rem;border-radius:999px;background:#fff;border:2px solid #eee3d8;font-weight:700;font-size:.92rem;letter-spacing:.02em}
+.skref .nr{display:inline-grid;place-items:center;width:1.6rem;height:1.6rem;border-radius:50%;background:var(--appelsina);color:#fff;font-size:.85rem}
+.skref .takn{color:var(--graent);font-size:1.05rem}
+.skref .flis.nuna{background:var(--appelsina-ljos);border-color:var(--appelsina)}
+.skref .flis.blikk{animation:blikk 1.2s ease}
+@keyframes blikk{0%,100%{background:#fff}30%,60%{background:var(--graent-ljos);border-color:var(--graent)}}
+
+/* Leikskjár */
+.toppur{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:.6rem}
+.toppur .efni-heiti{font-weight:700;font-size:1.05rem}
+.toppur .stada{color:var(--grar)}
+.toppur .takkar{display:flex;gap:.5rem;flex-wrap:wrap}
+.vinnusvaedi{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1rem;align-items:start}
+@media (max-width:820px){.vinnusvaedi{grid-template-columns:1fr}}
+.daemi-titill{font-size:1.25rem;margin:0 0 .6rem}
+.daemi-titill b{font-family:'Andika',sans-serif;font-weight:600}
+.uppsetning-ramma{overflow-x:auto;padding:.6rem .2rem 1rem 2.2rem}
+
+/* Uppsetningin sjálf */
+.uppsetning{display:inline-grid;font-family:'Andika',sans-serif;font-size:2.3rem;line-height:1.3;grid-auto-rows:1.3em}
+.uppsetning .h{position:relative;display:flex;align-items:center;justify-content:center;white-space:nowrap}
+.uppsetning .deilt-med{justify-content:flex-end;padding-right:.35ch;border-right:3px solid var(--dokkt);color:var(--appelsina);font-weight:600}
+.uppsetning .stofn{border-top:3px solid var(--dokkt)}
+.uppsetning .svar{color:var(--appelsina);font-weight:600}
+.uppsetning .strik{border-bottom:2px solid var(--dokkt)}
+.uppsetning .minus::before{content:'−';position:absolute;right:100%;margin-right:.08ch;color:var(--graent);font-weight:600}
+.uppsetning .dauft{color:transparent}
+.uppsetning .or{color:var(--graent);font-size:.7em;font-weight:600}
+.uppsetning .virk{background:var(--appelsina-ljos);color:var(--appelsina);font-weight:600;border-radius:4px}
+.uppsetning .rauf::after{content:'';position:absolute;inset:.08em .04em;border:2px dashed var(--appelsina);border-radius:6px}
+.uppsetning .rauf{color:var(--grar)}
+.uppsetning .smellanlegt{cursor:pointer;border-radius:4px}
+.uppsetning .smellanlegt:hover{background:var(--graent-ljos)}
+.uppsetning .smellanlegt.valid{background:var(--graent-ljos);color:var(--graent)}
+.uppsetning .stofn.smellanlegt{border-top-left-radius:0;border-top-right-radius:0}
+.uppsetning .notad{color:var(--grar)}
+.uppsetning .komma-mark{position:absolute;left:50%;top:50%;width:.9em;height:.9em;transform:translate(-50%,-25%);border-radius:50%;border:2px dashed var(--graent);background:#fff;padding:0;z-index:2;font:inherit;font-size:.55em;color:var(--graent)}
+.uppsetning .komma-mark:hover{background:var(--graent-ljos);border-style:solid}
+
+/* Verkefnaspjald */
+.verkefni p{margin:.2rem 0 .7rem}
+.svarform{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.3rem 0 .6rem}
+.svarform input{font-family:'Andika',sans-serif;font-size:1.6rem;width:7ch;padding:.3rem .5rem;border:2px solid #e3d8cc;border-radius:10px;text-align:center}
+.endurgjof{min-height:1.5em;padding:.6rem .8rem;border-radius:10px;margin-top:.4rem}
+.endurgjof:empty{padding:0}
+.endurgjof.rett{background:var(--graent-ljos);color:#1d6b3d}
+.endurgjof.rangt{background:var(--rautt-ljos);color:var(--rautt)}
+.endurgjof.uppl{background:#f3eee8}
+.abending{margin-top:.6rem;padding:.6rem .8rem;border-left:4px solid var(--appelsina);background:#fff8f1;border-radius:0 10px 10px 0}
+.nidurstada{font-family:'Andika',sans-serif;font-size:1.5rem;font-weight:600;background:var(--bleikt);padding:.5rem .9rem;border-radius:10px;display:inline-block;margin:.3rem 0 .8rem}
+.tafla{margin-top:1rem;padding:.7rem .9rem;background:#faf6f1;border-radius:12px}
+.tafla h4{margin:0 0 .3rem;font-size:1rem}
+.tafla ul{list-style:none;margin:0;padding:0;columns:3;font-family:'Andika',sans-serif;font-size:1rem}
+.tafla li{padding:.05rem 0}
+
+/* Upprifjun */
+.yfirlag{position:fixed;inset:0;background:rgba(43,27,46,.45);display:grid;place-items:center;padding:1rem;z-index:20}
+.yfirlag .kort{max-width:760px;width:100%;max-height:92vh;overflow:auto}
+.upprifjun-innri{display:grid;grid-template-columns:auto 1fr;gap:1.2rem;align-items:start}
+@media (max-width:700px){.upprifjun-innri{grid-template-columns:1fr}}
+.upprifjun-innri .uppsetning{font-size:1.6rem}
+.upprifjun-innri ul{margin:.2rem 0;padding-left:1.2rem}
+.upprifjun-innri li{margin:.35rem 0}
+.merki{display:inline-block;font-size:.85rem;font-weight:700;color:var(--appelsina);text-transform:uppercase;letter-spacing:.06em}
+
+/* Lok */
+.lok-listi{list-style:none;padding:0;margin:.4rem 0 1rem}
+.lok-listi li{padding:.5rem .8rem;border-radius:10px;background:#faf6f1;margin:.35rem 0;display:flex;justify-content:space-between;gap:1rem}
+</style>
+</head>
+<body>
+<header>
+  <a href="../index.html">← Forsíða</a>
+  <h1>Deiling – Ausuaðferð</h1>
+</header>
+
+<main>
+  <!-- Upphafsskjár -->
+  <section id="upphaf" class="kort">
+    <h2>Æfðu ausuaðferðina skref fyrir skref</h2>
+    <div class="skref" aria-hidden="true">
+      <span class="flis"><span class="nr">1</span>DEILA <span class="takn">:</span></span>
+      <span class="flis"><span class="nr">2</span>MARGFALDA <span class="takn">·</span></span>
+      <span class="flis"><span class="nr">3</span>DRAGA FRÁ <span class="takn">−</span></span>
+      <span class="flis"><span class="nr">4</span>FÆRA NIÐUR <span class="takn">↓</span></span>
+      <span class="flis"><span class="nr">5</span>ENDURTAKA <span class="takn">↻</span></span>
+    </div>
+    <p>Veldu hvað þú vilt æfa. Í hverju efni eru 4 dæmi sem byrja létt og þyngjast smám saman.</p>
+    <p><a href="veggspjald.html?v=ausa" style="color:var(--appelsina);font-weight:700">Skoðaðu veggspjaldið: aðferðin skref fyrir skref →</a></p>
+    <div id="efnalisti"></div>
+    <button class="adal" id="btnByrja">Byrja</button><span id="upphafVilla" class="villa-texti"></span>
+  </section>
+
+  <!-- Leikskjár -->
+  <section id="leikur" class="falid">
+    <div class="toppur">
+      <div><div class="efni-heiti" id="efniHeiti"></div><div class="stada" id="stada"></div></div>
+      <div class="takkar">
+        <button class="auka" id="btnUpprifjun">Upprifjun</button>
+        <button class="auka" id="btnTafla">Margföldunartafla</button>
+      </div>
+    </div>
+    <div class="skref" id="skrefin">
+      <span class="flis" data-s="deila"><span class="nr">1</span>DEILA <span class="takn">:</span></span>
+      <span class="flis" data-s="margfalda"><span class="nr">2</span>MARGFALDA <span class="takn">·</span></span>
+      <span class="flis" data-s="draga"><span class="nr">3</span>DRAGA FRÁ <span class="takn">−</span></span>
+      <span class="flis" data-s="faera"><span class="nr">4</span>FÆRA NIÐUR <span class="takn">↓</span></span>
+      <span class="flis" data-s="endurtaka"><span class="nr">5</span>ENDURTAKA <span class="takn">↻</span></span>
+    </div>
+    <div class="vinnusvaedi">
+      <div class="kort">
+        <p class="daemi-titill">Reiknaðu: <b id="daemiTexti"></b></p>
+        <div class="uppsetning-ramma" id="uppsetning"></div>
+      </div>
+      <div class="kort verkefni">
+        <div id="lysing"></div>
+        <form class="svarform falid" id="svarform" autocomplete="off">
+          <input id="svar" inputmode="numeric" aria-label="Svar">
+          <button class="adal" type="submit">Athuga</button>
+        </form>
+        <div id="aukatakkar"></div>
+        <div class="endurgjof" id="endurgjof" aria-live="polite"></div>
+        <div id="abending" class="abending falid"></div>
+        <div style="margin-top:.8rem"><button class="auka" id="btnAbending">Fá ábendingu</button></div>
+        <div id="tafla" class="tafla falid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lok -->
+  <section id="lok" class="kort falid">
+    <h2>Vel gert!</h2>
+    <p id="lokTexti"></p>
+    <ul class="lok-listi" id="lokListi"></ul>
+    <button class="adal" id="btnAftur">Spila aftur</button>
+    <button class="auka" id="btnVelja">Velja önnur efni</button>
+  </section>
+</main>
+
+<!-- Upprifjun -->
+<div class="yfirlag falid" id="upprifjun">
+  <div class="kort">
+    <span class="merki">Upprifjun</span>
+    <h2 id="uppTitill"></h2>
+    <div class="upprifjun-innri">
+      <div id="uppDaemi"></div>
+      <div id="uppAtridi"></div>
+    </div>
+    <div style="margin-top:1rem"><button class="adal" id="btnLokaUpp">Byrja á dæmunum</button></div>
+  </div>
+</div>
+
+<script>
+/* ============ Hjálparföll ============ */
+const $ = s => document.querySelector(s);
+const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const velja = arr => arr[Math.floor(Math.random() * arr.length)];
+const hefur0 = n => String(n).includes('0');
+const fyrstiStafur = n => Number(String(n)[0]);
+const NBSP = ' ';
+
+// Þúsundabil eins og í Stiku: 5 496, 14 350
+function thusund(heiltala) {
+  const s = String(heiltala);
+  if (s.length < 4) return s;
+  return s.replace(/\B(?=(\d{3})+(?!\d))/g, NBSP);
+}
+const ein = n => n % 10 === 1 && n % 100 !== 11;
+function erAfgangs(n, enn) { return (ein(n) ? 'Það er ' : 'Það eru ') + (enn ? 'enn ' : '') + n + ' afgangs'; }
+function sinnum(q) { return q === 1 ? 'einu sinni' : q + ' sinnum'; }
+
+/* ============ Dæmi búin til ============ */
+function heil(D, d) { return { digits: String(D).split('').map(Number), comma: null, d }; }
+function kommutala(N, d, aukastafir) {
+  const s = String(N);
+  return { digits: s.split('').map(Number), comma: s.length - aukastafir, d };
+}
+function reyna(fall) {
+  for (let i = 0; i < 20000; i++) { const p = fall(); if (p) return p; }
+  throw new Error('Tókst ekki að búa til dæmi');
+}
+const milli = (x, a, b) => x >= a && x <= b;
+
+const EFNI = [
+  { id: 'e1', hopur: 'Án kommu', heiti: 'Deilt með eins stafs tölu', daemi: '936 : 4',
+    upp: { p: heil(936, 4), atridi: [
+      'Fimm skref: <b>deila, margfalda, draga frá, færa niður</b> og <b>endurtaka</b> þar til allir tölustafirnir hafa verið notaðir.',
+      'Byrjaðu fremst. Ef talan sem deilt er með gengur ekki upp í fyrsta tölustafinn tekurðu næsta tölustaf með.',
+      'Svarið er skrifað ofan á strikið, beint fyrir ofan síðasta tölustafinn sem þú notaðir.',
+      'Ef talan sem deilt er með gengur ekki upp í töluna skrifarðu <b>0</b> í svarið og færir næsta tölustaf niður.'] },
+    threp: [
+      () => { const d = rand(2, 5), q = rand(21, 499), D = q * d; return milli(D, 100, 999) && fyrstiStafur(D) >= d && !hefur0(q) ? heil(D, d) : null; },
+      () => { const d = rand(3, 9), q = rand(12, 99), D = q * d; return milli(D, 100, 999) && fyrstiStafur(D) < d && !hefur0(q) ? heil(D, d) : null; },
+      () => { const d = rand(3, 9), q = rand(112, 3333), D = q * d; return milli(D, 1000, 9999) && !hefur0(q) ? heil(D, d) : null; },
+      () => { const d = rand(2, 9), q = rand(101, 1999), D = q * d; return milli(D, 200, 9999) && hefur0(q) ? heil(D, d) : null; }
+    ] },
+  { id: 'e1a', hopur: 'Án kommu', heiti: 'Deilt með eins stafs tölu – með afgangi', daemi: '447 : 6', afgangur: true,
+    upp: { p: heil(447, 6), afgangur: true, atridi: [
+      'Sömu skref og áður: deila, margfalda, draga frá og færa niður.',
+      'Þegar engir tölustafir eru eftir til að færa niður er talan neðst <b>afgangurinn</b>.',
+      'Afgangurinn er alltaf minni en talan sem deilt er með.',
+      'Svarið er skrifað svona: 447 : 6 = 74 og 3 afgangs.'] },
+    threp: [
+      () => { const d = rand(2, 5), q = rand(21, 499), r = rand(1, d - 1), D = q * d + r; return milli(D, 100, 999) && fyrstiStafur(D) >= d && !hefur0(q) ? heil(D, d) : null; },
+      () => { const d = rand(3, 9), q = rand(12, 99), r = rand(1, d - 1), D = q * d + r; return milli(D, 100, 999) && fyrstiStafur(D) < d && !hefur0(q) ? heil(D, d) : null; },
+      () => { const d = rand(3, 9), q = rand(112, 3333), r = rand(1, d - 1), D = q * d + r; return milli(D, 1000, 9999) && !hefur0(q) ? heil(D, d) : null; },
+      () => { const d = rand(3, 9), q = rand(101, 1999), r = rand(1, d - 1), D = q * d + r; return milli(D, 300, 9999) && hefur0(q) ? heil(D, d) : null; }
+    ] },
+  { id: 't2', hopur: 'Án kommu', heiti: 'Deilt með tveggja stafa tölu', daemi: '5 496 : 12',
+    upp: { p: heil(5496, 12), atridi: [
+      'Sömu skref og áður: deila, margfalda, draga frá og færa niður.',
+      'Oft þarf að taka tvo eða þrjá tölustafi í byrjun. 12 gengur ekki upp í 5 en gengur upp í 54.',
+      'Prófaðu þig áfram: 4 · 12 = 48 og 5 · 12 = 60. 60 er meira en 54, svo 12 gengur 4 sinnum upp í 54.',
+      'Hnappurinn <b>Margföldunartafla</b> sýnir margfeldi tölunnar sem deilt er með.'] },
+    threp: [
+      () => { const d = rand(11, 19), q = rand(2, 9); return heil(q * d, d); },
+      () => { const d = rand(11, 25), q = rand(11, 39), D = q * d; return milli(D, 100, 999) && !hefur0(q) ? heil(D, d) : null; },
+      () => { const d = rand(21, 45), q = rand(11, 49), D = q * d; return milli(D, 300, 1999) && !hefur0(q) ? heil(D, d) : null; },
+      () => { const d = rand(11, 25), q = rand(101, 799), D = q * d; return milli(D, 1000, 9999) ? heil(D, d) : null; }
+    ] },
+  { id: 't2a', hopur: 'Án kommu', heiti: 'Deilt með tveggja stafa tölu – með afgangi', daemi: '71 : 17', afgangur: true,
+    upp: { p: heil(71, 17), afgangur: true, atridi: [
+      'Prófaðu þig áfram: 4 · 17 = 68 og 5 · 17 = 85. 85 er meira en 71, svo 17 gengur 4 sinnum upp í 71.',
+      'Þegar engir tölustafir eru eftir til að færa niður er talan neðst afgangurinn.',
+      'Afgangurinn er alltaf minni en talan sem deilt er með. Hér er 3 minna en 17.',
+      'Svarið er skrifað svona: 71 : 17 = 4 og 3 afgangs.'] },
+    threp: [
+      () => { const d = rand(11, 19), q = rand(2, 9), r = rand(1, d - 1); return heil(q * d + r, d); },
+      () => { const d = rand(11, 25), q = rand(11, 39), r = rand(1, d - 1), D = q * d + r; return milli(D, 100, 999) && !hefur0(q) ? heil(D, d) : null; },
+      () => { const d = rand(21, 45), q = rand(11, 49), r = rand(1, d - 1), D = q * d + r; return milli(D, 300, 1999) && !hefur0(q) ? heil(D, d) : null; },
+      () => { const d = rand(11, 25), q = rand(101, 799), r = rand(1, d - 1), D = q * d + r; return milli(D, 1000, 9999) ? heil(D, d) : null; }
+    ] },
+  { id: 'k1', hopur: 'Með kommu', heiti: 'Tala með kommu – deilt með eins stafs tölu', daemi: '67,5 : 5',
+    upp: { p: kommutala(675, 5, 1), atridi: [
+      'Reiknaðu alveg eins og ef engin komma væri.',
+      'Komman í svarinu fer <b>beint fyrir ofan</b> kommuna í tölunni.',
+      'Settu kommuna í svarið um leið og þú færir niður fyrsta tölustafinn á eftir kommunni.'] },
+    threp: [
+      () => { const d = rand(2, 5), Q = rand(21, 499), N = Q * d; return milli(N, 100, 999) && Math.floor(N / 10) >= d && N % 10 !== 0 ? kommutala(N, d, 1) : null; },
+      () => { const d = rand(3, 9), Q = rand(12, 333), N = Q * d; return milli(N, 100, 999) && Math.floor(N / 10) >= d && N % 10 !== 0 ? kommutala(N, d, 1) : null; },
+      () => { const d = rand(3, 9), Q = rand(112, 3333), N = Q * d; return milli(N, 1000, 9999) && N % 10 !== 0 ? kommutala(N, d, 1) : null; },
+      () => { const d = rand(2, 9), Q = rand(101, 4999), N = Q * d; return milli(N, 1000, 9999) && Math.floor(N / 100) >= d && N % 10 !== 0 ? kommutala(N, d, 2) : null; }
+    ] },
+  { id: 'k2', hopur: 'Með kommu', heiti: 'Tala með kommu – deilt með tveggja stafa tölu', daemi: '67,2 : 12',
+    upp: { p: kommutala(672, 12, 1), atridi: [
+      'Reiknaðu alveg eins og ef engin komma væri.',
+      'Komman í svarinu fer <b>beint fyrir ofan</b> kommuna í tölunni.',
+      'Settu kommuna í svarið um leið og þú færir niður fyrsta tölustafinn á eftir kommunni.',
+      'Prófaðu þig áfram með margföldun eins og áður: 5 · 12 = 60 og 6 · 12 = 72.'] },
+    threp: [
+      () => { const d = rand(11, 15), Q = rand(11, 90), N = Q * d; return milli(N, 100, 999) && Math.floor(N / 10) >= d && N % 10 !== 0 ? kommutala(N, d, 1) : null; },
+      () => { const d = rand(11, 25), Q = rand(11, 99), N = Q * d; return milli(N, 200, 999) && Math.floor(N / 10) >= d && N % 10 !== 0 ? kommutala(N, d, 1) : null; },
+      () => { const d = rand(12, 35), Q = rand(101, 499), N = Q * d; return milli(N, 1000, 9999) && N % 10 !== 0 ? kommutala(N, d, 1) : null; },
+      () => { const d = rand(11, 25), Q = rand(101, 999), N = Q * d; return milli(N, 1000, 9999) && Math.floor(N / 100) >= d && N % 10 !== 0 ? kommutala(N, d, 2) : null; }
+    ] },
+  { id: 'k0', hopur: 'Með kommu', heiti: 'Afgangur – haldið áfram með kommu og 0', daemi: '86 : 4 = 21,5', nulla: true,
+    upp: { p: heil(86, 4), nulla: true, atridi: [
+      'Þegar afgangur er eftir má halda áfram og fá svar með kommu.',
+      '86 er það sama og 86,0. Settu kommu og 0 aftan við töluna.',
+      'Færðu 0 niður og settu kommu í svarið beint fyrir ofan kommuna.',
+      'Haltu áfram þar til ekkert er afgangs. Stundum þarf að bæta við öðru 0.'] },
+    threp: [
+      () => { const d = velja([2, 4, 5]), D = rand(11, 99); return D >= d && D % d !== 0 && (D * 10) % d === 0 ? heil(D, d) : null; },
+      () => { const d = velja([2, 4, 5]), D = rand(100, 999); return D % d !== 0 && (D * 10) % d === 0 ? heil(D, d) : null; },
+      () => { const d = velja([4, 8]), D = rand(10, 999); return D >= d && (D * 10) % d !== 0 && (D * 100) % d === 0 ? heil(D, d) : null; },
+      () => { const d = velja([12, 15, 16, 24, 25, 35, 40, 45]), D = rand(d + 1, 999); return D % d !== 0 && (D * 100) % d === 0 ? heil(D, d) : null; }
+    ] }
+];
+
+/* ============ Rökfræði ausuaðferðarinnar ============ */
+const tala = digs => digs.reduce((a, b) => a * 10 + b, 0);
+
+function nyttAstand(p) {
+  return { p, digits: p.digits.slice(), comma: p.comma, d: p.d, idx: -1, cur: 0, q: {}, rows: [], orvar: [],
+           fasi: 'byrja', kommaSett: false, nulla: !!p.nulla, afgangur: !!p.afgangur, fyrsti: null, blikk: false };
+}
+function fyrstaEnd(S) {
+  let v = 0;
+  for (let i = 0; i < S.digits.length; i++) { v = v * 10 + S.digits[i]; if (v >= S.d) return i; }
+  return S.digits.length - 1;
+}
+const sidasti = S => S.digits.length - 1;
+function stofnTexti(digits, comma) {
+  const heilt = comma === null ? digits : digits.slice(0, comma);
+  const brot = comma === null ? [] : digits.slice(comma);
+  return thusund(heilt.join('')) + (brot.length ? ',' + brot.join('') : '');
+}
+function svarTexti(S) {
+  let heilt = '', brot = '';
+  for (let i = S.fyrsti; i <= S.idx; i++) {
+    if (S.q[i] === undefined) continue;
+    if (S.kommaSett && i >= S.comma) brot += S.q[i]; else heilt += S.q[i];
+  }
+  return thusund(heilt) + (brot ? ',' + brot : '');
+}
+
+function endir(S, s) {
+  if (S.cur === 0) { S.fasi = 'lokid'; return { ok: true, s: s + ' Ekkert er afgangs. Dæmið gengur upp!' }; }
+  if (S.nulla) { S.fasi = 'baeta'; return { ok: true, s }; }
+  S.fasi = 'afgangur'; return { ok: true, s };
+}
+
+function smellaTolustaf(S, i) {
+  if (S.fasi === 'byrja') {
+    const e = fyrstaEnd(S), v = tala(S.digits.slice(0, i + 1));
+    if (i < e) return { ok: false, s: `${S.d} gengur ekki upp í ${v} því ${v} er minna en ${S.d}. Taktu fleiri tölustafi með.` };
+    if (i > e) return { ok: false, s: `Þú þarft ekki svona marga tölustafi. ${S.d} gengur nú þegar upp í ${tala(S.digits.slice(0, e + 1))}.` };
+    S.idx = e; S.cur = v; S.fyrsti = e; S.fasi = 'deila';
+    return { ok: true, s: `Rétt! Við byrjum á ${v}.` };
+  }
+  if (S.fasi === 'faera') {
+    if (i <= S.idx) return { ok: false, s: 'Þessi tölustafur hefur þegar verið notaður. Taktu næsta tölustaf.' };
+    if (i > S.idx + 1) return { ok: false, s: 'Ekki hoppa yfir tölustaf. Taktu þann sem kemur næst.' };
+    const r = S.rows[S.rows.length - 1];
+    r.s += String(S.digits[i]); r.end = i;
+    const ofar = S.rows[S.rows.length - 2];
+    if (ofar && ofar.teg === 'marg') S.orvar.push({ rod: S.rows.length - 2, col: i });
+    S.cur = S.cur * 10 + S.digits[i]; S.idx = i;
+    if (S.comma !== null && i === S.comma && !S.kommaSett) {
+      S.fasi = 'komma';
+      return { ok: true, s: `Rétt! Þú færðir ${S.digits[i]} niður. Þessi tölustafur er á eftir kommunni.` };
+    }
+    S.fasi = 'deila'; S.blikk = true;
+    return { ok: true, s: `Rétt! Nú er talan ${S.cur}. Þá endurtökum við skrefin og byrjum aftur á að deila.` };
+  }
+  return null;
+}
+
+function smellaBil(S, g) {
+  if (S.fasi !== 'komma') return null;
+  if (g !== S.comma - 1) return { ok: false, s: 'Ekki alveg. Komman í svarinu á að vera beint fyrir ofan kommuna í tölunni.' };
+  S.kommaSett = true; S.fasi = 'deila'; S.blikk = true;
+  return { ok: true, s: 'Rétt! Komman í svarinu er beint fyrir ofan kommuna í tölunni. Nú heldurðu áfram að deila.' };
+}
+
+function baeta(S) {
+  if (S.fasi !== 'baeta') return null;
+  const nyKomma = S.comma === null;
+  if (nyKomma) S.comma = S.digits.length;
+  S.digits.push(0);
+  S.fasi = 'faera';
+  return { ok: true, s: nyKomma
+    ? `Nú stendur ${stofnTexti(S.digits, S.comma)}. Talan er jafn stór og áður. Færðu núllið niður.`
+    : `Nú stendur ${stofnTexti(S.digits, S.comma)}. Færðu nýja núllið niður.` };
+}
+
+function svara(S, ans) {
+  if (S.fasi === 'deila') {
+    const q = Math.floor(S.cur / S.d);
+    if (ans === q) {
+      S.q[S.idx] = q;
+      if (q === 0) {
+        if (S.idx < sidasti(S)) { S.fasi = 'faera'; return { ok: true, s: `Rétt! ${S.d} gengur 0 sinnum upp í ${S.cur}. Þá færum við strax næsta tölustaf niður.` }; }
+        return endir(S, `Rétt! ${S.d} gengur 0 sinnum upp í ${S.cur}.`);
+      }
+      S.fasi = 'margfalda';
+      return { ok: true, s: `Rétt! ${S.d} gengur ${sinnum(q)} upp í ${S.cur}.` };
+    }
+    const m = ans * S.d;
+    if (ans > q) return { ok: false, s: `${ans} · ${S.d} = ${thusund(m)}. Það er meira en ${S.cur}. Prófaðu lægri tölu.` };
+    const eftir = S.cur - m;
+    return { ok: false, s: `${ans} · ${S.d} = ${m}. Þá ${ein(eftir) ? 'er' : 'eru'} ${eftir} eftir og ${S.d} gengur upp í ${eftir}. Prófaðu hærri tölu.` };
+  }
+  if (S.fasi === 'margfalda') {
+    const q = S.q[S.idx], p = q * S.d;
+    if (ans !== p) return { ok: false, s: `Ekki alveg. Reiknaðu ${q} · ${S.d} aftur.` };
+    S.rows.push({ teg: 'marg', s: String(p), end: S.idx });
+    S.fasi = 'draga';
+    return { ok: true, s: `Rétt! ${q} · ${S.d} = ${p}.` };
+  }
+  if (S.fasi === 'draga') {
+    const p = S.q[S.idx] * S.d, mism = S.cur - p;
+    if (ans !== mism) return { ok: false, s: `Ekki alveg. Reiknaðu ${S.cur} − ${p} aftur.` };
+    const fyrr = S.cur;
+    S.rows.push({ teg: 'mism', s: String(mism), end: S.idx });
+    S.cur = mism;
+    if (S.idx < sidasti(S)) { S.fasi = 'faera'; return { ok: true, s: `Rétt! ${fyrr} − ${p} = ${mism}.` }; }
+    return endir(S, `Rétt! ${fyrr} − ${p} = ${mism}.`);
+  }
+  if (S.fasi === 'afgangur') {
+    if (ans !== S.cur) return { ok: false, s: `Ekki alveg. Afgangurinn er talan neðst í uppsetningunni.` };
+    S.fasi = 'lokid';
+    return { ok: true, s: `Rétt! ${erAfgangs(S.cur)}.` };
+  }
+  return null;
+}
+
+// Rétta skrefið (notað í upprifjun, þegar svarað er rangt þrisvar og í prófunum)
+function rettSkref(S) {
+  switch (S.fasi) {
+    case 'byrja': return smellaTolustaf(S, fyrstaEnd(S));
+    case 'faera': return smellaTolustaf(S, S.idx + 1);
+    case 'komma': return smellaBil(S, S.comma - 1);
+    case 'baeta': return baeta(S);
+    case 'deila': return svara(S, Math.floor(S.cur / S.d));
+    case 'margfalda': return svara(S, S.q[S.idx] * S.d);
+    case 'draga': return svara(S, S.cur - S.q[S.idx] * S.d);
+    case 'afgangur': return svara(S, S.cur);
+  }
+  return null;
+}
+function rettSvarTexti(S) {
+  switch (S.fasi) {
+    case 'deila': return String(Math.floor(S.cur / S.d));
+    case 'margfalda': return String(S.q[S.idx] * S.d);
+    case 'draga': return String(S.cur - S.q[S.idx] * S.d);
+    case 'afgangur': return String(S.cur);
+  }
+  return '';
+}
+function leysaAllt(p) {
+  const S = nyttAstand(p);
+  for (let n = 0; n < 300 && S.fasi !== 'lokid'; n++) rettSkref(S);
+  S.blikk = false;
+  return S;
+}
+function jafnaTexti(S) {
+  let t = `${stofnTexti(S.p.digits, S.p.comma)} : ${S.d} = ${svarTexti(S)}`;
+  if (S.afgangur && S.cur > 0) t += ` og ${S.cur} afgangs`;
+  return t;
+}
+
+/* ============ Teikning uppsetningar ============ */
+function teiknaUppsetningu(S, gagnvirkt) {
+  const n = S.digits.length;
+  const g = document.createElement('div');
+  g.className = 'uppsetning';
+  const F0 = gagnvirkt ? S.fasi : 'lokid';
+  g.style.gridTemplateColumns = `auto repeat(${n}, 1.25ch ${F0 === 'komma' ? '1.1ch' : '.5ch'})`;
+  const dalkur = i => 2 + 2 * i, bil = i => 3 + 2 * i;
+  const holf = (row, col, txt, cls) => {
+    const c = document.createElement('div');
+    c.className = 'h ' + (cls || '');
+    c.style.gridRow = row; c.style.gridColumn = col;
+    if (txt !== undefined && txt !== null) c.textContent = txt;
+    g.appendChild(c); return c;
+  };
+  const F = gagnvirkt ? S.fasi : 'lokid';
+
+  // Hvaða tala er „núverandi“ tala?  -1 = fremsti hluti tölunnar efst, k = röð k
+  let virkRod = null;
+  if (['deila', 'margfalda'].includes(F)) virkRod = S.rows.length ? S.rows.length - 1 : -1;
+  if (F === 'draga') virkRod = S.rows.length >= 2 ? S.rows.length - 2 : -1;
+  if (F === 'afgangur') virkRod = S.rows.length - 1;
+
+  // Röð 1: svarið
+  for (let i = 0; i < n; i++) {
+    const c = holf(1, dalkur(i), S.q[i] !== undefined ? S.q[i] : '', 'svar');
+    if (F === 'deila' && i === S.idx) { c.classList.add('rauf'); c.textContent = '?'; }
+    const b = holf(1, bil(i), S.kommaSett && i === S.comma - 1 ? ',' : '', 'svar');
+    if (F === 'komma' && i < n - 1) {
+      const k = document.createElement('button');
+      k.className = 'komma-mark'; k.type = 'button'; k.dataset.bil = i;
+      k.setAttribute('aria-label', 'Setja kommu hér'); k.textContent = ',';
+      b.appendChild(k);
+    }
+  }
+  // Röð 2: talan sem deilt er með og talan sem á að deila
+  holf(2, 1, String(S.d), 'deilt-med');
+  for (let i = 0; i < n; i++) {
+    const c = holf(2, dalkur(i), S.digits[i], 'stofn');
+    c.dataset.i = i;
+    if (virkRod === -1 && i <= S.idx) c.classList.add('virk');
+    if (F === 'byrja' || F === 'faera') c.classList.add('smellanlegt');
+    holf(2, bil(i), S.comma !== null && i === S.comma - 1 ? ',' : '', 'stofn');
+  }
+  // Útreikningar fyrir neðan
+  S.rows.forEach((r, k) => {
+    const row = 3 + k, start = r.end - r.s.length + 1;
+    for (let j = 0; j < r.s.length; j++) {
+      const col = start + j;
+      let cls = r.teg === 'marg' ? 'strik' + (j === 0 ? ' minus' : '') : '';
+      if (r.teg === 'mism' && j < r.s.length - 1 && /^0+$/.test(r.s.slice(0, j + 1))) cls += ' dauft';
+      if (virkRod === k) cls += ' virk';
+      holf(row, dalkur(col), r.s[j], cls);
+      if (j < r.s.length - 1) holf(row, bil(col), '', r.teg === 'marg' ? 'strik' : '');
+    }
+  });
+  S.orvar.forEach(o => holf(3 + o.rod, dalkur(o.col), '↓', 'or'));
+  // Auður reitur fyrir næsta svar
+  if (F === 'margfalda' || F === 'draga') {
+    const c = holf(3 + S.rows.length, dalkur(S.idx), '?', 'rauf' + (F === 'margfalda' ? ' minus' : ''));
+  }
+  return g;
+}
+
+/* ============ Viðmót ============ */
+let leikur = { valin: [], rod: [], nr: 0, S: null, villurSkref: 0, villurDaemi: 0, nidurstodur: {}, taflaSynd: false };
+
+function synaSkja(id) {
+  ['upphaf', 'leikur', 'lok'].forEach(s => $('#' + s).classList.toggle('falid', s !== id));
+  window.scrollTo(0, 0);
+}
+
+function teiknaEfnalista() {
+  const box = $('#efnalisti');
+  let html = '', hopur = '';
+  EFNI.forEach((e, i) => {
+    if (e.hopur !== hopur) { if (hopur) html += '</div>'; hopur = e.hopur; html += `<h3>${hopur}</h3><div class="efnalisti">`; }
+    html += `<label><input type="checkbox" id="v_${e.id}" ${i === 0 ? 'checked' : ''}><span>${e.heiti}<br><span class="daemi">t.d. ${e.daemi}</span></span></label>`;
+  });
+  box.innerHTML = html + '</div>';
+}
+
+function byrjaLeik(efni) {
+  const notud = new Set();
+  leikur.valin = efni;
+  leikur.rod = [];
+  leikur.nidurstodur = {};
+  efni.forEach(e => {
+    leikur.nidurstodur[e.id] = { heiti: e.heiti, alls: 0, anVillu: 0 };
+    e.threp.forEach((f, t) => {
+      let p, lykill;
+      do { p = reyna(f); lykill = p.digits.join('') + '|' + p.comma + '|' + p.d; } while (notud.has(lykill));
+      notud.add(lykill);
+      p.afgangur = !!e.afgangur; p.nulla = !!e.nulla;
+      leikur.rod.push({ efni: e, p, threp: t });
+    });
+  });
+  leikur.nr = 0;
+  synaSkja('leikur');
+  synaDaemi();
+}
+
+function synaDaemi() {
+  const x = leikur.rod[leikur.nr];
+  leikur.S = nyttAstand(x.p);
+  leikur.villurSkref = 0; leikur.villurDaemi = 0;
+  setjaEndurgjof('', '');
+  $('#abending').classList.add('falid');
+  teikna();
+  if (x.threp === 0) opnaUpprifjun(x.efni);
+}
+
+function setjaEndurgjof(texti, teg) {
+  const e = $('#endurgjof');
+  e.textContent = texti; e.className = 'endurgjof ' + (teg || '');
+}
+
+function lysing(S) {
+  const d = S.d;
+  switch (S.fasi) {
+    case 'byrja': return `<p><b>Byrjun:</b> Hve marga tölustafi þarftu að taka fremst svo að ${d} gangi upp í töluna?</p><p>Smelltu á <b>síðasta</b> tölustafinn sem þú tekur með.</p>`;
+    case 'deila': return `<p><b>1. Deila:</b> Hve oft gengur ${d} upp í ${S.cur}?</p>`;
+    case 'margfalda': return `<p><b>2. Margfalda:</b> ${S.q[S.idx]} · ${d} = ?</p>`;
+    case 'draga': return `<p><b>3. Draga frá:</b> ${S.cur} − ${S.q[S.idx] * d} = ?</p>`;
+    case 'faera': return `<p><b>4. Færa niður:</b> Smelltu á tölustafinn sem þú færir niður.</p>`;
+    case 'komma': return `<p><b>Komman:</b> Smelltu þar sem komman á að vera í svarinu.</p>`;
+    case 'baeta': return S.comma === null
+      ? `<p><b>Afgangur:</b> ${erAfgangs(S.cur)} en engir tölustafir eru eftir til að færa niður.</p><p>Í stað þess að hætta setjum við kommu og 0 aftan við töluna og höldum áfram.</p>`
+      : `<p><b>Afgangur:</b> ${erAfgangs(S.cur, true)}. Bættu öðru 0 aftan við og haltu áfram.</p>`;
+    case 'afgangur': return `<p><b>Afgangur:</b> Engir tölustafir eru eftir til að færa niður. Hver er afgangurinn?</p>`;
+    case 'lokid': return `<p><b>Svarið er:</b></p><div class="nidurstada">${jafnaTexti(S)}</div>`;
+  }
+  return '';
+}
+
+function abendingTexti(S) {
+  const d = S.d;
+  switch (S.fasi) {
+    case 'byrja': return `Byrjaðu á fremsta tölustafnum, ${S.digits[0]}. Ef ${d} er stærri en ${S.digits[0]} gengur ${d} ekki upp í hann og þú tekur næsta tölustaf með.`;
+    case 'deila': return `Finndu tölu sem þú getur margfaldað með ${d} svo að útkoman verði eins nálægt ${S.cur} og hægt er, en ekki stærri.` + (d > 9 ? ' Margföldunartaflan getur hjálpað.' : '');
+    case 'margfalda': return `Margfaldaðu töluna sem þú skrifaðir síðast í svarið (${S.q[S.idx]}) með ${d}.`;
+    case 'draga': return `Dragðu neðri töluna frá þeirri efri: ${S.cur} − ${S.q[S.idx] * d}.`;
+    case 'faera': return `Taktu næsta tölustaf sem hefur ekki verið notaður. Hann er beint fyrir ofan auða plássið hægra megin við ${S.cur}.`;
+    case 'komma': return `Finndu kommuna í ${stofnTexti(S.digits, S.comma)}. Komman í svarinu fer beint fyrir ofan hana.`;
+    case 'baeta': return `${stofnTexti(S.digits, S.comma)} og ${stofnTexti(S.digits.concat([0]), S.comma === null ? S.digits.length : S.comma)} eru jafn stórar tölur. Þess vegna má bæta 0 aftan við.`;
+    case 'afgangur': return `Afgangurinn er talan neðst. Hann er alltaf minni en ${d}.`;
+  }
+  return 'Dæmið er búið. Smelltu á „Næsta dæmi“.';
+}
+
+function teikna() {
+  const S = leikur.S, x = leikur.rod[leikur.nr];
+  $('#efniHeiti').textContent = x.efni.heiti;
+  $('#stada').textContent = `Dæmi ${leikur.nr + 1} af ${leikur.rod.length}`;
+  $('#daemiTexti').textContent = `${stofnTexti(S.p.digits, S.p.comma)} : ${S.d}`;
+
+  document.querySelectorAll('#skrefin .flis').forEach(f => {
+    f.classList.toggle('nuna', f.dataset.s === S.fasi);
+    f.classList.remove('blikk');
+  });
+  if (S.blikk) {
+    const f = document.querySelector('#skrefin .flis[data-s="endurtaka"]');
+    void f.offsetWidth; f.classList.add('blikk'); S.blikk = false;
+  }
+
+  const ramma = $('#uppsetning');
+  ramma.innerHTML = '';
+  ramma.appendChild(teiknaUppsetningu(S, true));
+
+  $('#lysing').innerHTML = lysing(S);
+  const medInntak = ['deila', 'margfalda', 'draga', 'afgangur'].includes(S.fasi);
+  $('#svarform').classList.toggle('falid', !medInntak);
+  if (medInntak) { $('#svar').value = ''; $('#svar').focus({ preventScroll: true }); }
+
+  const auka = $('#aukatakkar');
+  auka.innerHTML = '';
+  if (S.fasi === 'baeta') {
+    const b = document.createElement('button');
+    b.className = 'adal'; b.id = 'btnBaeta';
+    b.textContent = S.comma === null ? 'Bæta við ,0' : 'Bæta við 0';
+    b.onclick = () => adgerd(baeta(S));
+    auka.appendChild(b);
+  }
+  if (S.fasi === 'lokid') {
+    const b = document.createElement('button');
+    b.className = 'adal'; b.id = 'btnNaesta';
+    b.textContent = leikur.nr < leikur.rod.length - 1 ? 'Næsta dæmi →' : 'Sjá niðurstöður →';
+    b.onclick = naesta;
+    auka.appendChild(b);
+    b.focus({ preventScroll: true });
+  }
+  $('#btnAbending').classList.toggle('falid', S.fasi === 'lokid');
+  teiknaToflu();
+}
+
+function teiknaToflu() {
+  const t = $('#tafla');
+  t.classList.toggle('falid', !leikur.taflaSynd);
+  $('#btnTafla').classList.toggle('virkur', leikur.taflaSynd);
+  if (!leikur.taflaSynd || !leikur.S) return;
+  const d = leikur.S.d;
+  let li = '';
+  for (let k = 1; k <= 9; k++) li += `<li>${k} · ${d} = ${thusund(k * d)}</li>`;
+  t.innerHTML = `<h4>Margföldunartafla ${d}</h4><ul>${li}</ul>`;
+}
+
+function adgerd(nidurstada) {
+  if (!nidurstada) return;
+  const S = leikur.S;
+  if (nidurstada.ok) {
+    leikur.villurSkref = 0;
+    $('#abending').classList.add('falid');
+    const lokid = S.fasi === 'lokid';
+    if (lokid) skraNidurstodu();
+    teikna();
+    setjaEndurgjof(nidurstada.s, 'rett');
+    return;
+  }
+  leikur.villurSkref++; leikur.villurDaemi++;
+  if (leikur.villurSkref >= 3) {
+    const rett = rettSvarTexti(S);
+    const r = rettSkref(S);
+    leikur.villurSkref = 0;
+    $('#abending').classList.add('falid');
+    if (S.fasi === 'lokid') skraNidurstodu();
+    teikna();
+    setjaEndurgjof((rett ? `Rétta svarið er ${rett}. ` : 'Hér er rétta skrefið. ') + r.s.replace(/^Rétt! /, ''), 'uppl');
+    return;
+  }
+  setjaEndurgjof(nidurstada.s, 'rangt');
+}
+
+function skraNidurstodu() {
+  const x = leikur.rod[leikur.nr], n = leikur.nidurstodur[x.efni.id];
+  n.alls++; if (leikur.villurDaemi === 0) n.anVillu++;
+}
+
+function naesta() {
+  if (leikur.nr < leikur.rod.length - 1) { leikur.nr++; synaDaemi(); return; }
+  const listi = Object.values(leikur.nidurstodur);
+  const alls = listi.reduce((a, n) => a + n.alls, 0), an = listi.reduce((a, n) => a + n.anVillu, 0);
+  $('#lokTexti').textContent = `Þú leystir ${alls} dæmi. ${an} þeirra leystirðu án villu.`;
+  $('#lokListi').innerHTML = listi.map(n => `<li><span>${n.heiti}</span><b>${n.anVillu} af ${n.alls} án villu</b></li>`).join('');
+  synaSkja('lok');
+}
+
+function opnaUpprifjun(efni) {
+  const p = Object.assign({}, efni.upp.p, { afgangur: !!efni.upp.afgangur, nulla: !!efni.upp.nulla });
+  const S = leysaAllt(p);
+  $('#uppTitill').textContent = efni.heiti;
+  const box = $('#uppDaemi');
+  box.innerHTML = `<div class="nidurstada" style="font-size:1.15rem">${jafnaTexti(S)}</div>`;
+  const r = document.createElement('div'); r.className = 'uppsetning-ramma';
+  r.appendChild(teiknaUppsetningu(S, false));
+  box.appendChild(r);
+  $('#uppAtridi').innerHTML = '<ul>' + efni.upp.atridi.map(a => `<li>${a}</li>`).join('') + '</ul>';
+  $('#upprifjun').classList.remove('falid');
+  $('#btnLokaUpp').focus();
+}
+function lokaUpprifjun() {
+  $('#upprifjun').classList.add('falid');
+  if (['deila', 'margfalda', 'draga', 'afgangur'].includes(leikur.S?.fasi)) $('#svar').focus({ preventScroll: true });
+}
+
+/* ============ Atburðir ============ */
+$('#btnByrja').onclick = () => {
+  const valin = EFNI.filter(e => $('#v_' + e.id).checked);
+  if (!valin.length) { $('#upphafVilla').textContent = 'Veldu að minnsta kosti eitt efni.'; return; }
+  $('#upphafVilla').textContent = '';
+  byrjaLeik(valin);
+};
+$('#efnalisti').addEventListener('change', () => { $('#upphafVilla').textContent = ''; });
+$('#btnAftur').onclick = () => byrjaLeik(leikur.valin);
+$('#btnVelja').onclick = () => synaSkja('upphaf');
+$('#btnLokaUpp').onclick = lokaUpprifjun;
+$('#upprifjun').addEventListener('click', e => { if (e.target.id === 'upprifjun') lokaUpprifjun(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#upprifjun').classList.contains('falid')) lokaUpprifjun(); });
+$('#btnUpprifjun').onclick = () => opnaUpprifjun(leikur.rod[leikur.nr].efni);
+$('#btnTafla').onclick = () => { leikur.taflaSynd = !leikur.taflaSynd; teiknaToflu(); };
+$('#btnAbending').onclick = () => {
+  const a = $('#abending');
+  a.textContent = abendingTexti(leikur.S);
+  a.classList.remove('falid');
+};
+$('#svarform').addEventListener('submit', e => {
+  e.preventDefault();
+  const v = $('#svar').value.replace(/\s/g, '');
+  if (!/^\d+$/.test(v)) { setjaEndurgjof('Skrifaðu tölu.', 'rangt'); return; }
+  adgerd(svara(leikur.S, Number(v)));
+});
+$('#uppsetning').addEventListener('click', e => {
+  const k = e.target.closest('.komma-mark');
+  if (k) { adgerd(smellaBil(leikur.S, Number(k.dataset.bil))); return; }
+  const t = e.target.closest('.stofn.smellanlegt');
+  if (t) adgerd(smellaTolustaf(leikur.S, Number(t.dataset.i)));
+});
+// Í byrjun: lita tölustafina sem yrðu teknir með
+$('#uppsetning').addEventListener('mouseover', e => {
+  const t = e.target.closest('.stofn.smellanlegt');
+  if (!t || leikur.S.fasi !== 'byrja') return;
+  const i = Number(t.dataset.i);
+  document.querySelectorAll('#uppsetning .stofn.smellanlegt').forEach(c => c.classList.toggle('valid', Number(c.dataset.i) <= i));
+});
+$('#uppsetning').addEventListener('mouseleave', () => {
+  document.querySelectorAll('#uppsetning .stofn.valid').forEach(c => c.classList.remove('valid'));
+});
+
+teiknaEfnalista();
+</script>
+</body>
+</html>

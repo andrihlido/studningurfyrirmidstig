@@ -184,6 +184,33 @@ window.VEGGSPJOLD = {
     ]
   },
 
+  ausa: {
+    titill:"Deiling – Ausuaðferð",
+    inngangur:"Fimm skref sem eru endurtekin: deila, margfalda, draga frá, færa niður og endurtaka.",
+    aefa:[{heiti:"Deiling – Ausuaðferð", slod:"deiling-ausuadferd.html"}],
+    skref:{daemi:"936 : 4", lidir:[
+      {t:"Uppsetning", x:"Skrifaðu töluna sem á að deila undir strikið og töluna sem deilt er með vinstra megin. Svarið kemur ofan á strikið.",
+       m:{teg:"ausa", tala:"936", deilir:4, skref:0}},
+      {t:"Deila", x:"Hve oft gengur 4 upp í 9? 2 sinnum. Skrifaðu 2 ofan á strikið, beint fyrir ofan 9.",
+       m:{teg:"ausa", tala:"936", deilir:4, skref:2}},
+      {t:"Margfalda", x:"2 · 4 = 8. Skrifaðu 8 undir 9.",
+       m:{teg:"ausa", tala:"936", deilir:4, skref:3}},
+      {t:"Draga frá", x:"9 − 8 = 1.",
+       m:{teg:"ausa", tala:"936", deilir:4, skref:4}},
+      {t:"Færa niður", x:"Færðu næsta tölustaf, 3, niður við hliðina á 1. Nú er talan 13.",
+       m:{teg:"ausa", tala:"936", deilir:4, skref:5}},
+      {t:"Endurtaka", x:"Byrjaðu aftur á að deila: 4 gengur 3 sinnum upp í 13. Haltu áfram þar til allir tölustafirnir hafa verið notaðir.",
+       m:{teg:"ausa", tala:"936", deilir:4}}
+    ]},
+    auka:{titill:"Með afgangi", x:"Þegar engir tölustafir eru eftir til að færa niður er talan neðst afgangurinn. Hann er alltaf minni en talan sem deilt er með.",
+      m:[{teg:"ausa", tala:"447", deilir:6},{teg:"jofnur", linur:[{s:"447 : 6 = [74 og 3 afgangs]"}]}]},
+    leidir:{x:"Sama dæmi, ólíkar leiðir. Svarið við 936 : 4 er alltaf 234.", lidir:[
+      {t:"Ausuaðferð", x:"Deila, margfalda, draga frá og færa niður.", m:{teg:"ausa", tala:"936", deilir:4}, svar:"234"},
+      {t:"Stikuaðferð", x:"Margföldun sem þú kannt, skref fyrir skref.", m:{teg:"deiling", tala:"936", deilir:4, skref:[200,30,4]}, svar:"200 + 30 + 4 = 234"},
+      {t:"Prófun með rúðuneti", x:"Margfaldaðu svarið með 4. Þá áttu að fá 936.", m:{teg:"rudunet", a:[200,30,4], b:[4]}, svar:"800 + 120 + 16 = 936"}
+    ], nidur:"Allar leiðirnar sýna að 936 : 4 = 234."}
+  },
+
   tugabrot: {
     titill:"Tugabrot – margföldun og deiling",
     inngangur:"Reiknaðu eins og með heilar tölur en hafðu sætin í huga: einingar, tíundu hlutar og hundraðshlutar.",

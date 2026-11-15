@@ -6,38 +6,77 @@
 <title>Stuðningur fyrir miðstig</title>
 <link rel="stylesheet" href="sameiginlegt.css">
 <style>
+/* Litir hverrar tegundar */
+:root{
+  --vs-bg:#EEF5FE; --vs-line:#C7DBF4; --vs-tag:#D6E6FB; --vs-ink:#1E4C8A; --vs-acc:#3B78C4;
+  --hu-bg:#F5F3FC; --hu-line:#DCD5F0; --hu-tag:#E6E0F7; --hu-ink:#4A3C8C; --hu-acc:#7563C2;
+  --le-bg:#FFF1F1; --le-line:#F5CACA; --le-tag:#FBDADA; --le-ink:#9B2226; --le-acc:#D64545;
+  --pr-bg:#EEFAF2; --pr-line:#BFE5CC; --pr-tag:#D5F1DF; --pr-ink:#14532D; --pr-acc:#2E9E5B;
+}
 .hero{display:flex;flex-direction:column;gap:8px;margin:8px 0 22px}
 .hero p{font-size:20px;max-width:720px}
-.quick{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:26px}
-.quick a{display:flex;flex-direction:column;gap:2px;flex:1 1 240px;max-width:380px;background:var(--card);border:1.5px solid var(--line);border-left:6px solid var(--acc);border-radius:14px;padding:14px 18px;color:var(--ink);text-decoration:none}
-.quick a:hover{border-color:var(--acc)}
+.quick{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.quick a{display:flex;flex-direction:column;gap:2px;flex:1 1 240px;max-width:380px;border:1.5px solid var(--line);border-left-width:6px;border-radius:14px;padding:14px 18px;color:var(--ink);text-decoration:none}
+.quick a.hugtok{background:var(--hu-bg);border-color:var(--hu-line);border-left-color:var(--hu-acc)}
+.quick a.utskyring{background:var(--vs-bg);border-color:var(--vs-line);border-left-color:var(--vs-acc)}
+.quick a:hover{filter:brightness(.98);box-shadow:0 2px 8px rgba(31,42,68,.08)}
 .quick b{font-size:19px}
 .quick span{color:var(--muted);font-size:16px}
-.tools{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:26px}
-.filter{font:inherit;font-weight:700;min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
-.filter[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:#fff}
+
+.tools{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.filter{font:inherit;font-weight:700;min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.filter .dot{width:12px;height:12px;border-radius:50%}
+.filter[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
 .search{font:inherit;min-height:44px;padding:8px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);flex:1 1 220px;max-width:360px}
-.flokkur{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:20px 22px;margin-bottom:20px}
-.flokkur-head{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+
+.listihaus{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0 12px}
+.litaskyring{display:flex;gap:14px;flex-wrap:wrap;font-size:15px;color:var(--muted)}
+.litaskyring span{display:inline-flex;align-items:center;gap:6px}
+.litaskyring i{width:14px;height:14px;border-radius:4px;border:1.5px solid}
+.btn-texti{font:inherit;font-weight:700;font-size:15px;background:none;border:0;color:var(--acc-dark);cursor:pointer;min-height:44px;padding:0 4px}
+
+/* Kaflar sem opnast og lokast */
+details.kafli{background:var(--card);border:1.5px solid var(--line);border-radius:18px;margin-bottom:12px;overflow:hidden}
+details.kafli[open]{border-color:var(--acc-line)}
+details.kafli summary{list-style:none;display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;min-height:64px}
+details.kafli summary::-webkit-details-marker{display:none}
+details.kafli summary:hover{background:var(--soft)}
+details.kafli summary:focus-visible{outline:3px solid #2563EB;outline-offset:-3px}
 .knr{flex:none;width:44px;height:44px;border-radius:12px;background:var(--acc);color:#fff;font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center}
-.flokkur-head h2{margin:0;font-size:24px}
-.flokkur-head p{color:var(--muted);font-size:15px}
+.kafli-texti{flex:1;min-width:0}
+.kafli-texti h2{margin:0;font-size:22px}
+.kafli-texti p{color:var(--muted);font-size:15px}
+.ord{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.ord span{font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px}
+.ord .utskyring{background:var(--vs-tag);color:var(--vs-ink)}
+.ord .leikur{background:var(--le-tag);color:var(--le-ink)}
+.ord .prof{background:var(--pr-tag);color:var(--pr-ink)}
+.ord .hugtok{background:var(--hu-tag);color:var(--hu-ink)}
+.or{flex:none;width:28px;height:28px;transition:transform .2s ease;color:var(--muted)}
+details.kafli[open] .or{transform:rotate(180deg)}
+.kafli-efni{padding:4px 20px 20px}
 .dalkar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 .dalkar.einn{grid-template-columns:minmax(0,1fr)}
 .dalkur h3{margin:0 0 10px;font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
 .atridi{display:flex;flex-direction:column;gap:10px}
-.item{display:flex;flex-direction:column;gap:3px;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--ink);text-decoration:none;background:#fff}
-.item:hover{border-color:var(--acc);background:var(--acc-bg)}
+
+/* Efni, litað eftir tegund */
+.item{display:flex;flex-direction:column;gap:3px;border:1.5px solid var(--line);border-left-width:6px;border-radius:12px;padding:12px 14px;color:var(--ink);text-decoration:none}
+.item:hover{box-shadow:0 2px 8px rgba(31,42,68,.1)}
 .item .t{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .item b{font-size:18px}
 .item .lys{color:var(--muted);font-size:15px}
 .mk{font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;letter-spacing:.02em}
-.mk.utskyring{background:#E7F0FB;color:#1E4C8A}
-.mk.hugtok{background:#EEF0F5;color:#3B4660}
-.mk.leikur{background:var(--acc-bg);color:var(--acc-dark)}
-.mk.prof{background:#ECFDF3;color:#14532D}
+.item.utskyring{background:var(--vs-bg);border-color:var(--vs-line);border-left-color:var(--vs-acc)}
+.item.utskyring .mk{background:var(--vs-tag);color:var(--vs-ink)}
+.item.hugtok{background:var(--hu-bg);border-color:var(--hu-line);border-left-color:var(--hu-acc)}
+.item.hugtok .mk{background:var(--hu-tag);color:var(--hu-ink)}
+.item.leikur{background:var(--le-bg);border-color:var(--le-line);border-left-color:var(--le-acc)}
+.item.leikur .mk{background:var(--le-tag);color:var(--le-ink)}
+.item.prof{background:var(--pr-bg);border-color:var(--pr-line);border-left-color:var(--pr-acc)}
+.item.prof .mk{background:var(--pr-tag);color:var(--pr-ink)}
 .tomt{color:var(--muted);background:var(--card);border:1.5px dashed var(--line);border-radius:16px;padding:18px 20px}
-@media (max-width:760px){ .dalkar{grid-template-columns:minmax(0,1fr)} .hero p{font-size:18px} }
+@media (max-width:760px){ .dalkar{grid-template-columns:minmax(0,1fr)} .hero p{font-size:18px} details.kafli summary{padding:14px 14px} .kafli-efni{padding:4px 14px 16px} }
 </style>
 </head>
 <body class="fag-staerdfraedi">
@@ -48,14 +87,24 @@
   </header>
 
   <nav class="quick" aria-label="Flýtileiðir">
-    <a href="staerdfraedi/hugtakasafn.html"><b>Hugtakasafn</b><span>Orð og hugtök með dæmi og mynd</span></a>
-    <a href="staerdfraedi/veggspjald.html"><b>Öll veggspjöld</b><span>Aðferðir skref fyrir skref</span></a>
+    <a class="hugtok" href="staerdfraedi/hugtakasafn.html"><b>Hugtakasafn</b><span>Orð og hugtök með dæmi og mynd</span></a>
+    <a class="utskyring" href="staerdfraedi/veggspjald.html"><b>Öll veggspjöld</b><span>Aðferðir skref fyrir skref</span></a>
   </nav>
 
   <div class="tools">
     <div class="row" id="filters" role="group" aria-label="Velja tegund"></div>
     <label for="search" class="sr-only">Leita</label>
     <input class="search" id="search" type="search" placeholder="Leita, t.d. deiling" autocomplete="off">
+  </div>
+
+  <div class="listihaus">
+    <div class="litaskyring" aria-label="Litaskýring">
+      <span><i style="background:var(--vs-bg);border-color:var(--vs-acc)"></i>Veggspjald</span>
+      <span><i style="background:var(--hu-bg);border-color:var(--hu-acc)"></i>Hugtök</span>
+      <span><i style="background:var(--le-bg);border-color:var(--le-acc)"></i>Leikur</span>
+      <span><i style="background:var(--pr-bg);border-color:var(--pr-acc)"></i>Kaflapróf</span>
+    </div>
+    <button class="btn-texti" type="button" id="btnAllir">Opna alla kafla</button>
   </div>
 
   <main id="list"></main>
@@ -66,16 +115,24 @@
 (function(){
   "use strict";
   var FLOKKAR = window.FLOKKAR || [], EFNI = window.EFNI || [];
-  var TEG = [{id:"allt", heiti:"Allt"}, {id:"utskyring", heiti:"Útskýringar"}, {id:"leikur", heiti:"Leikir"}];
-  var state = {teg: "allt", leit: ""};
+  var TEG = [{id:"allt", heiti:"Allt"}, {id:"utskyring", heiti:"Útskýringar", lit:"var(--vs-acc)"}, {id:"leikur", heiti:"Leikir", lit:"var(--le-acc)"}];
+  var LYKILL = "studningur-opnir-kaflar";
+  var state = {teg: "allt", leit: "", opnir: lesa()};
+
+  /* Hvaða kaflar eru opnir er geymt í vafranum (aðeins til þæginda) */
+  function lesa(){ try { return JSON.parse(localStorage.getItem(LYKILL)) || []; } catch(e){ return []; } }
+  function vista(){ try { localStorage.setItem(LYKILL, JSON.stringify(state.opnir)); } catch(e){} }
 
   function esc(s){
     return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; });
   }
+  function fjoldi(n, et, ft){ return n + " " + (n % 10 === 1 && n % 100 !== 11 ? et : ft); }
+
   function renderFilters(){
     var box = document.getElementById("filters"); box.innerHTML = "";
     TEG.forEach(function(f){
-      var b = document.createElement("button"); b.type = "button"; b.className = "filter"; b.textContent = f.heiti;
+      var b = document.createElement("button"); b.type = "button"; b.className = "filter";
+      b.innerHTML = (f.lit ? "<span class=\"dot\" style=\"background:" + f.lit + "\"></span>" : "") + f.heiti;
       b.setAttribute("aria-pressed", String(state.teg === f.id));
       b.addEventListener("click", function(){ state.teg = f.id; renderFilters(); renderList(); });
       box.appendChild(b);
@@ -85,21 +142,25 @@
     if(!state.leit) return true;
     return (x.titill + " " + x.lysing + " " + (x.flokkur || "")).toLowerCase().indexOf(state.leit) !== -1;
   }
-  function item(x, mk, mkHeiti){
-    return "<a class=\"item\" href=\"" + esc(x.slod) + "\"><span class=\"t\"><span class=\"mk " + mk + "\">" + mkHeiti + "</span><b>" + esc(x.titill) + "</b></span>" +
+  function item(x, teg, heiti){
+    return "<a class=\"item " + teg + "\" href=\"" + esc(x.slod) + "\"><span class=\"t\"><span class=\"mk\">" + heiti + "</span><b>" + esc(x.titill) + "</b></span>" +
            "<span class=\"lys\">" + esc(x.lysing) + "</span></a>";
   }
+  var OR = "<svg class=\"or\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M6 9l6 6 6-6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>";
+
   function renderList(){
-    var html = "";
+    var html = "", syndir = [];
     FLOKKAR.forEach(function(f){
-      var skilja = [], aefa = [];
+      var skilja = [], aefa = [], nV = 0, nL = 0, prof = false;
       EFNI.forEach(function(e){
         if(e.flokkar.indexOf(f.id) === -1) return;
         var x = {titill:e.titill, lysing:e.lysing, slod:e.slod, flokkur:f.heiti};
-        if(e.tegund === "utskyring"){ if(passar(x)) skilja.push(item(x, "utskyring", "Veggspjald")); }
+        if(e.tegund === "utskyring"){ nV++; if(passar(x)) skilja.push(item(x, "utskyring", "Veggspjald")); }
         else {
+          nL++;
           if(passar(x)) aefa.push(item(x, "leikur", "Leikur"));
           if(e.kaflaprof){
+            prof = true;
             var p = {titill:"Æfing fyrir kaflapróf", lysing:"Spurningar úr öllum efnum kaflans, án upprifjunar.", slod:e.slod + "#kaflaprof", flokkur:f.heiti + " próf"};
             if(passar(p)) aefa.push(item(p, "prof", "Kaflapróf"));
           }
@@ -109,15 +170,43 @@
       if(passar(h)) skilja.push(item(h, "hugtok", "Hugtök"));
       var synaS = state.teg !== "leikur" && skilja.length, synaA = state.teg !== "utskyring" && aefa.length;
       if(!synaS && !synaA) return;
-      html += "<section class=\"flokkur\" aria-labelledby=\"h-" + f.id + "\"><div class=\"flokkur-head\"><span class=\"knr\" aria-hidden=\"true\">" + f.kafli + "</span>" +
-              "<div><h2 id=\"h-" + f.id + "\">" + esc(f.heiti) + "</h2><p>Stika 3a · " + f.kafli + ". kafli</p></div></div>" +
-              "<div class=\"dalkar" + (synaS && synaA ? "" : " einn") + "\">" +
+      syndir.push(f.id);
+      var opinn = state.leit ? true : state.opnir.indexOf(f.id) !== -1;
+      var ord = (nV ? "<span class=\"utskyring\">" + fjoldi(nV, "veggspjald", "veggspjöld") + "</span>" : "") +
+                (nL ? "<span class=\"leikur\">" + fjoldi(nL, "leikur", "leikir") + "</span>" : "") +
+                (prof ? "<span class=\"prof\">Kaflapróf</span>" : "") + "<span class=\"hugtok\">Hugtök</span>";
+      html += "<details class=\"kafli\" data-id=\"" + f.id + "\"" + (opinn ? " open" : "") + "><summary>" +
+              "<span class=\"knr\" aria-hidden=\"true\">" + f.kafli + "</span><span class=\"kafli-texti\"><h2>" + esc(f.heiti) + "</h2>" +
+              "<p>Stika 3a · " + f.kafli + ". kafli</p><span class=\"ord\">" + ord + "</span></span>" + OR + "</summary>" +
+              "<div class=\"kafli-efni\"><div class=\"dalkar" + (synaS && synaA ? "" : " einn") + "\">" +
               (synaS ? "<div class=\"dalkur\"><h3>Skilja</h3><div class=\"atridi\">" + skilja.join("") + "</div></div>" : "") +
               (synaA ? "<div class=\"dalkur\"><h3>Æfa</h3><div class=\"atridi\">" + aefa.join("") + "</div></div>" : "") +
-              "</div></section>";
+              "</div></div></details>";
     });
-    document.getElementById("list").innerHTML = html || "<p class=\"tomt\">Ekkert fannst. Prófaðu annað leitarorð.</p>";
+    var list = document.getElementById("list");
+    list.innerHTML = html || "<p class=\"tomt\">Ekkert fannst. Prófaðu annað leitarorð.</p>";
+    list.querySelectorAll("details.kafli").forEach(function(d){
+      d.addEventListener("toggle", function(){
+        if(state.leit) return;                       /* Við leit eru allir kaflar opnir; það breytir ekki vistuðu vali */
+        var id = d.getAttribute("data-id"), i = state.opnir.indexOf(id);
+        if(d.open && i === -1) state.opnir.push(id);
+        if(!d.open && i !== -1) state.opnir.splice(i, 1);
+        vista(); uppfaeraHnapp();
+      });
+    });
+    state.syndir = syndir;
+    uppfaeraHnapp();
   }
+  function allirOpnir(){ return (state.syndir || []).length && state.syndir.every(function(id){ return state.opnir.indexOf(id) !== -1; }); }
+  function uppfaeraHnapp(){
+    var b = document.getElementById("btnAllir");
+    b.hidden = !!state.leit;
+    b.textContent = allirOpnir() ? "Loka öllum köflum" : "Opna alla kafla";
+  }
+  document.getElementById("btnAllir").addEventListener("click", function(){
+    state.opnir = allirOpnir() ? [] : FLOKKAR.map(function(f){ return f.id; });
+    vista(); renderList();
+  });
   document.getElementById("search").addEventListener("input", function(e){ state.leit = e.target.value.trim().toLowerCase(); renderList(); });
   renderFilters();
   renderList();

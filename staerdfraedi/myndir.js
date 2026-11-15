@@ -39,6 +39,16 @@
     ".saeti th{font-size:12px;font-weight:400;color:var(--muted);vertical-align:top;padding:4px 3px;line-height:1.2}",
     ".saeti .k{min-width:10px;padding:0}",
     ".saeti .on{color:var(--acc-dark);background:var(--acc-bg)}",
+    ".ausa{display:inline-grid;font-size:30px;line-height:1.3;grid-auto-rows:1.3em;font-weight:400;font-variant-numeric:tabular-nums;padding:4px 6px 4px 34px}",
+    ".ausa .h{position:relative;display:flex;align-items:center;justify-content:center;white-space:nowrap}",
+    ".ausa .dm{justify-content:flex-end;padding-right:.35ch;border-right:3px solid var(--ink);color:var(--acc-dark);font-weight:700}",
+    ".ausa .st{border-top:3px solid var(--ink)}",
+    ".ausa .sv{color:var(--acc-dark);font-weight:700}",
+    ".ausa .strik{border-bottom:2px solid var(--ink)}",
+    ".ausa .minus::before{content:'−';position:absolute;right:100%;margin-right:.08ch;color:#2E9E5B;font-weight:700}",
+    ".ausa .dauft{color:transparent}",
+    ".ausa .or{color:#2E9E5B;font-size:.7em;font-weight:700}",
+    ".ausa .nytt{background:var(--acc-bg);color:var(--acc-dark);font-weight:700;border-radius:4px}",
     ".frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;margin:0 2px;font-size:.85em}",
     ".frac span:first-child{border-bottom:2px solid currentColor;padding:0 3px 2px}",
     ".frac span:last-child{padding:2px 3px 0}"
@@ -213,7 +223,7 @@
 
   /* Tómt rúðunet (flatarmálslíkan) */
   M.rudunet = function(m){
-    var cw = m.a.map(function(v, i){ return i === 0 ? 190 : 120; }), rh = m.b.map(function(v, i){ return i === 0 ? 92 : 64; });
+    var cw = m.a.map(function(v, i){ return m.a.length > 2 ? (i === 0 ? 150 : 100) : (i === 0 ? 190 : 120); }), rh = m.b.map(function(v, i){ return i === 0 ? 92 : 64; });
     var x0 = 60, y0 = 16, s = "", W = x0 + cw.reduce(function(a, b){ return a + b; }, 0) + 16, H = y0 + rh.reduce(function(a, b){ return a + b; }, 0) + 40;
     var y = y0;
     m.b.forEach(function(bv, r){
@@ -458,6 +468,66 @@
       x += w + gap;
     });
     return svg(Math.round(x - gap + 90), Math.round(base + 40), "Einslaga myndir", s);
+  };
+
+  /* Ausuaðferð: sama uppsetning og í leiknum Deiling – Ausuaðferð.
+     skref segir hve mörgum aðgerðum er lokið (byrja, deila, margfalda, draga frá, færa niður …). */
+  M.ausa = function(m){
+    var dig = String(m.tala).split("").map(Number), d = m.deilir, n = dig.length;
+    var S = {idx:-1, cur:0, q:{}, rows:[], orvar:[], fasi:"byrja", fyrsti:0, nytt:null};
+    function tala(a, b){ var v = 0; for(var i = a; i <= b; i++) v = v*10 + dig[i]; return v; }
+    function adgerd(){
+      var q, p, r;
+      if(S.fasi === "byrja"){
+        var e = n - 1, v = 0; for(var i = 0; i < n; i++){ v = v*10 + dig[i]; if(v >= d){ e = i; break; } }
+        S.idx = e; S.fyrsti = e; S.cur = tala(0, e); S.fasi = "deila"; S.nytt = {teg:"stofn", upp:e};
+      } else if(S.fasi === "deila"){
+        q = Math.floor(S.cur / d); S.q[S.idx] = q; S.nytt = {teg:"q", i:S.idx};
+        S.fasi = q === 0 ? (S.idx < n - 1 ? "faera" : "lokid") : "margfalda";
+      } else if(S.fasi === "margfalda"){
+        p = S.q[S.idx] * d; S.rows.push({teg:"marg", s:String(p), end:S.idx}); S.fasi = "draga"; S.nytt = {teg:"rod", k:S.rows.length - 1};
+      } else if(S.fasi === "draga"){
+        p = S.q[S.idx] * d; S.cur = S.cur - p; S.rows.push({teg:"mism", s:String(S.cur), end:S.idx});
+        S.fasi = S.idx < n - 1 ? "faera" : "lokid"; S.nytt = {teg:"rod", k:S.rows.length - 1};
+      } else if(S.fasi === "faera"){
+        r = S.rows[S.rows.length - 1];
+        if(!r){ r = {teg:"mism", s:String(S.cur), end:S.idx}; S.rows.push(r); }
+        r.s += String(dig[S.idx + 1]); r.end = S.idx + 1;
+        var ofar = S.rows[S.rows.length - 2];
+        if(ofar && ofar.teg === "marg") S.orvar.push({rod:S.rows.length - 2, col:S.idx + 1});
+        S.cur = S.cur*10 + dig[S.idx + 1]; S.idx++; S.fasi = "deila"; S.nytt = {teg:"rod", k:S.rows.length - 1, faert:S.idx};
+      }
+    }
+    var fjoldi = m.skref === undefined ? 999 : m.skref;
+    for(var k = 0; k < fjoldi && S.fasi !== "lokid"; k++) adgerd();
+    if(m.skref === undefined) S.nytt = null;
+
+    var h = "", nyttR = S.nytt && S.nytt.teg === "rod" ? S.nytt.k : -1;
+    function holf(row, col, t, cls){ h += "<div class=\"h " + (cls || "") + "\" style=\"grid-row:" + row + ";grid-column:" + col + "\">" + (t === undefined || t === null ? "" : t) + "</div>"; }
+    function dalkur(i){ return 2 + 2*i; }
+    function bil(i){ return 3 + 2*i; }
+    for(var i = 0; i < n; i++){
+      var qv = S.q[i];
+      holf(1, dalkur(i), qv !== undefined ? qv : "", "sv" + (S.nytt && S.nytt.teg === "q" && S.nytt.i === i ? " nytt" : ""));
+    }
+    holf(2, 1, d, "dm");
+    for(var j = 0; j < n; j++){
+      var upp = S.nytt && S.nytt.teg === "stofn" && j <= S.nytt.upp;
+      holf(2, dalkur(j), dig[j], "st" + (upp ? " nytt" : ""));
+      holf(2, bil(j), "", "st");
+    }
+    S.rows.forEach(function(r, k){
+      var row = 3 + k, start = r.end - r.s.length + 1;
+      for(var c = 0; c < r.s.length; c++){
+        var cls = r.teg === "marg" ? "strik" + (c === 0 ? " minus" : "") : "";
+        if(r.teg === "mism" && c < r.s.length - 1 && /^0+$/.test(r.s.slice(0, c + 1))) cls += " dauft";
+        if(k === nyttR && !(S.nytt.faert !== undefined && start + c !== S.nytt.faert)) cls += " nytt";
+        holf(row, dalkur(start + c), r.s.charAt(c), cls);
+        if(c < r.s.length - 1) holf(row, bil(start + c), "", r.teg === "marg" ? "strik" : "");
+      }
+    });
+    S.orvar.forEach(function(o){ holf(3 + o.rod, dalkur(o.col), "↓", "or"); });
+    return "<div class=\"ausa\" style=\"grid-template-columns:auto repeat(" + n + ", 1.25ch .5ch)\" aria-label=\"Ausuaðferð\">" + h + "</div>";
   };
 
   M.teikna = function(m){

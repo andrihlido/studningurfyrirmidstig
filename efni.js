@@ -27,6 +27,8 @@ window.EFNI = [
     lysing: "Dæminu bútað niður í minni hluta, t.d. 22 · 12 = 22 · 10 + 22 · 2.", slod: "staerdfraedi/veggspjald.html?v=margfoldun" },
   { titill: "Deiling – Stikuaðferð", tegund: "utskyring", flokkar: ["margfoldun"],
     lysing: "Deilt með margföldun sem þú kannt, skref fyrir skref.", slod: "staerdfraedi/veggspjald.html?v=deiling" },
+  { titill: "Deiling – Ausuaðferð", tegund: "utskyring", flokkar: ["margfoldun"],
+    lysing: "Deila, margfalda, draga frá, færa niður og endurtaka.", slod: "staerdfraedi/veggspjald.html?v=ausa" },
   { titill: "Tugabrot – margföldun og deiling", tegund: "utskyring", flokkar: ["margfoldun"],
     lysing: "Rúðunet, tíundu hlutar og hvar komman á að vera.", slod: "staerdfraedi/veggspjald.html?v=tugabrot" },
   { titill: "Hornasumma", tegund: "utskyring", flokkar: ["rumfraedi"],
@@ -43,6 +45,8 @@ window.EFNI = [
     lysing: "Hlutföll, möguleikar, frumtölur, margföldun, deiling, tugabrot og svigar.", slod: "staerdfraedi/margfoldun-og-deiling.html" },
   { titill: "Deiling – Stikuaðferð", tegund: "leikur", flokkar: ["margfoldun"],
     lysing: "Æfðu deilingu með margföldun sem þú kannt.", slod: "staerdfraedi/deiling-stikuadferd.html" },
+  { titill: "Deiling – Ausuaðferð", tegund: "leikur", flokkar: ["margfoldun"],
+    lysing: "Deila, margfalda, draga frá, færa niður og endurtaka.", slod: "staerdfraedi/deiling-ausuadferd.html" },
   { titill: "Rúmfræði", tegund: "leikur", flokkar: ["rumfraedi"], kaflaprof: true,
     lysing: "Horn, snúningur, hringir, þríhyrningar, ferhyrningar, einslaga form og mælikvarði.", slod: "staerdfraedi/rumfraedi.html" }
 ];
