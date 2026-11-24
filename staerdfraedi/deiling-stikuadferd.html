@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Deiling – Stikuaðferð</title>
 <link rel="stylesheet" href="../sameiginlegt.css">
+<link rel="stylesheet" href="leikjarammi.css">
 <style>
 
 /* Upphafsskjár */
@@ -70,58 +71,17 @@ th{font-size:15px;color:var(--muted)}
 <div class="wrap">
 <a class="heim" href="../index.html">← Forsíða</a>
 
-<!-- Upphafsskjár -->
-<section id="start">
-  <div class="top">
-    <div class="stack" style="gap:6px">
-      <h1>Deiling – Stikuaðferð</h1>
-      <p class="muted">Æfðu þig að deila með margföldun sem þú kannt.</p>
-      <p><a href="veggspjald.html?v=deiling" style="color:var(--acc-dark);font-weight:700">Skoðaðu veggspjaldið: aðferðin skref fyrir skref →</a></p>
-    </div>
-  </div>
-  <div class="start-grid">
-    <div class="card stack">
-      <h2>Veldu stig</h2>
-      <div class="levels" id="levels"></div>
-      <label class="check"><input type="checkbox" id="optHelper" checked> Sýna hjálparlista</label>
-      <label class="check"><input type="checkbox" id="optEasy"> Leikurinn reiknar margföldunina fyrir mig (auðveldara)</label>
-      <label class="check"><input type="checkbox" id="optRem"> Taka með dæmi með afgangi</label>
-      <div class="row"><button class="btn acc" id="btnStart">Byrja – 5 dæmi</button></div>
-      <hr style="border:0;border-top:1.5px solid var(--line);margin:4px 0">
-      <h2 style="margin:0">Æfa ákveðið dæmi</h2>
-      <div class="row">
-        <label class="sr" for="cDividend" style="position:absolute;left:-9999px">Talan sem á að deila</label>
-        <input class="num-in" id="cDividend" inputmode="numeric" autocomplete="off" placeholder="5215">
-        <span class="mono" style="font-size:24px">:</span>
-        <label for="cDivisor" style="position:absolute;left:-9999px">Talan sem deilt er með</label>
-        <input class="num-in small" id="cDivisor" inputmode="numeric" autocomplete="off" placeholder="5">
-        <button class="btn ghost" id="btnCustom">Æfa</button>
-      </div>
-      <p id="customMsg" class="tip" role="status"></p>
-    </div>
-    <div class="card stack">
-      <h2>Svona virkar þetta</h2>
-      <ol class="howto">
-        <li>Veldu tölu sem þú kannt að margfalda með.</li>
-        <li>Margfaldaðu.</li>
-        <li>Dragðu frá.</li>
-        <li>Endurtaktu þar til talan sem er eftir er minni en talan sem þú deilir með.</li>
-        <li>Leggðu saman tölurnar hægra megin línunnar.</li>
-      </ol>
-      <p class="tip">Ef 0 er eftir gengur dæmið upp. Ef önnur tala er eftir er hún afgangurinn.</p>
-      <p class="tip">Það eru margar réttar leiðir. Fleiri skref eru ekki röng, bara lengri leið að sama svari.</p>
-    </div>
-  </div>
-</section>
+<!-- Upphafsskjár (teiknaður af leikjarammi.js) -->
+<section id="upphaf"></section>
 
 <!-- Leikjaskjár -->
-<section id="play" class="hidden">
+<section id="leikur" class="hidden">
   <div class="top">
     <div class="stack" style="gap:4px">
       <p class="muted" id="progress">Dæmi 1 af 5</p>
       <p class="problem" id="problemText">5215 : 5</p>
     </div>
-    <button class="btn ghost" id="btnQuit">Hætta</button>
+    <div class="row"><button class="btn ghost" id="btnUpp">Upprifjun</button><button class="btn ghost" id="btnQuit">Hætta</button></div>
   </div>
   <div class="game">
     <div class="stack">
@@ -157,71 +117,41 @@ th{font-size:15px;color:var(--muted)}
   </div>
 </section>
 
-<!-- Niðurstöður -->
-<section id="end" class="hidden">
-  <div class="top">
-    <div class="stack" style="gap:6px">
-      <h1>Niðurstöður</h1>
-      <p class="muted" id="endSummary"></p>
-    </div>
-  </div>
-  <div class="card stack">
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Dæmi</th><th>Svar</th><th>Þín leið</th><th>Skref</th><th>Villur</th></tr></thead>
-        <tbody id="endRows"></tbody>
-      </table>
-    </div>
-    <div class="row">
-      <button class="btn acc" id="btnAgain">Spila aftur</button>
-      <button class="btn ghost" id="btnHome">Til baka</button>
-    </div>
-  </div>
-</section>
+<!-- Niðurstöður (teiknaðar af leikjarammi.js) -->
+<section id="lok" class="hidden"></section>
 
 </div>
 
+<script src="myndir.js"></script>
+<script src="leikjarammi.js"></script>
 <script>
 (function(){
   "use strict";
   var $ = function(id){ return document.getElementById(id); };
   var rand = function(a,b){ return a + Math.floor(Math.random()*(b-a+1)); };
-  var ROUND = 5;
+  var I_EFNI = 4;   /* dæmi í hverju efni */
 
   var LEVELS = [
-    {id:1, name:"Stig 1", desc:"Þriggja stafa tala deilt með 2–9", dMin:2, dMax:9, nMin:100, nMax:999},
-    {id:2, name:"Stig 2", desc:"Fjögurra stafa tala deilt með 2–9", dMin:2, dMax:9, nMin:1000, nMax:9999},
-    {id:3, name:"Stig 3", desc:"Fjögurra stafa tala deilt með 11–25", dMin:11, dMax:25, nMin:1000, nMax:9999}
+    {id:"thriggja", heiti:"Þriggja stafa tala deilt með 2–9", daemi:"852 : 4", dMin:2, dMax:9, nMin:100, nMax:999},
+    {id:"fjogurra", heiti:"Fjögurra stafa tala deilt með 2–9", daemi:"5 215 : 5", dMin:2, dMax:9, nMin:1000, nMax:9999},
+    {id:"tveggja-stafa", heiti:"Fjögurra stafa tala deilt með 11–25", daemi:"3 024 : 12", dMin:11, dMax:25, nMin:1000, nMax:9999}
   ];
 
-  var settings = {level:1, helper:true, easy:false, rem:false};
+  var settings = {helper:true, easy:false, rem:false};
   var game = null;
+  window.__stika = function(){ return game; };   /* fyrir sjálfvirkar prófanir */
 
   /* Tölur sem enda á 1 (nema 11) taka eintölu: „1 er eftir“, „21 villa“ */
   function ein(n){ return (n % 10 === 1 && n % 100 !== 11); }
   function eru(n){ return ein(n) ? "er" : "eru"; }
   function villur(n){ return n + (ein(n) ? " villa" : " villur"); }
-  function svar(q, r){ return r > 0 ? q + ", afgangur " + r : String(q); }
+  /* Bil á milli þúsunda eins og í Stiku: 5 215 */
+  function thus(n){ var t = String(n); return t.replace(/\D/g, "").length >= 4 ? t.replace(/\B(?=(\d{3})+(?!\d))/g, "\u00a0") : t; }
+  function svar(q, r){ return r > 0 ? thus(q) + ", afgangur " + thus(r) : thus(q); }
 
-  /* ---------- Upphafsskjár ---------- */
-  function renderLevels(){
-    var box = $("levels");
-    box.innerHTML = "";
-    LEVELS.forEach(function(lv){
-      var b = document.createElement("button");
-      b.type = "button";
-      b.className = "level";
-      b.setAttribute("aria-pressed", String(settings.level === lv.id));
-      b.innerHTML = "<b>" + lv.name + "</b><span class=\"muted\">" + lv.desc + "</span>";
-      b.addEventListener("click", function(){ settings.level = lv.id; renderLevels(); });
-      box.appendChild(b);
-    });
-  }
+  /* ---------- Upphafsskjár: kemur úr leikjarammi.js ---------- */
 
-  function show(id){
-    ["start","play","end"].forEach(function(s){ $(s).classList.toggle("hidden", s !== id); });
-    window.scrollTo(0,0);
-  }
+  function show(id){ RAMMI.syna({start:"upphaf", play:"leikur", end:"lok"}[id] || id); }
 
   function makeProblem(lv, withRem){
     var d = rand(lv.dMin, lv.dMax);
@@ -230,22 +160,25 @@ th{font-size:15px;color:var(--muted)}
     return {dividend:d*q + r, divisor:d, quotient:q, rest:r};
   }
 
-  function makeRound(){
-    var lv = LEVELS.filter(function(l){ return l.id === settings.level; })[0];
-    /* Með afgangi: um helmingur dæmanna fær afgang, í handahófskenndri röð */
-    var flags = [];
-    for(var i = 0; i < ROUND; i++){ flags.push(settings.rem && i < Math.ceil(ROUND/2)); }
-    flags.sort(function(){ return Math.random() - 0.5; });
+  /* Fjögur dæmi úr hverju völdu efni. Með afgangi: helmingur dæmanna fær afgang. */
+  function makeRound(ids){
+    readSettings();
     var list = [], seen = {};
-    var guard = 0;
-    while(list.length < ROUND && guard < 500){
-      guard++;
-      var p = makeProblem(lv, flags[list.length]);
-      var key = p.dividend + ":" + p.divisor;
-      if(seen[key]) continue;
-      seen[key] = true;
-      list.push(p);
-    }
+    ids.forEach(function(id){
+      var lv = LEVELS.filter(function(l){ return l.id === id; })[0];
+      var flags = [];
+      for(var i = 0; i < I_EFNI; i++){ flags.push(settings.rem && i < I_EFNI / 2); }
+      flags.sort(function(){ return Math.random() - 0.5; });
+      var n = 0, guard = 0;
+      while(n < I_EFNI && guard < 500){
+        guard++;
+        var p = makeProblem(lv, flags[n]);
+        var key = p.dividend + ":" + p.divisor;
+        if(seen[key]) continue;
+        seen[key] = true; p.efni = id;
+        list.push(p); n++;
+      }
+    });
     return list;
   }
 
@@ -255,11 +188,27 @@ th{font-size:15px;color:var(--muted)}
     settings.rem = $("optRem").checked;
   }
 
-  function startGame(problems){
+  function startGame(problems, ids){
     readSettings();
-    game = {problems:problems, index:0, results:[], cur:null};
-    loadProblem();
+    game = {problems:problems, ids:ids || null, index:0, results:[], cur:null};
+    RAMMI.hefja(problems.map(function(p){ return p.efni || "eigid"; }), {heiti:{eigid:"Eigið dæmi"}});
     show("play");
+    loadProblem();
+    if(ids) synaUpprifjun(true);
+  }
+
+  /* Upprifjun á undan fyrsta dæminu */
+  function synaUpprifjun(fyrst){
+    RAMMI.upprifjun({titill:"Deiling – Stikuaðferð",
+      atridi:["Veldu tölu sem þú kannt að margfalda með.", "Margfaldaðu og dragðu frá.",
+              "Endurtaktu þar til talan sem er eftir er minni en talan sem þú deilir með.",
+              "Leggðu saman tölurnar hægra megin línunnar.",
+              "Ef 0 er eftir gengur dæmið upp. Ef önnur tala er eftir er hún afgangurinn.",
+              "Það eru margar réttar leiðir. Fleiri skref eru ekki röng, bara lengri leið að sama svari."],
+      mynd:"<p class=\"muted\" style=\"margin-bottom:6px\">5 215 : 5 = 1 000 + 40 + 3 = 1 043</p>" + MYNDIR.teikna({teg:"deiling", tala:"5215", deilir:5, skref:[1000,40,3]}),
+      tengill:{texti:"Skoðaðu veggspjaldið „Deiling – Stikuaðferð“", slod:"veggspjald.html?v=deiling"},
+      hnappur: fyrst ? "Byrja á dæmunum" : "Loka upprifjun",
+      eftir:function(){ if(game && game.cur && game.cur.phase !== "done") $("answer").focus(); }});
   }
 
   function parseNum(s){
@@ -268,19 +217,6 @@ th{font-size:15px;color:var(--muted)}
     return Number(raw);
   }
 
-  $("btnStart").addEventListener("click", function(){ readSettings(); startGame(makeRound()); });
-
-  $("btnCustom").addEventListener("click", function(){
-    var n = parseNum($("cDividend").value);
-    var d = parseNum($("cDivisor").value);
-    var msg = $("customMsg");
-    if(n === null || d === null){ msg.textContent = "Skrifaðu báðar tölurnar."; return; }
-    if(d < 2 || d > 99){ msg.textContent = "Deilirinn þarf að vera á bilinu 2–99."; return; }
-    if(n < 10 || n > 99999){ msg.textContent = "Talan sem á að deila þarf að vera á bilinu 10–99999."; return; }
-    if(n < d){ msg.textContent = "Talan sem á að deila þarf að vera stærri en talan sem deilt er með."; return; }
-    msg.textContent = "";
-    startGame([{dividend:n, divisor:d, quotient:Math.floor(n/d), rest:n % d}]);
-  });
 
   /* ---------- Leikur ---------- */
   function loadProblem(){
@@ -324,7 +260,7 @@ th{font-size:15px;color:var(--muted)}
       if(v === 0){ say("Talan þarf að vera stærri en 0.", ""); return; }
       if(d * v > c.remaining){
         c.errors++;
-        say(d + " · " + v + " er stærra en " + c.remaining + ". Veldu minni tölu.", "bad");
+        say(d + " · " + thus(v) + " er stærra en " + thus(c.remaining) + ". Veldu minni tölu.", "bad");
         $("answer").select();
         render();
         return;
@@ -333,7 +269,7 @@ th{font-size:15px;color:var(--muted)}
       if(settings.easy){
         last().p = d * v;
         c.phase = "rem";
-        say(d + " · " + v + " = " + (d*v) + ". Dragðu nú frá.", "good");
+        say(d + " · " + thus(v) + " = " + thus(d*v) + ". Dragðu nú frá.", "good");
       } else {
         c.phase = "prod";
         say("Góð tala! Margfaldaðu nú.", "good");
@@ -349,9 +285,9 @@ th{font-size:15px;color:var(--muted)}
         c.errors++; c.tries++;
         if(c.tries >= 2){
           s.p = p; c.phase = "rem"; c.tries = 0;
-          say(d + " · " + s.m + " = " + p + ". Haltu áfram og dragðu frá.", "bad");
+          say(d + " · " + thus(s.m) + " = " + thus(p) + ". Haltu áfram og dragðu frá.", "bad");
         } else {
-          say("Ekki alveg. Reiknaðu " + d + " · " + s.m + " aftur.", "bad");
+          say("Ekki alveg. Reiknaðu " + d + " · " + thus(s.m) + " aftur.", "bad");
           $("answer").select();
           return;
         }
@@ -364,14 +300,14 @@ th{font-size:15px;color:var(--muted)}
       if(v !== r){
         c.errors++; c.tries++;
         if(c.tries < 2){
-          say("Ekki alveg. Reiknaðu " + c.remaining + " − " + s2.p + " aftur.", "bad");
+          say("Ekki alveg. Reiknaðu " + thus(c.remaining) + " − " + thus(s2.p) + " aftur.", "bad");
           $("answer").select();
           return;
         }
         revealed = true;
       }
       s2.r = r; c.remaining = r; c.tries = 0;
-      var pre = revealed ? (c.remaining + s2.p) + " − " + s2.p + " = " + r + ". " : "Rétt! ";
+      var pre = revealed ? thus(c.remaining + s2.p) + " − " + thus(s2.p) + " = " + thus(r) + ". " : "Rétt! ";
       if(r < d){
         if(c.steps.length === 1){
           finishProblem();
@@ -384,7 +320,7 @@ th{font-size:15px;color:var(--muted)}
         say(pre + stop + "Leggðu nú saman tölurnar hægra megin.", revealed ? "bad" : "good");
       } else {
         c.phase = "mult";
-        say(pre + "Nú " + eru(r) + " " + r + " eftir. Veldu næstu tölu.", revealed ? "bad" : "good");
+        say(pre + "Nú " + eru(r) + " " + thus(r) + " eftir. Veldu næstu tölu.", revealed ? "bad" : "good");
       }
     }
     else if(c.phase === "sum"){
@@ -410,14 +346,15 @@ th{font-size:15px;color:var(--muted)}
     c.phase = "done";
     var ms = multipliers();
     game.results.push({dividend:c.dividend, divisor:c.divisor, quotient:c.quotient, rest:c.rest, way:ms, errors:c.errors});
+    RAMMI.skra(game.problems[game.index].efni || "eigid", c.errors === 0);
     render();
     $("taskCard").classList.add("hidden");
     $("doneCard").classList.remove("hidden");
-    $("doneEq").textContent = c.dividend + " : " + c.divisor + " = " + svar(c.quotient, c.rest);
-    $("doneWay").innerHTML = "<b>Þín leið:</b> <span class=\"mono\">" + ms.join(" + ") + " = " + c.quotient + "</span>" +
+    $("doneEq").textContent = thus(c.dividend) + " : " + c.divisor + " = " + svar(c.quotient, c.rest);
+    $("doneWay").innerHTML = "<b>Þín leið:</b> <span class=\"mono\">" + ms.map(thus).join(" + ") + " = " + thus(c.quotient) + "</span>" +
       (c.rest > 0 ? "<br><b>Afgangur:</b> <span class=\"mono\">" + c.rest + "</span>" : "");
-    $("doneCheck").innerHTML = "<b>Prófun:</b> <span class=\"mono\">" + c.divisor + " · " + c.quotient +
-      (c.rest > 0 ? " + " + c.rest : "") + " = " + c.dividend + "</span>";
+    $("doneCheck").innerHTML = "<b>Prófun:</b> <span class=\"mono\">" + c.divisor + " · " + thus(c.quotient) +
+      (c.rest > 0 ? " + " + c.rest : "") + " = " + thus(c.dividend) + "</span>";
     var errText = c.errors === 0 ? "Engin villa." : villur(c.errors) + ".";
     $("doneStats").textContent = "Þú notaðir " + ms.length + " skref. " + errText;
     $("btnNext").textContent = (game.index < game.problems.length - 1) ? "Næsta dæmi" : "Sjá niðurstöður";
@@ -434,19 +371,20 @@ th{font-size:15px;color:var(--muted)}
   });
 
   $("btnQuit").addEventListener("click", function(){ show("start"); });
+  $("btnUpp").addEventListener("click", function(){ synaUpprifjun(false); });
 
   /* ---------- Teikning ---------- */
   function cellN(o){
     o = o || {};
     var cls = "n" + (o.u ? " u" : "") + ((o.q || o.hl) ? " hl" : "");
-    var val = o.q ? "<span class=\"qbox\">?</span>" : (o.val === undefined ? "" : o.val);
+    var val = o.q ? "<span class=\"qbox\">?</span>" : (o.val === undefined ? "" : thus(o.val));
     return "<div class=\"" + cls + "\"><span>" + (o.sign || "") + "</span><span>" + val + "</span></div>";
   }
   function cellD(t){ return "<div class=\"d\">" + (t || "") + "</div>"; }
   function cellR(o){
     o = o || {};
     var cls = "r" + (o.uu ? " uu" : "") + ((o.q || o.hl) ? " hl" : "");
-    var val = o.q ? "<span class=\"qbox\">?</span>" : (o.val === undefined ? "" : o.val);
+    var val = o.q ? "<span class=\"qbox\">?</span>" : (o.val === undefined ? "" : thus(o.val));
     return "<div class=\"" + cls + "\"><span>" + (o.sign || "") + "</span><span>" + val + "</span></div>";
   }
 
@@ -496,21 +434,21 @@ th{font-size:15px;color:var(--muted)}
     var q = $("question"), lab = $("answerLabel");
     var s = last();
     if(ph === "mult"){
-      q.innerHTML = "Hve oft fer <b class=\"mono\">" + d + "</b> í <b class=\"mono\">" + c.remaining + "</b>? Veldu tölu sem þú kannt að margfalda með.";
+      q.innerHTML = "Hve oft fer <b class=\"mono\">" + d + "</b> í <b class=\"mono\">" + thus(c.remaining) + "</b>? Veldu tölu sem þú kannt að margfalda með.";
       lab.textContent = "Hve oft?";
     } else if(ph === "prod"){
-      q.innerHTML = "Hvað er <b class=\"mono\">" + d + " · " + s.m + "</b>?";
+      q.innerHTML = "Hvað er <b class=\"mono\">" + d + " · " + thus(s.m) + "</b>?";
       lab.textContent = "Margföldun";
     } else if(ph === "rem"){
-      q.innerHTML = "Hvað er <b class=\"mono\">" + c.remaining + " − " + s.p + "</b>?";
+      q.innerHTML = "Hvað er <b class=\"mono\">" + thus(c.remaining) + " − " + thus(s.p) + "</b>?";
       lab.textContent = "Hvað er eftir?";
     } else if(ph === "sum"){
-      q.innerHTML = "Leggðu saman tölurnar hægra megin: <b class=\"mono\">" + multipliers().join(" + ") + "</b> = ?";
+      q.innerHTML = "Leggðu saman tölurnar hægra megin: <b class=\"mono\">" + multipliers().map(thus).join(" + ") + "</b> = ?";
       lab.textContent = "Svar";
     }
     var phases = [
       {k:"mult", t:"Veldu tölu"},
-      {k:"prod", t:settings.easy ? "Margföldun (leikurinn)" : "Margfaldaðu"},
+      {k:"prod", t:settings.easy ? "Margföldunin er reiknuð" : "Margfaldaðu"},
       {k:"rem", t:"Dragðu frá"},
       {k:"sum", t:"Leggðu saman"}
     ];
@@ -530,7 +468,7 @@ th{font-size:15px;color:var(--muted)}
     $("helperCard").classList.toggle("hidden", !settings.helper);
     $("helperTitle").textContent = "Hjálparlisti fyrir " + d;
     $("helper").innerHTML = [1,2,5,10,100,1000].map(function(k){
-      return "<span>" + d + " · " + k + " = " + (d*k) + "</span>";
+      return "<span>" + d + " · " + thus(k) + " = " + thus(d*k) + "</span>";
     }).join("");
   }
 
@@ -539,7 +477,7 @@ th{font-size:15px;color:var(--muted)}
     $("progress").textContent = game.problems.length > 1
       ? "Dæmi " + (game.index + 1) + " af " + game.problems.length
       : "Eigið dæmi";
-    $("problemText").textContent = c.dividend + " : " + c.divisor;
+    $("problemText").textContent = thus(c.dividend) + " : " + c.divisor;
     renderBoard();
     if(c.phase !== "done") renderTask();
     renderHelper();
@@ -547,26 +485,52 @@ th{font-size:15px;color:var(--muted)}
 
   /* ---------- Niðurstöður ---------- */
   function showEnd(){
-    var res = game.results;
-    var clean = res.filter(function(r){ return r.errors === 0; }).length;
-    $("endSummary").textContent = "Þú kláraðir " + res.length + " dæmi. " + clean + " " + (ein(clean) ? "var" : "voru") + " án villu.";
-    $("endRows").innerHTML = res.map(function(r){
-      return "<tr><td class=\"mono\">" + r.dividend + " : " + r.divisor + "</td>" +
-             "<td class=\"mono\">" + svar(r.quotient, r.rest) + "</td>" +
-             "<td class=\"mono\">" + r.way.join(" + ") + "</td>" +
-             "<td>" + r.way.length + "</td>" +
-             "<td>" + r.errors + "</td></tr>";
-    }).join("");
-    show("end");
+    var tafla = "<div class=\"card stack\"><h2 style=\"margin:0\">Öll dæmin</h2><div class=\"table-wrap\"><table>" +
+      "<thead><tr><th>Dæmi</th><th>Svar</th><th>Þín leið</th><th>Skref</th><th>Villur</th></tr></thead><tbody>" +
+      game.results.map(function(r){
+        return "<tr><td class=\"mono\">" + thus(r.dividend) + " : " + r.divisor + "</td>" +
+               "<td class=\"mono\">" + svar(r.quotient, r.rest) + "</td>" +
+               "<td class=\"mono\">" + r.way.map(thus).join(" + ") + "</td>" +
+               "<td>" + r.way.length + "</td>" +
+               "<td>" + r.errors + "</td></tr>";
+      }).join("") + "</tbody></table></div></div>";
+    RAMMI.lok({nedan:tafla, hnappar:[
+      {texti:"Æfa aftur", adal:true, smellt:function(){ if(game.ids) startGame(makeRound(game.ids), game.ids); else startGame(game.problems); }},
+      {texti:"Velja önnur efni", smellt:function(){ show("start"); }}
+    ]});
   }
 
-  $("btnAgain").addEventListener("click", function(){
-    if(game && game.problems.length === 1){ startGame(game.problems); }
-    else { startGame(makeRound()); }
+  /* ---------- Upphafsskjár ---------- */
+  RAMMI.upphaf({
+    titill:"Deiling – Stikuaðferð",
+    inngangur:"Æfðu þig að deila með margföldun sem þú kannt. Þú ræður hve stór skrefin eru.",
+    skref:[{heiti:"Veldu tölu"}, {heiti:"Margfaldaðu", takn:"·"}, {heiti:"Dragðu frá", takn:"−"}, {heiti:"Endurtaktu", takn:"↻"}, {heiti:"Leggðu saman", takn:"+"}],
+    efni:LEVELS.map(function(l){ return {id:l.id, heiti:l.heiti, lysing:"t.d. " + l.daemi, fjoldi:I_EFNI}; }),
+    sjalfgefid:1,
+    fjoldiTexti:"Í hverju efni eru " + I_EFNI + " dæmi.",
+    stillingar:"<label class=\"r-stilling\"><input type=\"checkbox\" id=\"optHelper\" checked> Sýna hjálparlista</label>" +
+               "<label class=\"r-stilling\"><input type=\"checkbox\" id=\"optEasy\"> Margföldunin er reiknuð fyrir mig (auðveldara)</label>" +
+               "<label class=\"r-stilling\"><input type=\"checkbox\" id=\"optRem\"> Taka með dæmi með afgangi</label>",
+    aukaspjald:"<div class=\"card stack\"><h2 style=\"margin:0\">Æfa ákveðið dæmi</h2><div class=\"row\">" +
+      "<label class=\"sr-only\" for=\"cDividend\">Talan sem á að deila</label><input class=\"num-in\" id=\"cDividend\" inputmode=\"numeric\" autocomplete=\"off\" placeholder=\"5 215\">" +
+      "<span class=\"mono\" style=\"font-size:24px\">:</span>" +
+      "<label class=\"sr-only\" for=\"cDivisor\">Talan sem deilt er með</label><input class=\"num-in small\" id=\"cDivisor\" inputmode=\"numeric\" autocomplete=\"off\" placeholder=\"5\">" +
+      "<button class=\"btn ghost\" id=\"btnCustom\">Æfa</button></div><p id=\"customMsg\" class=\"tip\" role=\"status\"></p></div>",
+    tengill:{texti:"Veggspjald: Deiling – Stikuaðferð", slod:"veggspjald.html?v=deiling"},
+    byrja:function(ids){ startGame(makeRound(ids), ids); }
   });
-  $("btnHome").addEventListener("click", function(){ show("start"); });
 
-  renderLevels();
+  $("btnCustom").addEventListener("click", function(){
+    var n = parseNum($("cDividend").value);
+    var d = parseNum($("cDivisor").value);
+    var msg = $("customMsg");
+    if(n === null || d === null){ msg.textContent = "Skrifaðu báðar tölurnar."; return; }
+    if(d < 2 || d > 99){ msg.textContent = "Talan sem deilt er með þarf að vera á bilinu 2–99."; return; }
+    if(n < 10 || n > 99999){ msg.textContent = "Talan sem á að deila þarf að vera á bilinu 10–99\u00a0999."; return; }
+    if(n < d){ msg.textContent = "Talan sem á að deila þarf að vera stærri en talan sem deilt er með."; return; }
+    msg.textContent = "";
+    startGame([{dividend:n, divisor:d, quotient:Math.floor(n/d), rest:n % d}]);
+  });
 })();
 </script>
 </body>

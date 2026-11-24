@@ -174,7 +174,7 @@
   /* ================= MYNDIR ================= */
   var M = {};
 
-  /* Deiling með Stikuaðferð: sama uppsetning og í leiknum */
+  /* Deiling með Stikuaðferð: sama uppsetning og í aðferðinni */
   M.deiling = function(m){
     var dec = (String(m.tala).split(",")[1] || "").length, sc = Math.pow(10, dec);
     var rem = Math.round(parseFloat(String(m.tala).replace(",", ".")) * sc);
@@ -367,6 +367,14 @@
     if(k === "thvermal") s += L(P(C, R, 180), P(C, R, 0), ACC) + txt(C[0], C[1] + 16, "þvermál", {s:14, c:"var(--acc-dark)"});
     if(k === "geisli"){ s += L(C, P(C, R, 50), ACC); var g = P(C, R/2, 50); s += txt(g[0] + 26, g[1] + 6, "geisli", {s:14, c:"var(--acc-dark)"}); }
     if(k === "midja") s += txt(C[0], C[1] + 18, "miðja", {s:14, c:"var(--acc-dark)"});
+    if(k === "allt"){
+      s += L(P(C, R, 200), P(C, R, 20), "stroke:var(--acc);stroke-width:3;stroke-linecap:round");
+      s += L(C, P(C, R, 110), "stroke:#2563EB;stroke-width:3;stroke-linecap:round");
+      var gg = P(C, R*0.55, 110); s += txt(gg[0] - 30, gg[1], "geisli", {s:14, c:"#1E4C8A", halo:true});
+      var tt = P(C, R*0.5, 200); s += txt(tt[0] + 4, tt[1] + 20, "þvermál", {s:14, c:"var(--acc-dark)", halo:true});
+      var ff = P(C, R + 14, 300); s += txt(ff[0] + 14, ff[1] + 4, "hringferill", {s:14, w:400, c:"var(--muted)"});
+      s += txt(C[0] + 26, C[1] - 14, "miðja", {s:13, w:400, c:"var(--muted)", halo:true});
+    }
     s += dot(C, k === "midja" ? 6 : 4, k === "midja" ? "var(--acc)" : "var(--ink)");
     return svg(260, 200, "Hringur", s);
   };
@@ -389,9 +397,13 @@
 
   /* Skífurit, súlurit og talnalína */
   M.skifurit = function(m){
-    var C = [100, 100], R = 82, s = "", a = 90;
-    m.hlutar.forEach(function(h, i){ s += geiri(C, R, a - h, a, "fill:" + LITIR[i % 5] + ";stroke:var(--ink);stroke-width:2"); a -= h; });
-    return svg(200, 200, "Skífurit", s);
+    var C = [100, 100], R = 82, s = "", a = 90, merki = "";
+    m.hlutar.forEach(function(h, i){
+      s += geiri(C, R, a - h, a, "fill:" + LITIR[i % 5] + ";stroke:var(--ink);stroke-width:2");
+      if(m.nofn && m.nofn[i]){ var p = P(C, h < 45 ? R * 0.74 : R * 0.55, a - h/2); merki += txt(p[0], p[1], m.nofn[i], {s: h < 45 ? 10 : 13, halo:true}); }
+      a -= h;
+    });
+    return svg(200, 200, "Skífurit", s + merki);
   };
   M.sulurit = function(m){
     var s = "", x0 = 40, y0 = 150, mx = m.max || 5, h = 130 / mx;
@@ -405,18 +417,23 @@
   M.talnalina = function(m){
     var Lx = 24, Rx = (m.w || 320) - 24, Y = m.stokk ? 86 : 50, s = "", a = m.fra, b = m.til, bil = m.bil || 1, id = "tl" + Math.floor(Math.random()*1e6);
     function x(v){ return Lx + (v - a) / (b - a) * (Rx - Lx); }
-    function lab(v){ return v < 0 ? "−" + thus(-v) : thus(v); }
+    /* deilir: tölurnar eru heiltölur sem eru sýndar deildar, t.d. 346 með deili 100 verður 3,46 */
+    function lab(v){ if(m.deilir) return talaStr(v / m.deilir, m.aukastafir || 2); return v < 0 ? "−" + thus(-v) : thus(v); }
     s += "<defs><marker id=\"" + id + "\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M1 1L9 5L1 9z\" style=\"fill:var(--acc)\"/></marker></defs>";
     s += L([Lx - 6, Y], [Rx + 6, Y], "stroke:var(--ink);stroke-width:2");
-    for(var v = a; v <= b; v += bil){ s += L([x(v), Y - 6], [x(v), Y + 6], "stroke:var(--ink);stroke-width:1.5"); s += txt(x(v), Y + 22, lab(v), {s:13, w: v === 0 ? 700 : 400, c: v < 0 ? "var(--acc-dark)" : "var(--muted)"}); }
+    for(var v = a; v <= b; v += bil){
+      var syna = !m.merkiHvert || (v - a) % m.merkiHvert === 0;
+      s += L([x(v), Y - (syna ? 7 : 4)], [x(v), Y + (syna ? 7 : 4)], "stroke:var(--ink);stroke-width:" + (syna ? 1.8 : 1.2));
+      if(syna) s += txt(x(v), Y + 22, lab(v), {s:13, w: v === 0 ? 700 : 400, c: v < 0 ? "var(--acc-dark)" : "var(--muted)"});
+    }
     (m.stokk || []).forEach(function(k){
       var p = x(k.fra), q = x(k.til), mm = (p + q)/2, hh = Math.min(60, Math.abs(q - p)/2 + 10);
       s += "<path d=\"M" + p.toFixed(1) + " " + (Y - 8) + " Q" + mm.toFixed(1) + " " + (Y - 8 - hh*1.4).toFixed(1) + " " + q.toFixed(1) + " " + (Y - 9) + "\" fill=\"none\" style=\"stroke:var(--acc);stroke-width:2.5\" marker-end=\"url(#" + id + ")\"/>";
       if(k.t) s += txt(mm, Y - 8 - hh*0.75 - 8, k.t, {s:15, c:"var(--acc-dark)", halo:true});
     });
-    (m.merki || []).forEach(function(v){ s += dot([x(v), Y], 6, "var(--acc)"); });
+    (m.merki || []).forEach(function(v, i){ s += dot([x(v), Y], 6, "var(--acc)"); if(m.merkiTexti && m.merkiTexti[i]) s += txt(x(v), Y + 40, m.merkiTexti[i], {s:15, c:"var(--acc-dark)"}); });
     if(m.titill) s += txt((Lx + Rx)/2, Y + 50, MYNDIR_FMT(m.titill), {s:20});
-    return svg(m.w || 320, Y + (m.titill ? 70 : 40), "Talnalína", s);
+    return svg(m.w || 320, Y + (m.titill ? 70 : m.merkiTexti ? 56 : 40), "Talnalína", s);
   };
 
   /* Sætisgildi: hver tölustafur með heiti sætisins */
@@ -470,7 +487,7 @@
     return svg(Math.round(x - gap + 90), Math.round(base + 40), "Einslaga myndir", s);
   };
 
-  /* Ausuaðferð: sama uppsetning og í leiknum Deiling – Ausuaðferð.
+  /* Ausuaðferð: sama uppsetning og í aðferðinni Deiling – Ausuaðferð.
      skref segir hve mörgum aðgerðum er lokið (byrja, deila, margfalda, draga frá, færa niður …). */
   M.ausa = function(m){
     var dig = String(m.tala).split("").map(Number), d = m.deilir, n = dig.length;
@@ -528,6 +545,104 @@
     });
     S.orvar.forEach(function(o){ holf(3 + o.rod, dalkur(o.col), "↓", "or"); });
     return "<div class=\"ausa\" style=\"grid-template-columns:auto repeat(" + n + ", 1.25ch .5ch)\" aria-label=\"Ausuaðferð\">" + h + "</div>";
+  };
+
+  /* Talnaruna: tölur í kössum og reglan á bogunum á milli. nytt: fyrsti vísir sem er merktur sem ný tala */
+  M.runa = function(m){
+    var n = m.tolur.length, bw = m.bw || 78, gap = 34, w = n * bw + (n - 1) * gap + 20, s = "", id = "ru" + Math.floor(Math.random()*1e6);
+    s += "<defs><marker id=\"" + id + "\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M1 1L9 5L1 9z\" style=\"fill:var(--acc)\"/></marker></defs>";
+    m.tolur.forEach(function(t, i){
+      var x = 10 + i * (bw + gap), nytt = m.nytt !== undefined && i >= m.nytt, q = t === "?";
+      s += "<rect x=\"" + x + "\" y=\"52\" width=\"" + bw + "\" height=\"46\" rx=\"10\" style=\"fill:" + (nytt || q ? "var(--acc-bg)" : "#fff") + ";stroke:" + (nytt || q ? "var(--acc)" : "var(--ink)") + ";stroke-width:2;" + (q ? "stroke-dasharray:6 4" : "") + "\"/>";
+      s += txt(x + bw/2, 75, MYNDIR_FMT(t), {s:19, c: nytt || q ? "var(--acc-dark)" : "var(--ink)"});
+      if(i < n - 1 && m.merki && m.merki[i]){
+        var a = x + bw/2 + 6, b = x + bw + gap + bw/2 - 6, mm = (a + b)/2;
+        s += "<path d=\"M" + a + " 50 Q" + mm + " 14 " + b + " 49\" fill=\"none\" style=\"stroke:var(--acc);stroke-width:2.2\" marker-end=\"url(#" + id + ")\"/>";
+        s += txt(mm, 18, MYNDIR_FMT(m.merki[i]), {s:14, c:"var(--acc-dark)", halo:true});
+      }
+    });
+    return svg(w, 108, "Talnaruna", s);
+  };
+
+  /* Línurit: punktar tengdir með ferli. gildi, nofn (x-ás), max, skref (bil á lóðrétta ásnum), min */
+  M.linurit = function(m){
+    var x0 = 46, y0 = 176, W = m.w || 300, H = 136, mn = m.min || 0, mx = m.max, sk = m.skref || (mx - mn) / 5, s = "";
+    function y(v){ return y0 - (v - mn) / (mx - mn) * H; }
+    for(var k = mn; k <= mx + 1e-9; k += sk){ s += L([x0, y(k)], [W - 8, y(k)], "stroke:#E1E4EA;stroke-width:1") + txt(x0 - 8, y(k), String(k).replace(".", ","), {s:12, w:400, c:"var(--muted)", a:"end"}); }
+    var dx = (W - x0 - 30) / Math.max(1, m.gildi.length - 1), pts = m.gildi.map(function(v, i){ return [x0 + 16 + i*dx, y(v)]; });
+    s += L([x0, y0], [W - 8, y0], "stroke:var(--ink);stroke-width:2") + L([x0, y0], [x0, y0 - H - 10], "stroke:var(--ink);stroke-width:2");
+    s += "<polyline points=\"" + pts.map(function(p){ return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join(" ") + "\" fill=\"none\" style=\"stroke:var(--acc);stroke-width:3;stroke-linejoin:round\"/>";
+    pts.forEach(function(p, i){ s += dot(p, 5, "var(--acc)"); if(m.nofn) s += txt(p[0], y0 + 15, m.nofn[i], {s:12, w:400, c:"var(--muted)"}); });
+    if(m.xas) s += txt((x0 + W)/2, y0 + 34, m.xas, {s:13, w:700, c:"var(--muted)"});
+    if(m.yas) s += txt(x0 - 4, y0 - H - 20, m.yas, {s:13, w:700, c:"var(--muted)", a:"start"});
+    return svg(W, y0 + (m.xas ? 46 : 26), "Línurit", s);
+  };
+
+  /* Perlur: r rauðar og b bláar perlur. hopur: perlunum skipt í hópa af þeirri stærð */
+  M.perlur = function(m){
+    var rad = 11, d = 26, s = "", x = 16, y = 32, g = m.hopur || 0, RAUD = "#DC2626", BLA = "#2563EB";
+    [[RAUD, m.r], [BLA, m.b]].forEach(function(lit, li){
+      var n = lit[1], st = g || n;
+      for(var k = 0; k < n; k += st){
+        var fj = Math.min(st, n - k);
+        if(g) s += "<rect x=\"" + (x - 4) + "\" y=\"" + (y - rad - 6) + "\" width=\"" + (fj * d + 6) + "\" height=\"" + (2*rad + 12) + "\" rx=\"12\" style=\"fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 4\"/>";
+        for(var q = 0; q < fj; q++) s += "<circle cx=\"" + (x + rad + q*d) + "\" cy=\"" + y + "\" r=\"" + rad + "\" style=\"fill:" + lit[0] + ";stroke:rgba(0,0,0,.25);stroke-width:1.5\"/>";
+        x += fj * d + (g ? 14 : 0);
+      }
+      if(li === 0) x += g ? 14 : 18;
+    });
+    return svg(x + 8, 64, "Perlukeðja", s);
+  };
+
+  /* Tré sem sýnir alla möguleika: a = fyrsta safn, b = annað safn */
+  M.trjamynd = function(m){
+    var na = m.a.length, nb = m.b.length, lh = m.lh || 24, H = na * nb * lh + 16, s = "", x1 = 20, x2 = 120, x3 = 210;
+    m.a.forEach(function(a, i){
+      var ya = 8 + (i + 0.5) * nb * lh;
+      s += L([x1 + 8, H/2], [x2 - 6, ya], "stroke:var(--muted);stroke-width:1.5");
+      s += "<rect x=\"" + (x2 - 4) + "\" y=\"" + (ya - 13) + "\" width=\"" + (m.aw || 70) + "\" height=\"26\" rx=\"8\" style=\"fill:#F6C3A3;stroke:var(--ink);stroke-width:1.5\"/>" + txt(x2 - 4 + (m.aw || 70)/2, ya, a, {s:13});
+      m.b.forEach(function(b, j){
+        var yb = 8 + (i * nb + j + 0.5) * lh;
+        s += L([x2 + (m.aw || 70) - 4, ya], [x3 - 4, yb], "stroke:var(--muted);stroke-width:1.5");
+        s += "<rect x=\"" + x3 + "\" y=\"" + (yb - 10) + "\" width=\"" + (m.bw || 70) + "\" height=\"20\" rx=\"7\" style=\"fill:#BFE3F5;stroke:var(--ink);stroke-width:1.2\"/>" + txt(x3 + (m.bw || 70)/2, yb, b, {s:12, w:400});
+        s += txt(x3 + (m.bw || 70) + 18, yb, String(i * nb + j + 1), {s:12, c:"var(--acc-dark)"});
+      });
+    });
+    s += dot([x1 + 4, H/2], 6, "var(--ink)");
+    return svg(x3 + (m.bw || 70) + 34, H, "Allir möguleikarnir", s);
+  };
+
+  /* Þáttatré: {t:36, b:[{t:4, b:[2,2]}, {t:9, b:[3,3]}]}. Frumtölur í hring. */
+  M.thattatre = function(m){
+    var s = "", lag = 64, W = m.w || 240;
+    function dypt(h){ return (typeof h === "object" && h.b) ? 1 + Math.max.apply(null, h.b.map(dypt)) : 0; }
+    var D = dypt(m.tre);
+    function teikna(h, x, y, breidd){
+      var t = typeof h === "object" ? h.t : h, frum = typeof h !== "object" || !h.b;
+      if(!frum){
+        var n = h.b.length;
+        h.b.forEach(function(c, i){
+          var cx = x - breidd/2 + breidd * (i + 0.5) / n, cy = y + lag;
+          s += L([x, y + 14], [cx, cy - 16], "stroke:var(--muted);stroke-width:1.8");
+          teikna(c, cx, cy, breidd / n);
+        });
+      }
+      if(frum) s += "<circle cx=\"" + x + "\" cy=\"" + y + "\" r=\"17\" style=\"fill:var(--acc-bg);stroke:var(--acc);stroke-width:2.5\"/>";
+      s += txt(x, y, t, {s:20, c: frum ? "var(--acc-dark)" : "var(--ink)"});
+    }
+    teikna(m.tre, W/2, 24, W - 30);
+    return svg(W, 24 + D * lag + 30, "Þáttatré", s);
+  };
+
+  /* Talnatafla 1–til með merktum tölum, t.d. frumtölum */
+  M.talnatafla = function(m){
+    var cols = m.dalkar || 10, c = 34, s = "", n = m.til;
+    for(var i = 1; i <= n; i++){
+      var x = 6 + ((i - 1) % cols) * c, y = 6 + Math.floor((i - 1) / cols) * c, on = (m.merkt || []).indexOf(i) !== -1;
+      s += "<rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + (c - 4) + "\" height=\"" + (c - 4) + "\" rx=\"6\" style=\"fill:" + (on ? "var(--acc-bg)" : "#fff") + ";stroke:" + (on ? "var(--acc)" : "#D9DCE3") + ";stroke-width:" + (on ? 2 : 1) + "\"/>";
+      s += txt(x + (c - 4)/2, y + (c - 4)/2, i, {s:14, w: on ? 700 : 400, c: on ? "var(--acc-dark)" : "var(--muted)"});
+    }
+    return svg(cols * c + 8, Math.ceil(n / cols) * c + 8, "Talnatafla", s);
   };
 
   M.teikna = function(m){

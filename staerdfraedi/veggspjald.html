@@ -8,7 +8,7 @@
 <style>
 .wrap{max-width:1100px}
 .vs-head{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
-.vs-head .tag{align-self:flex-start;background:var(--acc-bg);color:var(--acc-dark);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:700}
+.vs-head .tag{align-self:flex-start;background:var(--vs-tag);color:var(--vs-ink);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:700}
 .vs-head p{font-size:20px;color:var(--muted);max-width:760px}
 .vs-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
 a.btn{display:inline-flex;align-items:center;text-decoration:none}
@@ -33,9 +33,12 @@ a.btn{display:inline-flex;align-items:center;text-decoration:none}
 .rett{background:var(--ok-bg);color:#14532D}
 .aefa{margin-top:30px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;background:var(--acc-bg);border:2px solid var(--acc-line);border-radius:16px;padding:18px 22px}
 .aefa h2{margin:0}
-.listi{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-.listi a{display:flex;flex-direction:column;gap:8px;background:var(--card);border:1.5px solid var(--line);border-top:6px solid var(--acc);border-radius:16px;padding:18px 20px;color:var(--ink);text-decoration:none}
-.listi a:hover{border-color:var(--acc)}
+.kaflahopur{margin-bottom:28px}
+.kaflahopur h2{display:flex;align-items:center;gap:12px;font-size:24px;margin:0 0 12px}
+.kaflahopur .knr{flex:none;width:40px;height:40px;border-radius:12px;background:var(--acc);color:#fff;font-size:20px;display:inline-flex;align-items:center;justify-content:center}
+.listi{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.listi a{display:flex;flex-direction:column;gap:8px;background:var(--vs-bg);border:1.5px solid var(--vs-line);border-left:6px solid var(--vs-acc);border-radius:14px;padding:16px 18px;color:var(--ink);text-decoration:none}
+.listi a:hover{box-shadow:0 2px 8px rgba(31,42,68,.1)}
 .listi h3{margin:0;font-size:21px}
 .listi p{color:var(--muted);font-size:16px}
 @media (max-width:760px){ .grid2{grid-template-columns:minmax(0,1fr)} .vs-head p{font-size:18px} }
@@ -61,6 +64,7 @@ a.btn{display:inline-flex;align-items:center;text-decoration:none}
   <a class="heim" href="../index.html">← Forsíða</a>
   <main id="efni"></main>
 </div>
+<script src="../efni.js"></script>
 <script src="myndir.js"></script>
 <script src="veggspjold.js"></script>
 <script>
@@ -75,10 +79,21 @@ a.btn{display:inline-flex;align-items:center;text-decoration:none}
   var v = V[id], out = "";
 
   if(!v){
+    /* Listi yfir öll veggspjöld, flokkaður eftir köflum eins og á forsíðunni */
     document.title = "Veggspjöld";
-    out += "<header class=\"vs-head\"><h1>Veggspjöld</h1><p>Aðferðir skref fyrir skref og ólíkar leiðir að sama svari.</p></header><div class=\"listi\">";
-    Object.keys(V).forEach(function(k){ out += "<a href=\"veggspjald.html?v=" + k + "\"><h3>" + V[k].titill + "</h3><p>" + V[k].inngangur + "</p></a>"; });
-    document.getElementById("efni").innerHTML = out + "</div>";
+    out += "<header class=\"vs-head\"><h1>Veggspjöld</h1><p>Aðferðir skref fyrir skref og ólíkar leiðir að sama svari.</p></header>";
+    var F = window.FLOKKAR || [], E = window.EFNI || [], notud = {};
+    function spjald(k){ notud[k] = true; return "<a href=\"veggspjald.html?v=" + k + "\"><h3>" + V[k].titill + "</h3><p>" + fmt(V[k].inngangur) + "</p></a>"; }
+    F.forEach(function(f){
+      var ids = E.filter(function(e){ return e.tegund === "utskyring" && e.flokkar.indexOf(f.id) !== -1; })
+                 .map(function(e){ var m = /[?&]v=([^&#]+)/.exec(e.slod); return m && m[1]; })
+                 .filter(function(k){ return k && V[k]; });
+      if(!ids.length) return;
+      out += "<section class=\"kaflahopur\"><h2><span class=\"knr\" aria-hidden=\"true\">" + f.kafli + "</span>" + f.heiti + "</h2><div class=\"listi\">" + ids.map(spjald).join("") + "</div></section>";
+    });
+    var annad = Object.keys(V).filter(function(k){ return !notud[k]; });
+    if(annad.length) out += "<section class=\"kaflahopur\"><h2>Annað</h2><div class=\"listi\">" + annad.map(spjald).join("") + "</div></section>";
+    document.getElementById("efni").innerHTML = out;
     return;
   }
 
@@ -87,11 +102,11 @@ a.btn{display:inline-flex;align-items:center;text-decoration:none}
          "<div class=\"vs-actions\">" + (v.aefa && v.aefa[0] ? "<a class=\"btn acc\" href=\"" + v.aefa[0].slod + "\">Æfðu þig</a>" : "") +
          "<a class=\"btn ghost\" href=\"prenta.html?v=" + id + "\">Prenta veggspjald</a></div></header>";
 
-  out += "<div class=\"kafli\"><h2>Skref fyrir skref</h2></div>";
+  out += "<div class=\"kafli\"><h2>" + (v.skref.titill || "Skref fyrir skref") + "</h2></div>";
   if(v.skref.daemi) out += "<div class=\"daemi\">" + fmt(v.skref.daemi) + "</div>";
   out += "<div class=\"grid2\">";
   v.skref.lidir.forEach(function(s, i){
-    out += "<section class=\"spjald\"><h3><span class=\"nr\">" + (i + 1) + "</span>" + s.t + "</h3><p class=\"x\">" + fmt(s.x) + "</p>" + MY.teikna(s.m) + "</section>";
+    out += "<section class=\"spjald\"><h3>" + (v.skref.numer === false ? "" : "<span class=\"nr\">" + (i + 1) + "</span>") + s.t + "</h3><p class=\"x\">" + fmt(s.x) + "</p>" + MY.teikna(s.m) + "</section>";
   });
   out += "</div>";
 
@@ -100,6 +115,7 @@ a.btn{display:inline-flex;align-items:center;text-decoration:none}
     out += "<section class=\"spjald\"><p class=\"x\">" + fmt(v.auka.x) + "</p><div class=\"grid-auto\">" + MY.teikna(v.auka.m) + "</div></section>";
   }
 
+  if(v.leidir){
   out += "<div class=\"kafli\"><h2>Ólíkar leiðir að sama svari</h2><p>" + fmt(v.leidir.x) + "</p></div><div class=\"grid-auto\">";
   v.leidir.lidir.forEach(function(l, i){
     out += "<section class=\"spjald\"><span class=\"leid-tag\">Leið " + BOKSTAFIR[i] + "</span><h3>" + l.t + "</h3><p class=\"x\">" + fmt(l.x) + "</p>" + MY.teikna(l.m) +
@@ -107,6 +123,7 @@ a.btn{display:inline-flex;align-items:center;text-decoration:none}
   });
   out += "</div>";
   if(v.leidir.nidur) out += "<p class=\"nidur\">" + fmt(v.leidir.nidur) + "</p>";
+  }
 
   if(v.villur && v.villur.length){
   out += "<div class=\"kafli\"><h2>Algengar villur</h2></div><div class=\"grid-auto\">";

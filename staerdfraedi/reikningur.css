@@ -1,0 +1,70 @@
+/* Sameiginlegt útlit fyrir leikina „Forgangsröð reikniaðgerða“ og „Hvaða tölu táknar x?“ */
+.wrap{max-width:1180px}
+.hidden{display:none !important}
+
+/* Leikskjár */
+.toppur{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.toppur .heiti{font-weight:700;font-size:19px}
+.toppur .stada{color:var(--muted)}
+.vinnusvaedi{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){ .vinnusvaedi{grid-template-columns:minmax(0,1fr)} }
+.reikningsbok{background-color:#fff;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;border-radius:12px;padding:14px 16px;overflow-x:auto}
+.lina{display:flex;align-items:center;flex-wrap:nowrap;gap:0;font-size:30px;line-height:1.25;min-height:58px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.lina .jafnt{color:var(--muted);width:1.3em;flex:none}
+.lina.fyrri{color:#59647A}
+.lina.nuverandi{font-weight:700}
+.lina.svar-lina{color:var(--acc-dark);font-weight:700}
+.tk{padding:0 .12em}
+.tk.ox{color:var(--acc-dark);font-weight:700;font-style:italic}
+.tk.sv{color:#6B3FA0}
+.opk{font:inherit;font-weight:700;color:var(--ink);background:var(--acc-bg);border:2px solid var(--acc-line);border-radius:10px;min-width:44px;min-height:44px;margin:0 .12em;cursor:pointer;padding:0 .2em}
+.opk:hover,.opk:focus-visible{background:var(--acc);border-color:var(--acc);color:#fff}
+.tk.nagr{background:#FFE7D6;border-radius:6px}
+.valid{border:3px dashed var(--acc);border-radius:10px;padding:0 .15em;background:#FFF4ED}
+.kassi{display:inline-flex;align-items:center;justify-content:center;min-width:1.6em;height:1.3em;border:3px dashed var(--acc);border-radius:10px;color:var(--acc);background:#FFF4ED;margin:0 .12em}
+.hylkostur{font:inherit;font-weight:700;color:inherit;background:#fff;border:2px solid var(--line);border-radius:10px;padding:0 .15em;margin:0 .1em;cursor:pointer;min-height:44px}
+.hylkostur:hover,.hylkostur:focus-visible{border-color:var(--acc);background:var(--acc-bg)}
+.profun{margin-top:12px;border-top:2px dashed var(--line);padding-top:10px}
+.profun h3{margin:0 0 4px;font-size:16px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.verkefni p{margin:0 0 10px}
+.verkefni .spurning{font-size:22px;font-weight:700}
+.svarform{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:6px 0 10px}
+.svarform input{font:inherit;font-size:26px;font-weight:700;width:6.5em;padding:6px 10px;border:2px solid var(--line);border-radius:12px;text-align:center;font-variant-numeric:tabular-nums}
+.endurgjof{border-radius:12px;padding:10px 14px;margin-top:8px;font-weight:700}
+.endurgjof:empty{display:none}
+.endurgjof.rett{background:var(--ok-bg);color:#14532D}
+.endurgjof.rangt{background:#FDECEC;color:#8A1C1C}
+.endurgjof.uppl{background:var(--soft);color:var(--ink)}
+.abending{margin-top:10px;padding:10px 14px;border-left:4px solid var(--acc);background:var(--acc-bg);border-radius:0 12px 12px 0}
+.nidurstada{font-size:24px;font-weight:700;background:var(--acc-bg);color:var(--acc-dark);padding:8px 14px;border-radius:12px;display:inline-block;margin:4px 0 12px}
+.takkar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+
+/* Hreyfing og smáatriði */
+.lina.naesta{color:var(--muted)}
+.opk.hrista,.opk.hrista:hover{animation:hrista .4s ease;background:#FDECEC;border-color:#E5A3A3;color:#8A1C1C}
+@keyframes hrista{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@media (prefers-reduced-motion:reduce){ .opk.hrista{animation:none} }
+@media (max-width:600px){
+  .lina{font-size:23px;min-height:48px}
+  .opk,.hylkostur{min-width:36px;min-height:40px}
+}
+
+/* Jöfnur: vinstri hlið = hægri hlið, jafnaðarmerkin í beinni línu */
+.jofnur{display:grid;grid-template-columns:max-content max-content max-content;grid-auto-rows:minmax(58px,auto);column-gap:.3em;align-items:center;justify-content:start;font-size:30px;line-height:1.25;font-variant-numeric:tabular-nums;white-space:nowrap}
+.jofnur .v{justify-self:end;display:flex;align-items:center}
+.jofnur .j{color:var(--muted)}
+.jofnur .h{display:flex;align-items:center}
+.jofnur .fyrri{color:#59647A}
+.jofnur .nuverandi{font-weight:700}
+.jofnur .naesta{color:var(--muted)}
+.jofnur .svar-lina{color:var(--acc-dark);font-weight:700}
+.jofnur.med-skyringu{grid-template-columns:max-content max-content max-content max-content;font-size:24px;grid-auto-rows:minmax(40px,auto)}
+.jofnur .sk{font-size:16px;color:var(--muted);padding-left:1.2em;font-weight:400}
+.tk.merkt{color:var(--acc-dark);text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:6px}
+.profun-lina{font-size:18px;margin-top:10px;color:var(--ink)}
+.profun-lina .ok{color:var(--ok);font-weight:700}
+.lina.rett-lok{color:var(--ok)}
+@media (max-width:600px){
+  .jofnur{font-size:23px;grid-auto-rows:minmax(48px,auto)}
+  .jofnur.med-skyringu{font-size:19px}
+}

@@ -4,61 +4,42 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Deiling – Ausuaðferð</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../sameiginlegt.css">
+<link rel="stylesheet" href="leikjarammi.css">
 <style>
-:root{
-  --dokkt:#2b1b2e; --appelsina:#e07b2e; --appelsina-ljos:#fde8d6;
-  --graent:#2e9e5b; --graent-ljos:#e1f4e8; --bleikt:#f9d3da;
-  --rautt:#b9403a; --rautt-ljos:#fbe4e2; --bakgrunnur:#fbf7f0; --kort:#ffffff; --grar:#8f8489;
+/* Litir leiksins eru sóttir í sameiginlegt útlit síðunnar (sameiginlegt.css) */
+body{
+  --dokkt:var(--ink); --appelsina:var(--acc); --appelsina-ljos:var(--acc-bg);
+  --graent:var(--ok); --graent-ljos:var(--ok-bg); --bleikt:var(--acc-bg);
+  --rautt:#8A1C1C; --rautt-ljos:#FDECEC; --kort:var(--card); --grar:#8A93A6;
 }
-*{box-sizing:border-box}
-body{margin:0;font-family:'Andika',system-ui,sans-serif;font-variant-numeric:tabular-nums;background:var(--bakgrunnur);color:var(--dokkt);font-size:18px;line-height:1.45}
-header{display:flex;align-items:center;gap:1.2rem;padding:.75rem 1.2rem;background:var(--kort);border-bottom:4px solid var(--appelsina)}
-header a{color:var(--dokkt);text-decoration:none;font-weight:700;white-space:nowrap}
-header a:hover{color:var(--appelsina)}
-header h1{font-size:1.3rem;margin:0}
-main{max-width:1040px;margin:0 auto;padding:1.2rem}
-.kort{background:var(--kort);border-radius:16px;padding:1.2rem 1.4rem;box-shadow:0 2px 10px rgba(43,27,46,.07)}
-h2{margin:.2rem 0 .6rem;font-size:1.4rem}
 h3{margin:1rem 0 .4rem;font-size:1.1rem}
 button{font-family:inherit;font-size:1rem;cursor:pointer;border:none;border-radius:10px;padding:.6rem 1.1rem;color:var(--dokkt)}
-button:focus-visible,input:focus-visible{outline:3px solid var(--appelsina);outline-offset:2px}
-.adal{background:var(--appelsina);color:#fff;font-weight:700}
-.adal:hover{filter:brightness(.94)}
-.auka{background:#f0e9e1}
-.auka:hover{background:#e6ddd3}
-.auka.virkur{background:var(--appelsina-ljos);box-shadow:inset 0 0 0 2px var(--appelsina)}
+.adal,.auka{font-size:18px}
+.adal{font-weight:700;border-radius:12px;padding:12px 22px;min-height:48px;background:var(--acc);color:#fff}
+.adal:hover{filter:brightness(1.1)}
+.auka{font-weight:700;border-radius:12px;padding:10px 18px;min-height:44px;background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.auka:hover{background:var(--soft)}
+.auka.virkur{background:var(--acc-bg);border-color:var(--acc)}
 .falid{display:none !important}
+.kort{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:22px}
 
-/* Upphafsskjár */
-.efnalisti{display:grid;gap:.5rem;margin:.4rem 0 1rem}
-.efnalisti label{display:flex;gap:.7rem;align-items:flex-start;padding:.55rem .8rem;border-radius:10px;background:#faf6f1;cursor:pointer}
-.efnalisti label:hover{background:var(--appelsina-ljos)}
-.efnalisti input{width:1.2rem;height:1.2rem;margin-top:.2rem;accent-color:var(--appelsina)}
-.efnalisti .daemi{color:var(--grar);font-size:.92rem}
-.villa-texti{color:var(--rautt);font-weight:700;margin-left:.8rem}
-
-/* Skrefin */
-.skref{display:flex;flex-wrap:wrap;gap:.45rem;margin:.2rem 0 1rem}
-.skref .flis{display:flex;align-items:center;gap:.4rem;padding:.3rem .75rem .3rem .3rem;border-radius:999px;background:#fff;border:2px solid #eee3d8;font-weight:700;font-size:.92rem;letter-spacing:.02em}
-.skref .nr{display:inline-grid;place-items:center;width:1.6rem;height:1.6rem;border-radius:50%;background:var(--appelsina);color:#fff;font-size:.85rem}
-.skref .takn{color:var(--graent);font-size:1.05rem}
-.skref .flis.nuna{background:var(--appelsina-ljos);border-color:var(--appelsina)}
+/* Skrefin: útlit merkjanna er í leikjarammi.css, táknin eru græn eins og í uppsetningunni */
+.skref .takn{color:var(--graent)}
 .skref .flis.blikk{animation:blikk 1.2s ease}
 @keyframes blikk{0%,100%{background:#fff}30%,60%{background:var(--graent-ljos);border-color:var(--graent)}}
+@media (prefers-reduced-motion:reduce){ .skref .flis.blikk{animation:none} }
 
 /* Leikskjár */
-.toppur{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:.6rem}
-.toppur .efni-heiti{font-weight:700;font-size:1.05rem}
-.toppur .stada{color:var(--grar)}
-.toppur .takkar{display:flex;gap:.5rem;flex-wrap:wrap}
-.vinnusvaedi{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1rem;align-items:start}
-@media (max-width:820px){.vinnusvaedi{grid-template-columns:1fr}}
+.toppur{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.toppur .efni-heiti{font-weight:700;font-size:19px}
+.toppur .stada{color:var(--muted)}
+.toppur .takkar{display:flex;gap:10px;flex-wrap:wrap}
+.vinnusvaedi{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.vinnusvaedi{grid-template-columns:minmax(0,1fr)}}
 .daemi-titill{font-size:1.25rem;margin:0 0 .6rem}
-.daemi-titill b{font-family:'Andika',sans-serif;font-weight:600}
-.uppsetning-ramma{overflow-x:auto;padding:.6rem .2rem 1rem 2.2rem}
+.daemi-titill b{font-weight:700}
+.uppsetning-ramma{overflow-x:auto;padding:.6rem .2rem 1rem 2.2rem;background-color:#fff;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;border-radius:12px}
 
 /* Uppsetningin sjálf */
 .uppsetning{display:inline-grid;font-family:'Andika',sans-serif;font-size:2.3rem;line-height:1.3;grid-auto-rows:1.3em}
@@ -83,73 +64,48 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--appelsina);outl
 
 /* Verkefnaspjald */
 .verkefni p{margin:.2rem 0 .7rem}
-.svarform{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.3rem 0 .6rem}
-.svarform input{font-family:'Andika',sans-serif;font-size:1.6rem;width:7ch;padding:.3rem .5rem;border:2px solid #e3d8cc;border-radius:10px;text-align:center}
-.endurgjof{min-height:1.5em;padding:.6rem .8rem;border-radius:10px;margin-top:.4rem}
+.svarform{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:6px 0 10px}
+.svarform input{font:inherit;font-size:26px;font-weight:700;width:6.5em;padding:6px 10px;border:2px solid var(--line);border-radius:12px;text-align:center}
+.endurgjof{min-height:1.5em;padding:10px 14px;border-radius:12px;margin-top:8px;font-weight:700}
 .endurgjof:empty{padding:0}
-.endurgjof.rett{background:var(--graent-ljos);color:#1d6b3d}
-.endurgjof.rangt{background:var(--rautt-ljos);color:var(--rautt)}
-.endurgjof.uppl{background:#f3eee8}
-.abending{margin-top:.6rem;padding:.6rem .8rem;border-left:4px solid var(--appelsina);background:#fff8f1;border-radius:0 10px 10px 0}
-.nidurstada{font-family:'Andika',sans-serif;font-size:1.5rem;font-weight:600;background:var(--bleikt);padding:.5rem .9rem;border-radius:10px;display:inline-block;margin:.3rem 0 .8rem}
-.tafla{margin-top:1rem;padding:.7rem .9rem;background:#faf6f1;border-radius:12px}
+.endurgjof.rett{background:var(--ok-bg);color:#14532D}
+.endurgjof.rangt{background:#FDECEC;color:#8A1C1C}
+.endurgjof.uppl{background:var(--soft);color:var(--ink)}
+.abending{margin-top:10px;padding:10px 14px;border-left:4px solid var(--acc);background:var(--acc-bg);border-radius:0 12px 12px 0}
+.nidurstada{font-size:24px;font-weight:700;background:var(--acc-bg);color:var(--acc-dark);padding:8px 14px;border-radius:12px;display:inline-block;margin:4px 0 12px}
+.tafla{margin-top:1rem;padding:12px 14px;background:var(--soft);border-radius:12px}
 .tafla h4{margin:0 0 .3rem;font-size:1rem}
-.tafla ul{list-style:none;margin:0;padding:0;columns:3;font-family:'Andika',sans-serif;font-size:1rem}
+.tafla ul{list-style:none;margin:0;padding:0;columns:3;font-size:1rem}
 .tafla li{padding:.05rem 0}
 
 /* Upprifjun */
-.yfirlag{position:fixed;inset:0;background:rgba(43,27,46,.45);display:grid;place-items:center;padding:1rem;z-index:20}
-.yfirlag .kort{max-width:760px;width:100%;max-height:92vh;overflow:auto}
-.upprifjun-innri{display:grid;grid-template-columns:auto 1fr;gap:1.2rem;align-items:start}
-@media (max-width:700px){.upprifjun-innri{grid-template-columns:1fr}}
-.upprifjun-innri .uppsetning{font-size:1.6rem}
-.upprifjun-innri ul{margin:.2rem 0;padding-left:1.2rem}
-.upprifjun-innri li{margin:.35rem 0}
-.merki{display:inline-block;font-size:.85rem;font-weight:700;color:var(--appelsina);text-transform:uppercase;letter-spacing:.06em}
-
-/* Lok */
-.lok-listi{list-style:none;padding:0;margin:.4rem 0 1rem}
-.lok-listi li{padding:.5rem .8rem;border-radius:10px;background:#faf6f1;margin:.35rem 0;display:flex;justify-content:space-between;gap:1rem}
+.ausa-upp .nidurstada{font-size:1.15rem}
+.ausa-upp .uppsetning{font-size:1.6rem}
 </style>
 </head>
-<body>
-<header>
-  <a href="../index.html">← Forsíða</a>
-  <h1>Deiling – Ausuaðferð</h1>
-</header>
+<body class="fag-staerdfraedi">
+<div class="wrap">
+  <a class="heim" href="../index.html">← Forsíða</a>
 
-<main>
-  <!-- Upphafsskjár -->
-  <section id="upphaf" class="kort">
-    <h2>Æfðu ausuaðferðina skref fyrir skref</h2>
-    <div class="skref" aria-hidden="true">
-      <span class="flis"><span class="nr">1</span>DEILA <span class="takn">:</span></span>
-      <span class="flis"><span class="nr">2</span>MARGFALDA <span class="takn">·</span></span>
-      <span class="flis"><span class="nr">3</span>DRAGA FRÁ <span class="takn">−</span></span>
-      <span class="flis"><span class="nr">4</span>FÆRA NIÐUR <span class="takn">↓</span></span>
-      <span class="flis"><span class="nr">5</span>ENDURTAKA <span class="takn">↻</span></span>
-    </div>
-    <p>Veldu hvað þú vilt æfa. Í hverju efni eru 4 dæmi sem byrja létt og þyngjast smám saman.</p>
-    <p><a href="veggspjald.html?v=ausa" style="color:var(--appelsina);font-weight:700">Skoðaðu veggspjaldið: aðferðin skref fyrir skref →</a></p>
-    <div id="efnalisti"></div>
-    <button class="adal" id="btnByrja">Byrja</button><span id="upphafVilla" class="villa-texti"></span>
-  </section>
+  <!-- Upphafsskjár (teiknaður af leikjarammi.js) -->
+  <section id="upphaf"></section>
 
   <!-- Leikskjár -->
-  <section id="leikur" class="falid">
+  <section id="leikur" class="hidden">
     <div class="toppur">
       <div><div class="efni-heiti" id="efniHeiti"></div><div class="stada" id="stada"></div></div>
       <div class="takkar">
         <button class="auka" id="btnUpprifjun">Upprifjun</button>
         <button class="auka" id="btnTafla">Margföldunartafla</button>
+        <button class="auka" id="btnHaetta">Hætta</button>
       </div>
     </div>
     <div class="skref" id="skrefin">
-      <span class="flis" data-s="deila"><span class="nr">1</span>DEILA <span class="takn">:</span></span>
-      <span class="flis" data-s="margfalda"><span class="nr">2</span>MARGFALDA <span class="takn">·</span></span>
-      <span class="flis" data-s="draga"><span class="nr">3</span>DRAGA FRÁ <span class="takn">−</span></span>
-      <span class="flis" data-s="faera"><span class="nr">4</span>FÆRA NIÐUR <span class="takn">↓</span></span>
-      <span class="flis" data-s="endurtaka"><span class="nr">5</span>ENDURTAKA <span class="takn">↻</span></span>
+      <span class="flis" data-s="deila"><span class="nr">1</span>Deila <span class="takn">:</span></span>
+      <span class="flis" data-s="margfalda"><span class="nr">2</span>Margfalda <span class="takn">·</span></span>
+      <span class="flis" data-s="draga"><span class="nr">3</span>Draga frá <span class="takn">−</span></span>
+      <span class="flis" data-s="faera"><span class="nr">4</span>Færa niður <span class="takn">↓</span></span>
+      <span class="flis" data-s="endurtaka"><span class="nr">5</span>Endurtaka <span class="takn">↻</span></span>
     </div>
     <div class="vinnusvaedi">
       <div class="kort">
@@ -171,29 +127,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--appelsina);outl
     </div>
   </section>
 
-  <!-- Lok -->
-  <section id="lok" class="kort falid">
-    <h2>Vel gert!</h2>
-    <p id="lokTexti"></p>
-    <ul class="lok-listi" id="lokListi"></ul>
-    <button class="adal" id="btnAftur">Spila aftur</button>
-    <button class="auka" id="btnVelja">Velja önnur efni</button>
-  </section>
-</main>
-
-<!-- Upprifjun -->
-<div class="yfirlag falid" id="upprifjun">
-  <div class="kort">
-    <span class="merki">Upprifjun</span>
-    <h2 id="uppTitill"></h2>
-    <div class="upprifjun-innri">
-      <div id="uppDaemi"></div>
-      <div id="uppAtridi"></div>
-    </div>
-    <div style="margin-top:1rem"><button class="adal" id="btnLokaUpp">Byrja á dæmunum</button></div>
-  </div>
+  <!-- Lokaskjár (teiknaður af leikjarammi.js) -->
+  <section id="lok" class="hidden"></section>
 </div>
 
+
+<script src="leikjarammi.js"></script>
 <script>
 /* ============ Hjálparföll ============ */
 const $ = s => document.querySelector(s);
@@ -529,30 +468,15 @@ function teiknaUppsetningu(S, gagnvirkt) {
 }
 
 /* ============ Viðmót ============ */
-let leikur = { valin: [], rod: [], nr: 0, S: null, villurSkref: 0, villurDaemi: 0, nidurstodur: {}, taflaSynd: false };
+let leikur = { valin: [], rod: [], nr: 0, S: null, villurSkref: 0, villurDaemi: 0, taflaSynd: false };
 
-function synaSkja(id) {
-  ['upphaf', 'leikur', 'lok'].forEach(s => $('#' + s).classList.toggle('falid', s !== id));
-  window.scrollTo(0, 0);
-}
-
-function teiknaEfnalista() {
-  const box = $('#efnalisti');
-  let html = '', hopur = '';
-  EFNI.forEach((e, i) => {
-    if (e.hopur !== hopur) { if (hopur) html += '</div>'; hopur = e.hopur; html += `<h3>${hopur}</h3><div class="efnalisti">`; }
-    html += `<label><input type="checkbox" id="v_${e.id}" ${i === 0 ? 'checked' : ''}><span>${e.heiti}<br><span class="daemi">t.d. ${e.daemi}</span></span></label>`;
-  });
-  box.innerHTML = html + '</div>';
-}
+function synaSkja(id) { RAMMI.syna(id); }
 
 function byrjaLeik(efni) {
   const notud = new Set();
   leikur.valin = efni;
   leikur.rod = [];
-  leikur.nidurstodur = {};
   efni.forEach(e => {
-    leikur.nidurstodur[e.id] = { heiti: e.heiti, alls: 0, anVillu: 0 };
     e.threp.forEach((f, t) => {
       let p, lykill;
       do { p = reyna(f); lykill = p.digits.join('') + '|' + p.comma + '|' + p.d; } while (notud.has(lykill));
@@ -562,6 +486,7 @@ function byrjaLeik(efni) {
     });
   });
   leikur.nr = 0;
+  RAMMI.hefja(leikur.rod.map(x => x.efni.id));
   synaSkja('leikur');
   synaDaemi();
 }
@@ -573,7 +498,7 @@ function synaDaemi() {
   setjaEndurgjof('', '');
   $('#abending').classList.add('falid');
   teikna();
-  if (x.threp === 0) opnaUpprifjun(x.efni);
+  if (x.threp === 0) opnaUpprifjun(x.efni, true);
 }
 
 function setjaEndurgjof(texti, teg) {
@@ -697,51 +622,35 @@ function adgerd(nidurstada) {
 }
 
 function skraNidurstodu() {
-  const x = leikur.rod[leikur.nr], n = leikur.nidurstodur[x.efni.id];
-  n.alls++; if (leikur.villurDaemi === 0) n.anVillu++;
+  RAMMI.skra(leikur.rod[leikur.nr].efni.id, leikur.villurDaemi === 0);
 }
 
 function naesta() {
   if (leikur.nr < leikur.rod.length - 1) { leikur.nr++; synaDaemi(); return; }
-  const listi = Object.values(leikur.nidurstodur);
-  const alls = listi.reduce((a, n) => a + n.alls, 0), an = listi.reduce((a, n) => a + n.anVillu, 0);
-  $('#lokTexti').textContent = `Þú leystir ${alls} dæmi. ${an} þeirra leystirðu án villu.`;
-  $('#lokListi').innerHTML = listi.map(n => `<li><span>${n.heiti}</span><b>${n.anVillu} af ${n.alls} án villu</b></li>`).join('');
-  synaSkja('lok');
+  RAMMI.lok({ hnappar: [
+    { texti: 'Æfa aftur', adal: true, smellt: () => byrjaLeik(leikur.valin) },
+    { texti: 'Velja önnur efni', smellt: () => synaSkja('upphaf') }
+  ] });
 }
 
-function opnaUpprifjun(efni) {
+function opnaUpprifjun(efni, fyrst) {
   const p = Object.assign({}, efni.upp.p, { afgangur: !!efni.upp.afgangur, nulla: !!efni.upp.nulla });
   const S = leysaAllt(p);
-  $('#uppTitill').textContent = efni.heiti;
-  const box = $('#uppDaemi');
-  box.innerHTML = `<div class="nidurstada" style="font-size:1.15rem">${jafnaTexti(S)}</div>`;
+  const box = document.createElement('div'); box.className = 'ausa-upp';
+  box.innerHTML = `<div class="nidurstada">${jafnaTexti(S)}</div>`;
   const r = document.createElement('div'); r.className = 'uppsetning-ramma';
   r.appendChild(teiknaUppsetningu(S, false));
   box.appendChild(r);
-  $('#uppAtridi').innerHTML = '<ul>' + efni.upp.atridi.map(a => `<li>${a}</li>`).join('') + '</ul>';
-  $('#upprifjun').classList.remove('falid');
-  $('#btnLokaUpp').focus();
+  RAMMI.upprifjun({ titill: efni.heiti, atridi: efni.upp.atridi, mynd: box,
+    hnappur: fyrst ? 'Byrja á dæmunum' : 'Loka upprifjun', eftir: lokaUpprifjun });
 }
 function lokaUpprifjun() {
-  $('#upprifjun').classList.add('falid');
   if (['deila', 'margfalda', 'draga', 'afgangur'].includes(leikur.S?.fasi)) $('#svar').focus({ preventScroll: true });
 }
 
 /* ============ Atburðir ============ */
-$('#btnByrja').onclick = () => {
-  const valin = EFNI.filter(e => $('#v_' + e.id).checked);
-  if (!valin.length) { $('#upphafVilla').textContent = 'Veldu að minnsta kosti eitt efni.'; return; }
-  $('#upphafVilla').textContent = '';
-  byrjaLeik(valin);
-};
-$('#efnalisti').addEventListener('change', () => { $('#upphafVilla').textContent = ''; });
-$('#btnAftur').onclick = () => byrjaLeik(leikur.valin);
-$('#btnVelja').onclick = () => synaSkja('upphaf');
-$('#btnLokaUpp').onclick = lokaUpprifjun;
-$('#upprifjun').addEventListener('click', e => { if (e.target.id === 'upprifjun') lokaUpprifjun(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#upprifjun').classList.contains('falid')) lokaUpprifjun(); });
-$('#btnUpprifjun').onclick = () => opnaUpprifjun(leikur.rod[leikur.nr].efni);
+$('#btnHaetta').onclick = () => synaSkja('upphaf');
+$('#btnUpprifjun').onclick = () => opnaUpprifjun(leikur.rod[leikur.nr].efni, false);
 $('#btnTafla').onclick = () => { leikur.taflaSynd = !leikur.taflaSynd; teiknaToflu(); };
 $('#btnAbending').onclick = () => {
   const a = $('#abending');
@@ -771,7 +680,16 @@ $('#uppsetning').addEventListener('mouseleave', () => {
   document.querySelectorAll('#uppsetning .stofn.valid').forEach(c => c.classList.remove('valid'));
 });
 
-teiknaEfnalista();
+RAMMI.upphaf({
+  titill: 'Deiling – Ausuaðferð',
+  inngangur: 'Æfðu ausuaðferðina skref fyrir skref. Skrefin fimm eru endurtekin þar til allir tölustafirnir hafa verið notaðir.',
+  skref: [{ heiti: 'Deila', takn: ':' }, { heiti: 'Margfalda', takn: '·' }, { heiti: 'Draga frá', takn: '−' }, { heiti: 'Færa niður', takn: '↓' }, { heiti: 'Endurtaka', takn: '↻' }],
+  efni: EFNI.map(e => ({ id: e.id, hopur: e.hopur, heiti: e.heiti, lysing: 't.d. ' + e.daemi, fjoldi: 4 })),
+  sjalfgefid: 1,
+  fjoldiTexti: 'Í hverju efni eru 4 dæmi. Þau byrja létt og þyngjast.',
+  tengill: { texti: 'Veggspjald: Deiling – Ausuaðferð', slod: 'veggspjald.html?v=ausa' },
+  byrja: ids => byrjaLeik(EFNI.filter(e => ids.includes(e.id)))
+});
 </script>
 </body>
 </html>

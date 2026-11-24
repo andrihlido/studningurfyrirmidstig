@@ -9,6 +9,14 @@
   /* Litur fags (sjálfgefið dökkblár) */
   --acc:#1F2A44;--acc-dark:#141B2D;--acc-bg:#EEF0F5;--acc-line:#C9CEDA;
 }
+/* Litir tegunda: veggspjald (vs), hugtök (hu), aðferð (ad), æfingapróf (ap), kaflapróf (pr) */
+:root{
+  --vs-bg:#EEF5FE; --vs-line:#C7DBF4; --vs-tag:#D6E6FB; --vs-ink:#1E4C8A; --vs-acc:#3B78C4;
+  --hu-bg:#F5F3FC; --hu-line:#DCD5F0; --hu-tag:#E6E0F7; --hu-ink:#4A3C8C; --hu-acc:#7563C2;
+  --ad-bg:#FFF1F1; --ad-line:#F5CACA; --ad-tag:#FBDADA; --ad-ink:#9B2226; --ad-acc:#D64545;
+  --ap-bg:#FFF8EB; --ap-line:#F2D7A6; --ap-tag:#FBE6C2; --ap-ink:#7A4208; --ap-acc:#D9891A;
+  --pr-bg:#EEFAF2; --pr-line:#BFE5CC; --pr-tag:#D5F1DF; --pr-ink:#14532D; --pr-acc:#2E9E5B;
+}
 /* Litir faga */
 .fag-staerdfraedi{--acc:#C2410C;--acc-dark:#9A3412;--acc-bg:#FFF4ED;--acc-line:#F3C3A6}
 .fag-islenska{--acc:#0F766E;--acc-dark:#115E59;--acc-bg:#EEF9F7;--acc-line:#A7DCD3}

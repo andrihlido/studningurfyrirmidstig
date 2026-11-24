@@ -103,16 +103,17 @@
   function byggja(L, med){
     var h = "<div class=\"p-haus\"><div><h1>" + v.titill + "</h1><p>" + fmt(v.inngangur) + "</p></div><span class=\"merki\">Stuðningur fyrir miðstig</span></div>";
     var n = v.skref.lidir.length;
-    h += "<div class=\"p-kafli\"><h2>Skref fyrir skref</h2>" + (v.skref.daemi ? "<span class=\"daemi\">" + fmt(v.skref.daemi) + "</span>" : "") + "</div>";
+    h += "<div class=\"p-kafli\"><h2>" + (v.skref.titill || "Skref fyrir skref") + "</h2>" + (v.skref.daemi ? "<span class=\"daemi\">" + fmt(v.skref.daemi) + "</span>" : "") + "</div>";
     h += "<div class=\"p-grid\" style=\"grid-template-columns:repeat(" + dalkar(n, L, 250) + ",minmax(0,1fr))\">";
     v.skref.lidir.forEach(function(s, i){
-      h += "<section class=\"p-spjald\"><h3><span class=\"nr\">" + (i + 1) + "</span>" + s.t + "</h3><p class=\"x\">" + fmt(s.x) + "</p>" + MY.teikna(s.m) + "</section>";
+      h += "<section class=\"p-spjald\"><h3>" + (v.skref.numer === false ? "" : "<span class=\"nr\">" + (i + 1) + "</span>") + s.t + "</h3><p class=\"x\">" + fmt(s.x) + "</p>" + MY.teikna(s.m) + "</section>";
     });
     h += "</div>";
     if(v.auka && med.auka){
       h += "<div class=\"p-kafli\"><h2>" + v.auka.titill + "</h2><p>" + fmt(v.auka.x) + "</p></div>";
       h += "<section class=\"p-spjald\"><div class=\"auka-myndir\">" + MY.teikna(v.auka.m) + "</div></section>";
     }
+    if(v.leidir){
     var nl = v.leidir.lidir.length;
     h += "<div class=\"p-kafli\"><h2>Ólíkar leiðir að sama svari</h2><p>" + fmt(v.leidir.x) + "</p></div>";
     h += "<div class=\"p-grid\" style=\"grid-template-columns:repeat(" + dalkar(nl, L, 260) + ",minmax(0,1fr))\">";
@@ -122,6 +123,7 @@
     });
     h += "</div>";
     if(v.leidir.nidur) h += "<p class=\"nidur\">" + fmt(v.leidir.nidur) + "</p>";
+    }
     if(med.villur && hefurVillur){
       h += "<div class=\"p-kafli\"><h2>Algengar villur</h2></div>";
       h += "<div class=\"p-grid\" style=\"grid-template-columns:repeat(" + dalkar(v.villur.length, L, 260) + ",minmax(0,1fr))\">";

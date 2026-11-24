@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tölur</title>
+<title>Æfingapróf: Tölur</title>
 <link rel="stylesheet" href="../sameiginlegt.css">
+<link rel="stylesheet" href="leikjarammi.css">
 <style>
 .wrap{max-width:900px}
 .top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
@@ -106,49 +107,17 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
 <div class="wrap" id="wrap">
 <a class="heim" href="../index.html">← Forsíða</a>
 
-<!-- Upphafsskjár -->
-<section id="start">
-  <div class="top">
-    <div class="stack" style="gap:6px">
-      <h1>Tölur</h1>
-      <p class="muted">Upprifjun úr 1. kafla í Stiku 3a.</p>
-    </div>
-  </div>
-  <div class="start-grid">
-    <div class="card stack">
-      <h2 style="margin:0">Veldu efni</h2>
-      <div class="topics" id="topics" role="group" aria-label="Efni"></div>
-      <p class="tip" id="countText"></p>
-      <p class="err" id="startErr" role="status"></p>
-      <div class="row"><button class="btn acc" id="btnStart">Byrja</button><button class="btn ghost" id="btnProf">Æfing fyrir kaflapróf</button></div>
-      <p class="tip">Æfing fyrir kaflapróf: spurningar úr öllum efnum kaflans, án upprifjunar.</p>
-    </div>
-    <div class="card stack">
-      <h2 style="margin:0">Svona virkar þetta</h2>
-      <ol class="howto">
-        <li>Svaraðu spurningunni.</li>
-        <li>Ertu óviss? Smelltu á <b>Fá ábendingu</b>.</li>
-        <li>Ef svarið er rangt færðu ábendingu og aðra tilraun.</li>
-        <li>Eftir hverja spurningu sérðu útskýringu með mynd.</li>
-      </ol>
-    </div>
-  </div>
-</section>
+<!-- Upphafsskjár (teiknaður af leikjarammi.js) -->
+<section id="upphaf"></section>
 
 <!-- Leikjaskjár -->
-<section id="play" class="hidden">
+<section id="leikur" class="hidden">
   <div class="stack">
     <div class="row" style="justify-content:space-between">
       <p class="muted" id="progress">Spurning 1 af 10</p>
       <button class="btn ghost" id="btnQuit">Hætta</button>
     </div>
     <div class="bar" aria-hidden="true"><span id="barFill" style="width:0%"></span></div>
-    <div class="card stack recap hidden" id="recapCard">
-      <span class="tag" id="recapTag"></span>
-      <ul class="recap-list" id="recapList"></ul>
-      <div id="recapVisual"></div>
-      <div class="row"><button class="btn acc" id="btnRecapGo">Byrja á spurningunum</button></div>
-    </div>
     <div class="card stack" id="qCard">
       <span class="tag" id="qTopic"></span>
       <p class="question" id="qText"></p>
@@ -166,34 +135,11 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
   </div>
 </section>
 
-<!-- Niðurstöður -->
-<section id="end" class="hidden">
-  <div class="top">
-    <div class="stack" style="gap:6px">
-      <h1>Niðurstöður</h1>
-      <p class="muted" id="endSummary"></p>
-    </div>
-  </div>
-  <div class="stack">
-    <div class="card stack hidden" id="profBox"></div>
-    <div class="stats" id="stats"></div>
-    <div class="card stack">
-      <div class="table-wrap">
-        <table class="res-table">
-          <thead><tr><th>Efni</th><th>Spurning</th><th>Niðurstaða</th></tr></thead>
-          <tbody id="endRows"></tbody>
-        </table>
-      </div>
-      <div class="row">
-        <button class="btn acc" id="btnRetry">Æfa aftur það sem var erfitt</button>
-        <button class="btn ghost" id="btnAgain">Spila aftur</button>
-        <button class="btn ghost" id="btnHome">Velja efni</button>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- Niðurstöður (teiknaðar af leikjarammi.js) -->
+<section id="lok" class="hidden"></section>
 </div>
 
+<script src="leikjarammi.js"></script>
 <script>
 (function(){
   "use strict";
@@ -250,12 +196,12 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
       mynd:{teg:"saeti", tolur:["0,03"], gildi:true, merkt:"Hundraðshlutar"} },
 
     { efni:"Tugabrot", tegund:"val",
-      texti:"Reiknaðu: 1367,89 + 345,452 − 1111,120",
+      texti:"Reiknaðu: 1 367,89 + 345,452 − 1 111,120",
       svor:["602,222","601,222","702,222","599,122"],
       rett:0,
       abending:"Settu dæmið upp þannig að komma sé beint undir kommu. Byrjaðu á samlagningunni.",
       abMynd:{teg:"uppsetning", blokkir:[{titill:"1. Samlagning", linur:["1367,89","345,452"], adgerd:"+", fylla:true}]},
-      utskyring:["Fyrst leggjum við saman: 1367,89 + 345,452 = 1713,342","Síðan drögum við frá: 1713,342 − 1111,120 = 602,222"],
+      utskyring:["Fyrst leggjum við saman: 1 367,89 + 345,452 = 1 713,342","Síðan drögum við frá: 1 713,342 − 1 111,120 = 602,222"],
       mynd:{teg:"uppsetning", blokkir:[
         {titill:"1. Samlagning", linur:["1367,89","345,452"], adgerd:"+", svar:"1713,342", fylla:true},
         {titill:"2. Frádráttur", linur:["1713,342","1111,120"], adgerd:"−", svar:"602,222"}]} },
@@ -356,6 +302,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
   /* Röð spurninga: efni fyrir efni, auðveldast fyrst og erfiðast síðast */
   var ROD = [1,3,2,0,4,7,6,5,8,10,9,11,13,12,14,15,16];
   SPURNINGAR = ROD.map(function(i){ return SPURNINGAR[i]; });
+  window.__S = SPURNINGAR; /* fyrir sjálfvirkar prófanir */
 
   /* ================= HJÁLPARFÖLL ================= */
   var HROS = ["Rétt!","Vel gert!","Flott hjá þér!","Rétt svar!"];
@@ -540,63 +487,33 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
   function showRecap(efni, hlid){
     var u = UPPRIFJUN[efni];
     if(!u) return false;
-    $("recapTag").textContent = "Upprifjun · " + efni;
-    $("recapList").innerHTML = u.atridi.map(function(a){ return "<li>" + fmtU(a) + "</li>"; }).join("") +
-      (VS_TENGLAR[efni] ? "<li><a href=\"veggspjald.html?v=" + VS_TENGLAR[efni][0] + "\">Skoðaðu veggspjaldið „" + VS_TENGLAR[efni][1] + "“</a></li>" : "");
-    $("recapVisual").innerHTML = teikna(u.mynd);
-    $("recapCard").classList.remove("hidden");
-    if(hlid){ $("qCard").classList.add("hidden"); $("btnRecapGo").textContent = "Byrja á spurningunum"; }
-    else { $("btnRecapGo").textContent = "Loka upprifjun"; }
-    window.scrollTo(0, 0);
-    setTimeout(function(){ $("btnRecapGo").focus(); }, 30);
+    RAMMI.upprifjun({titill:efni, atridi:u.atridi.map(fmtU), mynd:teikna(u.mynd),
+      tengill: VS_TENGLAR[efni] ? {texti:"Skoðaðu veggspjaldið „" + VS_TENGLAR[efni][1] + "“", slod:"veggspjald.html?v=" + VS_TENGLAR[efni][0]} : null,
+      hnappur: hlid ? "Byrja á spurningunum" : "Loka upprifjun",
+      eftir:function(){ if(game && game.cur && game.cur.q.tegund === "skrifa" && !game.cur.done) setTimeout(function(){ $("answer").focus(); }, 30); }});
     return true;
   }
-  function hideRecap(){ $("recapCard").classList.add("hidden"); $("qCard").classList.remove("hidden"); }
-  $("btnRecapGo").addEventListener("click", function(){
-    hideRecap();
-    if(game && game.cur && game.cur.q.tegund === "skrifa" && !game.cur.done) setTimeout(function(){ $("answer").focus(); }, 30);
-  });
+  function hideRecap(){}
   $("btnRecap").addEventListener("click", function(){ if(game && game.cur) showRecap(game.cur.q.efni, false); });
 
-  /* ================= UPPHAFSSKJÁR ================= */
-  var valin = EFNI.slice();
-  function show(id){
-    ["start","play","end"].forEach(function(s){ $(s).classList.toggle("hidden", s !== id); });
-    window.scrollTo(0, 0);
-  }
-  function renderTopics(){
-    $("topics").innerHTML = "";
-    EFNI.forEach(function(e){
-      var b = document.createElement("button");
-      b.type = "button"; b.className = "topic"; b.textContent = e;
-      b.setAttribute("aria-pressed", String(valin.indexOf(e) !== -1));
-      b.addEventListener("click", function(){
-        var i = valin.indexOf(e);
-        if(i === -1) valin.push(e); else valin.splice(i, 1);
-        $("startErr").textContent = "";
-        renderTopics();
-      });
-      $("topics").appendChild(b);
-    });
-    var n = SPURNINGAR.filter(function(q){ return valin.indexOf(q.efni) !== -1; }).length;
-    $("countText").textContent = n === 0 ? "Ekkert efni valið." : (n + (ein(n) ? " spurning" : " spurningar") + " í völdu efni.");
-  }
+  /* ================= UPPHAFSSKJÁR =================
+     Upphafsskjár, upprifjun og niðurstöðuspjald koma úr leikjarammi.js */
+  function show(id){ RAMMI.syna({start:"upphaf", play:"leikur", end:"lok"}[id] || id); }
+  function efniId(e){ return RAMMI.audkenni(e); }
+  function velja(ids){ return SPURNINGAR.filter(function(q){ return ids.indexOf(efniId(q.efni)) !== -1; }); }
+  function renderTopics(){}
 
   /* ================= LEIKUR ================= */
   var game = null;
 
   function start(list, prof){
     game = {list: list.slice(), i: 0, results: [], prof: !!prof, seen: {}};
+    RAMMI.hefja(game.list.map(function(q){ return efniId(q.efni); }), {prof:!!prof});
     if(prof) EFNI.forEach(function(e){ game.seen[e] = true; });
     load();
     show("play");
   }
 
-  $("btnStart").addEventListener("click", function(){
-    var list = SPURNINGAR.filter(function(q){ return valin.indexOf(q.efni) !== -1; });
-    if(list.length === 0){ $("startErr").textContent = "Veldu að minnsta kosti eitt efni."; return; }
-    start(list);
-  });
 
   function load(){
     var q = game.list[game.i];
@@ -631,7 +548,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
       $("answerForm").classList.remove("hidden");
       var a = $("answer");
       a.value = ""; a.disabled = false; a.className = "";
-      setTimeout(function(){ a.focus(); }, 30);
+      setTimeout(function(){ if(!RAMMI.upprifjunOpin()) a.focus(); }, 30);
     }
   }
 
@@ -676,6 +593,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
     c.done = true;
     var status = ok ? ((c.tries === 1 && !c.hint) ? 1 : 2) : 3;
     game.results.push({q:q, status:status});
+    RAMMI.skra(efniId(q.efni), status === 1);
     var rettTexti = q.tegund === "val" ? q.svor[q.rett] : q.tekid[0];
     if(q.tegund === "val"){
       Array.prototype.forEach.call($("options").children, function(b){
@@ -707,34 +625,36 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
     if(game.i < game.list.length - 1){ game.i++; load(); }
     else showEnd();
   });
-  $("btnQuit").addEventListener("click", function(){ renderTopics(); show("start"); });
+  $("btnQuit").addEventListener("click", function(){ show("start"); });
 
   /* ================= NIÐURSTÖÐUR ================= */
   var STATUS = {1:["Rétt í fyrstu tilraun","s1"], 2:["Rétt með hjálp","s2"], 3:["Ekki rétt","s3"]};
   function showEnd(){
-    profNidurstodur();
-    var r = game.results;
-    var c = {1:0, 2:0, 3:0};
+    var r = game.results, c = {1:0, 2:0, 3:0};
     r.forEach(function(x){ c[x.status]++; });
-    $("endSummary").textContent = "Þú svaraðir " + r.length + (ein(r.length) ? " spurningu." : " spurningum.");
-    $("stats").innerHTML = [1,2,3].map(function(s){
+    var stats = "<div class=\"stats\">" + [1,2,3].map(function(s){
       return "<div class=\"stat " + STATUS[s][1] + "\"><b>" + c[s] + "</b><span>" + STATUS[s][0] + "</span></div>";
-    }).join("");
-    $("endRows").innerHTML = r.map(function(x){
-      return "<tr><td>" + x.q.efni + "</td><td>" + x.q.texti + "</td><td><span class=\"status " + STATUS[x.status][1] + "\">" + STATUS[x.status][0] + "</span></td></tr>";
-    }).join("");
-    $("btnRetry").classList.toggle("hidden", c[2] + c[3] === 0);
-    show("end");
+    }).join("") + "</div>";
+    var tafla = "<div class=\"card stack\"><h2 style=\"margin:0\">Allar spurningarnar</h2><div class=\"table-wrap\"><table class=\"res-table\">" +
+      "<thead><tr><th>Efni</th><th>Spurning</th><th>Niðurstaða</th></tr></thead><tbody>" + r.map(function(x){
+        return "<tr><td>" + x.q.efni + "</td><td>" + x.q.texti + "</td><td><span class=\"status " + STATUS[x.status][1] + "\">" + STATUS[x.status][0] + "</span></td></tr>";
+      }).join("") + "</tbody></table></div></div>";
+    var erfitt = c[2] + c[3] > 0, hnappar = [];
+    if(erfitt) hnappar.push({texti:"Æfa aftur það sem var erfitt", adal:true, smellt:function(){
+      start(game.results.filter(function(x){ return x.status > 1; }).map(function(x){ return x.q; }));
+    }});
+    hnappar.push({texti:"Taka prófið aftur", adal:!erfitt, smellt:function(){ if(game.prof) start(profList(), true); else start(game.results.map(function(x){ return x.q; })); }});
+    hnappar.push({texti:"Velja efni", smellt:function(){ show("start"); }});
+    var prof = profNidurstodur();
+    RAMMI.lok({ofan:prof.html, nedan:stats + tafla, hnappar:hnappar, eftir:function(){
+      var b = $("btnVeik");
+      if(b) b.addEventListener("click", function(){ start(velja(prof.veik.map(efniId))); });
+    }});
   }
-  $("btnRetry").addEventListener("click", function(){
-    start(game.results.filter(function(x){ return x.status > 1; }).map(function(x){ return x.q; }));
-  });
-  $("btnAgain").addEventListener("click", function(){ if(game.prof) start(profList(), true); else start(game.results.map(function(x){ return x.q; })); });
-  $("btnHome").addEventListener("click", function(){ renderTopics(); show("start"); });
 
   /* ================= ÆFING FYRIR KAFLAPRÓF =================
      Ein til tvær spurningar úr hverju efni, í sömu röð og í kaflanum, án upprifjunar. */
-  var VS_TENGLAR = {"Forgangsröð": ["forgangsrod", "Forgangsröð reikniaðgerða"]};
+  var VS_TENGLAR = {"Námundun": ["namundun", "Námundun og slumpreikningur"], "Forgangsröð": ["forgangsrod", "Forgangsröð reikniaðgerða"], "Talnarunur": ["talnarunur", "Talnarunur"], "Negatífar tölur": ["negatifar", "Negatífar tölur"], "Sætisgildi": ["tugakerfid", "Tugakerfið og sætisgildi"]};
   function profList(){
     var out = [];
     EFNI.forEach(function(e){
@@ -744,8 +664,7 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
     return out;
   }
   function profNidurstodur(){
-    var box = $("profBox");
-    if(!game.prof){ box.classList.add("hidden"); return; }
+    if(!game.prof) return {html:"", veik:[]};
     var veik = EFNI.filter(function(e){ return game.results.some(function(x){ return x.q.efni === e && x.status > 1; }); });
     var h;
     if(veik.length){
@@ -754,14 +673,21 @@ th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
     } else {
       h = "<h2 style=\"margin:0\">Vel gert!</h2><p>Þú svaraðir öllum spurningunum rétt í fyrstu tilraun.</p>";
     }
-    box.innerHTML = h; box.classList.remove("hidden");
-    var b = $("btnVeik");
-    if(b) b.addEventListener("click", function(){ start(SPURNINGAR.filter(function(q){ return veik.indexOf(q.efni) !== -1; })); });
+    return {html:"<div class=\"card stack\" style=\"max-width:760px\">" + h + "</div>", veik:veik};
   }
-  $("btnProf").addEventListener("click", function(){ start(profList(), true); });
 
-  renderTopics();
-  if(location.hash === "#kaflaprof") start(profList(), true);
+  var upphaf = RAMMI.upphaf({
+    titill:"Æfingapróf: Tölur", profTitill:"Kaflapróf: Tölur",
+    inngangur:"Æfingapróf úr 1. kafla í Stiku 3a. Á undan hverju efni er stutt upprifjun. Ef svarið er rangt færðu ábendingu og aðra tilraun. Eftir hverja spurningu sérðu útskýringu með mynd.",
+    efni:EFNI.map(function(e){ var n = SPURNINGAR.filter(function(q){ return q.efni === e; }).length;
+      return {id:efniId(e), heiti:e, lysing:n + (ein(n) ? " spurning" : " spurningar"), fjoldi:n}; }),
+    sjalfgefid:"allt", einingar:["spurningu", "spurningar"], kaflaprof:true,
+    fjoldiTexti:function(ids){ var n = velja(ids).length; return n === 0 ? "Ekkert efni valið." : n + (ein(n) ? " spurning" : " spurningar") + " í völdu efni."; },
+    hnappar:[{texti:"Æfing fyrir kaflapróf", smellt:function(){ start(profList(), true); }}],
+    tengill:{forskeyti:"Viltu rifja upp orðin?", texti:"Hugtök úr 1. kafla", slod:"hugtakasafn.html#kafli-1"},
+    byrja:function(ids){ start(velja(ids)); }
+  });
+  if(!upphaf.beinSlod && location.hash === "#kaflaprof") start(profList(), true);
 })();
 </script>
 </body>

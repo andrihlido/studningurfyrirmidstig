@@ -1,0 +1,68 @@
+/* Sameiginlegt útlit leikjanna: upphafsskjár, skrefamerki, upprifjun og lokaskjár (sjá leikjarammi.js) */
+
+/* Haus */
+.r-haus{gap:8px}
+.r-inngangur{font-size:19px;max-width:860px}
+
+/* Skrefamerki (líka notuð inni í leikjunum) */
+.skref{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
+.flis{display:inline-flex;align-items:center;gap:8px;padding:5px 14px 5px 5px;border-radius:999px;background:#fff;border:2px solid var(--line);font-weight:700;font-size:15px;letter-spacing:.02em}
+.flis .nr{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--acc);color:#fff;font-size:15px}
+.flis .takn{color:var(--acc-dark);font-size:17px}
+.flis.nuna{background:var(--acc-bg);border-color:var(--acc)}
+
+/* Val á efni */
+.r-titilrod{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.r-titilrod h2{margin:0}
+.r-textahnappur{font:inherit;font-weight:700;font-size:16px;background:none;border:0;color:var(--acc-dark);cursor:pointer;min-height:44px;padding:0 4px;text-align:left}
+.r-textahnappur:hover{text-decoration:underline}
+.r-hopur{margin:6px 0 8px;font-size:17px}
+.r-efnalisti{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin-bottom:6px}
+.r-efni{position:relative;display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:var(--soft);border:1.5px solid var(--line);cursor:pointer}
+.r-efni:hover{border-color:var(--acc)}
+.r-efni input{width:20px;height:20px;margin-top:3px;accent-color:var(--acc);flex:none}
+.r-efni-texti{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.r-efni-texti .d{color:var(--muted);font-size:15px}
+.r-efni.lokid{background:var(--ok-bg);border-color:var(--ok-line)}
+.r-besti{font-size:14px;color:#14532D}
+.r-lokid{flex:none;align-self:flex-start;font-size:13px;font-weight:700;color:#fff;background:var(--ok);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.r-stillingar{display:flex;flex-direction:column;gap:2px;border-top:1.5px solid var(--line);padding-top:10px}
+.r-stilling{display:flex;gap:10px;align-items:center;cursor:pointer;min-height:44px}
+.r-stilling input{width:20px;height:20px;accent-color:var(--acc);flex:none}
+.r-villa{color:#B42318;font-weight:700}
+.r-fotur{display:flex;justify-content:space-between;align-items:center;gap:8px 20px;flex-wrap:wrap}
+.r-tengill{color:var(--acc-dark);font-weight:700}
+.r-kennari{display:flex;flex-direction:column;align-items:flex-end;gap:4px;max-width:520px}
+.r-kennari .r-textahnappur{font-size:15px;color:var(--muted)}
+.r-kennari .muted{font-size:15px;text-align:right}
+.r-slod{font:inherit;font-size:14px;width:100%;max-width:480px;padding:6px 8px;border:1.5px solid var(--line);border-radius:8px;margin-top:4px}
+
+/* Upprifjun */
+.r-yfirlag{position:fixed;inset:0;background:rgba(31,42,68,.45);display:grid;place-items:center;padding:16px;z-index:20;overflow:auto}
+.r-yfirlag.hidden{display:none}
+.r-upp{max-width:800px;width:100%;max-height:92vh;overflow:auto;border:2px solid var(--acc-line)}
+.r-upp h2{margin:0}
+.r-merki{font-size:14px;font-weight:700;color:var(--acc-dark);text-transform:uppercase;letter-spacing:.06em}
+.r-upp-mynd{overflow-x:auto}
+
+/* Lokaskjár og niðurstöðuspjald */
+.r-spjald{border:2px solid var(--acc-line);max-width:760px}
+.r-spjald-haus{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.r-spjald-haus h2{margin:2px 0 0}
+.r-dags{color:var(--muted);font-weight:700}
+.r-nafn{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.r-nafn span{font-weight:700}
+.r-nafn input{font:inherit;font-size:20px;flex:1;min-width:200px;max-width:420px;padding:8px 12px;border:2px solid var(--line);border-radius:10px;min-height:48px}
+.r-listi{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.r-listi li{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;border-radius:12px;background:var(--soft)}
+.r-listi b{white-space:nowrap}
+.r-hak{color:var(--ok)}
+.r-samtals{font-size:20px;font-weight:700;color:var(--acc-dark)}
+.r-skjamynd{font-size:16px;max-width:760px}
+
+@media (max-width:600px){
+  .flis{font-size:14px}
+  .r-kennari{align-items:flex-start}
+  .r-kennari .muted{text-align:left}
+  .r-listi li{flex-direction:column;gap:2px}
+}

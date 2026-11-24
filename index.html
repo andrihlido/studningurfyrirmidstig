@@ -6,13 +6,6 @@
 <title>Stuðningur fyrir miðstig</title>
 <link rel="stylesheet" href="sameiginlegt.css">
 <style>
-/* Litir hverrar tegundar */
-:root{
-  --vs-bg:#EEF5FE; --vs-line:#C7DBF4; --vs-tag:#D6E6FB; --vs-ink:#1E4C8A; --vs-acc:#3B78C4;
-  --hu-bg:#F5F3FC; --hu-line:#DCD5F0; --hu-tag:#E6E0F7; --hu-ink:#4A3C8C; --hu-acc:#7563C2;
-  --le-bg:#FFF1F1; --le-line:#F5CACA; --le-tag:#FBDADA; --le-ink:#9B2226; --le-acc:#D64545;
-  --pr-bg:#EEFAF2; --pr-line:#BFE5CC; --pr-tag:#D5F1DF; --pr-ink:#14532D; --pr-acc:#2E9E5B;
-}
 .hero{display:flex;flex-direction:column;gap:8px;margin:8px 0 22px}
 .hero p{font-size:20px;max-width:720px}
 .quick{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
@@ -32,7 +25,7 @@
 .listihaus{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0 12px}
 .litaskyring{display:flex;gap:14px;flex-wrap:wrap;font-size:15px;color:var(--muted)}
 .litaskyring span{display:inline-flex;align-items:center;gap:6px}
-.litaskyring i{width:14px;height:14px;border-radius:4px;border:1.5px solid}
+.litaskyring i{width:12px;height:12px;border-radius:50%}
 .btn-texti{font:inherit;font-weight:700;font-size:15px;background:none;border:0;color:var(--acc-dark);cursor:pointer;min-height:44px;padding:0 4px}
 
 /* Kaflar sem opnast og lokast */
@@ -49,7 +42,8 @@ details.kafli summary:focus-visible{outline:3px solid #2563EB;outline-offset:-3p
 .ord{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 .ord span{font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px}
 .ord .utskyring{background:var(--vs-tag);color:var(--vs-ink)}
-.ord .leikur{background:var(--le-tag);color:var(--le-ink)}
+.ord .adferd{background:var(--ad-tag);color:var(--ad-ink)}
+.ord .aefingaprof{background:var(--ap-tag);color:var(--ap-ink)}
 .ord .prof{background:var(--pr-tag);color:var(--pr-ink)}
 .ord .hugtok{background:var(--hu-tag);color:var(--hu-ink)}
 .or{flex:none;width:28px;height:28px;transition:transform .2s ease;color:var(--muted)}
@@ -67,12 +61,15 @@ details.kafli[open] .or{transform:rotate(180deg)}
 .item b{font-size:18px}
 .item .lys{color:var(--muted);font-size:15px}
 .mk{font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;letter-spacing:.02em}
+.framvinda{font-size:13px;font-weight:700;color:#14532D;background:var(--ok-bg);border:1px solid var(--ok-line);border-radius:999px;padding:1px 9px;margin-left:auto}
 .item.utskyring{background:var(--vs-bg);border-color:var(--vs-line);border-left-color:var(--vs-acc)}
 .item.utskyring .mk{background:var(--vs-tag);color:var(--vs-ink)}
 .item.hugtok{background:var(--hu-bg);border-color:var(--hu-line);border-left-color:var(--hu-acc)}
 .item.hugtok .mk{background:var(--hu-tag);color:var(--hu-ink)}
-.item.leikur{background:var(--le-bg);border-color:var(--le-line);border-left-color:var(--le-acc)}
-.item.leikur .mk{background:var(--le-tag);color:var(--le-ink)}
+.item.adferd{background:var(--ad-bg);border-color:var(--ad-line);border-left-color:var(--ad-acc)}
+.item.adferd .mk{background:var(--ad-tag);color:var(--ad-ink)}
+.item.aefingaprof{background:var(--ap-bg);border-color:var(--ap-line);border-left-color:var(--ap-acc)}
+.item.aefingaprof .mk{background:var(--ap-tag);color:var(--ap-ink)}
 .item.prof{background:var(--pr-bg);border-color:var(--pr-line);border-left-color:var(--pr-acc)}
 .item.prof .mk{background:var(--pr-tag);color:var(--pr-ink)}
 .tomt{color:var(--muted);background:var(--card);border:1.5px dashed var(--line);border-radius:16px;padding:18px 20px}
@@ -83,7 +80,7 @@ details.kafli[open] .or{transform:rotate(180deg)}
 <div class="wrap">
   <header class="hero">
     <h1>Stuðningur fyrir miðstig</h1>
-    <p class="muted">Stærðfræði eftir köflum í Stiku 3a. Skildu aðferðirnar á veggspjöldunum og æfðu þig svo í leikjunum.</p>
+    <p class="muted">Stærðfræði eftir köflum í Stiku 3a. Skildu aðferðirnar á veggspjöldunum, æfðu þær skref fyrir skref og taktu svo æfingapróf úr kaflanum.</p>
   </header>
 
   <nav class="quick" aria-label="Flýtileiðir">
@@ -99,10 +96,11 @@ details.kafli[open] .or{transform:rotate(180deg)}
 
   <div class="listihaus">
     <div class="litaskyring" aria-label="Litaskýring">
-      <span><i style="background:var(--vs-bg);border-color:var(--vs-acc)"></i>Veggspjald</span>
-      <span><i style="background:var(--hu-bg);border-color:var(--hu-acc)"></i>Hugtök</span>
-      <span><i style="background:var(--le-bg);border-color:var(--le-acc)"></i>Leikur</span>
-      <span><i style="background:var(--pr-bg);border-color:var(--pr-acc)"></i>Kaflapróf</span>
+      <span><i style="background:var(--vs-acc)"></i>Veggspjald</span>
+      <span><i style="background:var(--hu-acc)"></i>Hugtök</span>
+      <span><i style="background:var(--ad-acc)"></i>Aðferð</span>
+      <span><i style="background:var(--ap-acc)"></i>Æfingapróf</span>
+      <span><i style="background:var(--pr-acc)"></i>Kaflapróf</span>
     </div>
     <button class="btn-texti" type="button" id="btnAllir">Opna alla kafla</button>
   </div>
@@ -115,7 +113,8 @@ details.kafli[open] .or{transform:rotate(180deg)}
 (function(){
   "use strict";
   var FLOKKAR = window.FLOKKAR || [], EFNI = window.EFNI || [];
-  var TEG = [{id:"allt", heiti:"Allt"}, {id:"utskyring", heiti:"Útskýringar", lit:"var(--vs-acc)"}, {id:"leikur", heiti:"Leikir", lit:"var(--le-acc)"}];
+  /* Heitin passa við dálkana í hverjum kafla: Skilja (veggspjöld og hugtök) og Æfa (aðferðir, æfingapróf og kaflapróf) */
+  var TEG = [{id:"allt", heiti:"Allt"}, {id:"utskyring", heiti:"Skilja"}, {id:"aefa", heiti:"Æfa"}];
   var LYKILL = "studningur-opnir-kaflar";
   var state = {teg: "allt", leit: "", opnir: lesa()};
 
@@ -142,8 +141,19 @@ details.kafli[open] .or{transform:rotate(180deg)}
     if(!state.leit) return true;
     return (x.titill + " " + x.lysing + " " + (x.flokkur || "")).toLowerCase().indexOf(state.leit) !== -1;
   }
+  /* Framvinda úr aðferðunum og æfingaprófunum (vistuð í vafranum af leikjarammi.js) */
+  var FRAMVINDA = (function(){ try { return JSON.parse(localStorage.getItem("studningur-framvinda")) || {}; } catch(e){ return {}; } })();
+  function framvinda(slod, teg){
+    var id = slod.split("/").pop().replace(/\.html.*$/, ""), f = FRAMVINDA[id];
+    if(!f) return "";
+    if(teg === "prof") return f.kaflaprof ? "<span class=\"framvinda\">Besti árangur: " + f.kaflaprof.an + " af " + f.kaflaprof.alls + "</span>" : "";
+    var n = Object.keys(f).filter(function(k){ return k !== "_efni" && k !== "kaflaprof"; }).length;
+    if(!n) return "";
+    return "<span class=\"framvinda\">" + (n >= f._efni ? "✓ Öllum efnum lokið" : "✓ " + n + " af " + f._efni + " efnum lokið") + "</span>";
+  }
   function item(x, teg, heiti){
-    return "<a class=\"item " + teg + "\" href=\"" + esc(x.slod) + "\"><span class=\"t\"><span class=\"mk\">" + heiti + "</span><b>" + esc(x.titill) + "</b></span>" +
+    return "<a class=\"item " + teg + "\" href=\"" + esc(x.slod) + "\"><span class=\"t\"><span class=\"mk\">" + heiti + "</span><b>" + esc(x.titill) + "</b>" +
+           (teg !== "utskyring" && teg !== "hugtok" ? framvinda(x.slod, teg) : "") + "</span>" +
            "<span class=\"lys\">" + esc(x.lysing) + "</span></a>";
   }
   var OR = "<svg class=\"or\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M6 9l6 6 6-6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>";
@@ -151,29 +161,33 @@ details.kafli[open] .or{transform:rotate(180deg)}
   function renderList(){
     var html = "", syndir = [];
     FLOKKAR.forEach(function(f){
-      var skilja = [], aefa = [], nV = 0, nL = 0, prof = false;
+      /* Æfa: fyrst aðferðir, svo æfingaprófið og síðast æfing fyrir kaflapróf */
+      var skilja = [], adferdir = [], aefingaprof = [], profin = [], nV = 0, nA = 0, nP = 0, prof = false;
       EFNI.forEach(function(e){
         if(e.flokkar.indexOf(f.id) === -1) return;
         var x = {titill:e.titill, lysing:e.lysing, slod:e.slod, flokkur:f.heiti};
         if(e.tegund === "utskyring"){ nV++; if(passar(x)) skilja.push(item(x, "utskyring", "Veggspjald")); }
+        else if(e.tegund === "adferd"){ nA++; if(passar(x)) adferdir.push(item(x, "adferd", "Aðferð")); }
         else {
-          nL++;
-          if(passar(x)) aefa.push(item(x, "leikur", "Leikur"));
+          nP++;
+          if(passar(x)) aefingaprof.push(item(x, "aefingaprof", "Æfingapróf"));
           if(e.kaflaprof){
             prof = true;
             var p = {titill:"Æfing fyrir kaflapróf", lysing:"Spurningar úr öllum efnum kaflans, án upprifjunar.", slod:e.slod + "#kaflaprof", flokkur:f.heiti + " próf"};
-            if(passar(p)) aefa.push(item(p, "prof", "Kaflapróf"));
+            if(passar(p)) profin.push(item(p, "prof", "Kaflapróf"));
           }
         }
       });
+      var aefa = adferdir.concat(aefingaprof, profin);
       var h = {titill:"Hugtök úr kaflanum", lysing:"Orðin í " + f.kafli + ". kafla með skýringu, dæmi og mynd.", slod:"staerdfraedi/hugtakasafn.html#kafli-" + f.kafli, flokkur:f.heiti + " hugtök"};
       if(passar(h)) skilja.push(item(h, "hugtok", "Hugtök"));
-      var synaS = state.teg !== "leikur" && skilja.length, synaA = state.teg !== "utskyring" && aefa.length;
+      var synaS = state.teg !== "aefa" && skilja.length, synaA = state.teg !== "utskyring" && aefa.length;
       if(!synaS && !synaA) return;
       syndir.push(f.id);
       var opinn = state.leit ? true : state.opnir.indexOf(f.id) !== -1;
       var ord = (nV ? "<span class=\"utskyring\">" + fjoldi(nV, "veggspjald", "veggspjöld") + "</span>" : "") +
-                (nL ? "<span class=\"leikur\">" + fjoldi(nL, "leikur", "leikir") + "</span>" : "") +
+                (nA ? "<span class=\"adferd\">" + fjoldi(nA, "aðferð", "aðferðir") + "</span>" : "") +
+                (nP ? "<span class=\"aefingaprof\">Æfingapróf</span>" : "") +
                 (prof ? "<span class=\"prof\">Kaflapróf</span>" : "") + "<span class=\"hugtok\">Hugtök</span>";
       html += "<details class=\"kafli\" data-id=\"" + f.id + "\"" + (opinn ? " open" : "") + "><summary>" +
               "<span class=\"knr\" aria-hidden=\"true\">" + f.kafli + "</span><span class=\"kafli-texti\"><h2>" + esc(f.heiti) + "</h2>" +

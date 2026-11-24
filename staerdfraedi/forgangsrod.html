@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="is">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forgangsröð reikniaðgerða</title>
+<link rel="stylesheet" href="../sameiginlegt.css">
+<link rel="stylesheet" href="leikjarammi.css">
+<link rel="stylesheet" href="reikningur.css">
+</head>
+<body class="fag-staerdfraedi">
+<div class="wrap">
+  <a class="heim" href="../index.html">← Forsíða</a>
+
+  <!-- Upphafsskjár (teiknaður af leikjarammi.js) -->
+  <section id="upphaf"></section>
+
+  <!-- Leikskjár -->
+  <section id="leikur" class="hidden">
+    <div class="toppur">
+      <div><span class="heiti" id="efniHeiti"></span> · <span class="stada" id="stada"></span></div>
+      <div class="row"><button type="button" class="btn ghost" id="uppTakki">Upprifjun</button><button type="button" class="btn ghost" id="haetta">Hætta</button></div>
+    </div>
+    <div class="skref" id="skrefLeik">
+      <span class="flis" data-s="1"><span class="nr">1</span>Svigar <span class="takn">( )</span></span>
+      <span class="flis" data-s="2"><span class="nr">2</span>Margföldun og deiling <span class="takn">· :</span></span>
+      <span class="flis" data-s="3"><span class="nr">3</span>Samlagning og frádráttur <span class="takn">+ −</span></span>
+    </div>
+    <div class="vinnusvaedi">
+      <div class="card">
+        <div class="reikningsbok" id="bok" aria-live="polite"></div>
+      </div>
+      <div class="card verkefni">
+        <p class="muted" id="samhengi"></p>
+        <p class="spurning" id="spurning"></p>
+        <form class="svarform hidden" id="svarform" autocomplete="off">
+          <label class="sr-only" for="svar">Svar</label>
+          <input id="svar" inputmode="numeric" aria-describedby="spurning">
+          <button type="submit" class="btn acc">Athuga</button>
+        </form>
+        <div class="endurgjof" id="endurgjof" role="status"></div>
+        <div class="takkar">
+          <button type="button" class="btn ghost" id="abendingTakki">Fá ábendingu</button>
+          <button type="button" class="btn acc hidden" id="naesta">Næsta dæmi</button>
+        </div>
+        <div class="abending hidden" id="abending"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lokaskjár (teiknaður af leikjarammi.js) -->
+  <section id="lok" class="hidden"></section>
+</div>
+
+
+<script src="leikjarammi.js"></script>
+<script src="reikningur.js"></script>
+<script>
+(function(){
+  "use strict";
+  var RK = window.RK;
+  function $(id){ return document.getElementById(id); }
+  function rnd(a, b){ return a + Math.floor(Math.random() * (b - a + 1)); }
+  function velja(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+  function gcd(a, b){ return b ? gcd(b, a % b) : a; }
+  function T(v){ return RK.tala(v); }
+
+  /* ---------- Efni og dæmi ----------
+     Hvert fall skilar {d: "dæmi"} og má bæta við {samhengi, lok} fyrir pör. */
+  var EFNI = [
+    { id:"tvaer", heiti:"Tvær aðgerðir", lysing:"12 + 3 · 5 og 40 − 18 : 3",
+      reglur:["Margföldun og deiling koma á undan samlagningu og frádrætti.", "Reiknaðu eina aðgerð í einu og skrifaðu nýja línu.", "Það sem er ekki reiknað er skrifað óbreytt í nýju línuna."],
+      daemi:["60 + 5 · 4"],
+      buatil:function(){
+        var b, c, q;
+        return [
+          function(){ return {d: rnd(2, 20) + " + " + rnd(2, 9) + " · " + rnd(2, 9)}; },
+          function(){ c = rnd(2, 9); q = rnd(2, 9); return {d: rnd(q + 5, 50) + " − " + (c * q) + " : " + c}; },
+          function(){ b = rnd(4, 9); c = rnd(4, 9); return {d: b + " · " + c + " − " + rnd(5, b * c - 2)}; },
+          function(){ return {d: (rnd(10, 50) * 10) + " + " + rnd(11, 19) + " · " + rnd(3, 9)}; }
+        ];
+      }},
+    { id:"svigar", heiti:"Svigar", lysing:"(4 + 3) · 5 og 50 − (24 − 8)",
+      reglur:["Það sem er inni í sviga er reiknað fyrst.", "Þegar búið er að reikna það sem er inni í sviganum hverfur sviginn."],
+      daemi:["(8 + 4) · 3"],
+      buatil:function(){
+        return [
+          function(){ return {d: "(" + rnd(2, 9) + " + " + rnd(2, 9) + ") · " + rnd(2, 9)}; },
+          function(){ var c = rnd(2, 9), b = rnd(c + 6, 30); return {d: rnd(b + 5, 60) + " − (" + b + " − " + c + ")"}; },
+          function(){ var c = rnd(3, 9), q = rnd(3, 9), b = rnd(3, 20); return {d: "(" + (b + c * q) + " − " + b + ") : " + c}; },
+          function(){
+            if(Math.random() < 0.5){ var a = rnd(10, 40) * 10, b = rnd(101, 299); return {d: "1000 − (" + a + " + " + b + ")"}; }
+            return {d: rnd(3, 9) + " · (" + rnd(5, 12) + " + " + rnd(5, 12) + ")"};
+          }
+        ];
+      }},
+    { id:"thrjar", heiti:"Þrjár aðgerðir", lysing:"10 + 4 · 6 − 5 og 36 : 4 + 3 · 5",
+      reglur:["Fyrst er öll margföldun og deiling reiknuð.", "Svo er lagt saman og dregið frá, frá vinstri til hægri.", "Ein aðgerð í einu og ný lína í hvert skipti."],
+      daemi:["6 · 4 − 12 : 3"],
+      buatil:function(){
+        return [
+          function(){ var b = rnd(2, 9), c = rnd(2, 9); return {d: rnd(5, 30) + " + " + b + " · " + c + " − " + rnd(2, 9)}; },
+          function(){ var a = rnd(4, 9), b = rnd(4, 9), d = rnd(2, 6), q = rnd(2, Math.min(9, a * b - 1)); return {d: a + " · " + b + " − " + (d * q) + " : " + d}; },
+          function(){ var b = rnd(2, 9), q = rnd(2, 9); return {d: (b * q) + " : " + b + " + " + rnd(2, 9) + " · " + rnd(2, 9)}; },
+          function(){
+            var b = rnd(2, 9), c = rnd(2, 9) * 10, d = rnd(2, 9), e = rnd(1, 4) * 10, a = rnd(10, 30) * 10;
+            if(a + b * c - d * e < 1) a += d * e;
+            return {d: a + " + " + b + " · " + c + " − " + d + " · " + e};
+          }
+        ];
+      }},
+    { id:"vinstri", heiti:"Frá vinstri til hægri", lysing:"20 − 6 − 4 og 24 : 4 · 2",
+      reglur:["Þegar bara er lagt saman og dregið frá er reiknað frá vinstri til hægri.", "Það sama gildir þegar bara er margfaldað og deilt.", "Byrjaðu á aðgerðinni sem er lengst til vinstri."],
+      daemi:["20 − 6 − 4"],
+      buatil:function(){
+        return [
+          function(){ var b = rnd(3, 9), c = rnd(2, 8); return {d: rnd(b + c + 5, 40) + " − " + b + " − " + c}; },
+          function(){ var b = rnd(3, 9); return {d: rnd(b + 3, 30) + " − " + b + " + " + rnd(2, 9)}; },
+          function(){ var b = rnd(2, 6), q = rnd(2, 9); return {d: (b * q) + " : " + b + " · " + rnd(2, 5)}; },
+          function(){ var b = rnd(10, 30) * 10, c = rnd(11, 99); return {d: rnd(b + c + 20, 900) + " − " + b + " − " + c}; }
+        ];
+      }},
+    { id:"breytir", heiti:"Svigi breytir svarinu", lysing:"(2 + 3) · 4 og 2 + 3 · 4",
+      reglur:["Svigi segir hvað á að reikna fyrst.", "Sömu tölur geta gefið ólík svör. Það fer eftir því hvar sviginn er."],
+      daemi:["(2 + 3) · 4", "2 + 3 · 4"],
+      buatil:function(){
+        var a = rnd(2, 9), b = rnd(2, 9), c = rnd(3, 9);
+        var bb = rnd(2, 6), cc = rnd(2, 6), L = bb * (bb + cc) / gcd(bb, bb + cc), k = Math.max(1, Math.floor(rnd(30, 120) / L)), aa = L * k;
+        var fyrra1 = {}, fyrra2 = {};
+        return [
+          function(){ return {d: "(" + a + " + " + b + ") · " + c, geyma:fyrra1}; },
+          function(){ return {d: a + " + " + b + " · " + c, fyrra:fyrra1, samhengi:"Sömu tölur og í dæminu á undan, en nú er enginn svigi."}; },
+          function(){ return {d: aa + " : (" + bb + " + " + cc + ")", geyma:fyrra2}; },
+          function(){ return {d: aa + " : " + bb + " + " + cc, fyrra:fyrra2, samhengi:"Sömu tölur og í dæminu á undan, en nú er enginn svigi."}; }
+        ];
+      }},
+    { id:"long", heiti:"Löng dæmi", lysing:"(3 + 5) · (12 − 5) og 14 · 7 + 6 · 12 − 5 · 19",
+      reglur:["Fyrst svigar.", "Svo margföldun og deiling.", "Síðast samlagning og frádráttur.", "Löng dæmi styttast með hverri línu. Ekki reikna allt í huganum!"],
+      daemi:["(5 + 3) · (12 − 5)"],
+      buatil:function(){
+        return [
+          function(){ var d = rnd(2, 6); return {d: "(" + rnd(2, 9) + " + " + rnd(2, 9) + ") · (" + rnd(d + 2, 15) + " − " + d + ")"}; },
+          function(){
+            var a, b, c, d, e, f;
+            do { a = rnd(11, 19); b = rnd(3, 9); c = rnd(3, 9); d = rnd(11, 15); e = rnd(3, 9); f = rnd(11, 19); } while(a * b + c * d - e * f < 5);
+            return {d: a + " · " + b + " + " + c + " · " + d + " − " + e + " · " + f};
+          },
+          function(){ var b = rnd(2, 9), e = rnd(2, 9); return {d: "(" + (b + rnd(2, 9)) + " − " + b + ") · " + rnd(2, 5) + " + " + (e * rnd(2, 9)) + " : " + e}; },
+          function(){ var c = rnd(3, 9), d = rnd(3, 9), b = rnd(5, 30); return {d: (rnd(Math.ceil((b + c * d) / 10) + 1, 20) * 10) + " − (" + b + " + " + c + " · " + d + ")"}; }
+        ];
+      }}
+  ];
+
+  var L = null; // staða leiksins
+  window.__leikur = function(){ return L; };
+  window.__efni = EFNI;
+
+  function hefja(valin){
+    var rodd = [];
+    valin.forEach(function(e){ e.buatil().forEach(function(f, i){ rodd.push({efni:e, nr:i, buatil:f}); }); });
+    L = {valin:valin, rod:rodd, i:-1};
+    RAMMI.hefja(rodd.map(function(r){ return r.efni.id; }));
+    RAMMI.syna("leikur");
+    naestaDaemi();
+  }
+  $("haetta").onclick = function(){ RAMMI.syna("upphaf"); };
+  $("uppTakki").onclick = function(){ synaUpprifjun(L.rod[L.i].efni, null); };
+
+  /* ---------- Upprifjun ---------- */
+  function lausnTeikning(texti){
+    var S = new RK.Skref(RK.lesa(texti)), html = "";
+    while(S.fasi !== "lokid"){
+      var k = S.kostir()[0];
+      html += "<div class=\"lina\"><span class=\"jafnt\">" + (S.linur.length > 1 ? "=" : "") + "</span>" + RK.teikna(S.rot, {valid:k.id}) + "</div>";
+      S.smella(k.id); S.svara(S.svarid());
+    }
+    return html + "<div class=\"lina svar-lina\"><span class=\"jafnt\">=</span>" + RK.teikna(S.rot) + "</div>";
+  }
+  function synaUpprifjun(e, afram){
+    RAMMI.upprifjun({titill:e.heiti, atridi:e.reglur,
+      mynd:"<div class=\"reikningsbok\">" + e.daemi.map(lausnTeikning).join("<div style=\"height:14px\"></div>") + "</div>",
+      hnappur: afram ? "Byrja á dæmunum" : "Loka upprifjun", eftir:afram});
+  }
+
+  /* ---------- Hvert dæmi ---------- */
+  function naestaDaemi(){
+    L.i++;
+    if(L.i >= L.rod.length) return lok();
+    var r = L.rod[L.i];
+    var gogn = r.buatil();
+    L.d = gogn; L.S = new RK.Skref(RK.lesa(gogn.d)); L.villur = 0; L.rangtIRod = 0;
+    $("efniHeiti").textContent = r.efni.heiti;
+    $("stada").textContent = "Dæmi " + (r.nr + 1) + " af 4";
+    $("samhengi").textContent = gogn.samhengi || "";
+    $("endurgjof").textContent = ""; $("endurgjof").className = "endurgjof";
+    $("naesta").classList.add("hidden");
+    if(r.nr === 0) synaUpprifjun(r.efni, teikna); else teikna();
+  }
+
+  function stigAdgerdar(S, id){
+    var n = RK.finna(S.rot, id), s = [];
+    var inni = RK.inniISviga(S.rot, id);
+    if(inni) s.push(1);
+    if(RK.stig(n.o) === 2) s.push(2); else if(!inni) s.push(3);
+    return s;
+  }
+  function merkjaSkref(stig){
+    $("skrefLeik").querySelectorAll(".flis").forEach(function(f){ f.classList.toggle("nuna", stig.indexOf(Number(f.dataset.s)) !== -1); });
+  }
+
+  function teikna(){
+    var S = L.S, html = "";
+    S.linur.forEach(function(lina, i){
+      var sidust = i === S.linur.length - 1;
+      var jafnt = "<span class=\"jafnt\">" + (i > 0 ? "=" : "") + "</span>";
+      if(!sidust){ html += "<div class=\"lina fyrri\">" + jafnt + RK.teikna(lina) + "</div>"; return; }
+      if(S.fasi === "velja") html += "<div class=\"lina nuverandi\">" + jafnt + RK.teikna(S.rot, {takkar:true}) + "</div>";
+      else if(S.fasi === "reikna"){
+        html += "<div class=\"lina nuverandi\">" + jafnt + RK.teikna(S.rot, {valid:S.valid}) + "</div>";
+        html += "<div class=\"lina naesta\"><span class=\"jafnt\">=</span>" + RK.teikna(S.rot, {kassi:S.valid}) + "</div>";
+      }
+      else html += "<div class=\"lina svar-lina\">" + jafnt + RK.teikna(S.rot) + "</div>";
+    });
+    $("bok").innerHTML = html;
+    $("bok").querySelectorAll(".opk").forEach(function(b){
+      b.onclick = function(){ smellt(Number(b.dataset.id), b); };
+      b.onmouseenter = b.onfocus = function(){ lysaNagranna(b, true); };
+      b.onmouseleave = b.onblur = function(){ lysaNagranna(b, false); };
+    });
+    $("abending").classList.add("hidden");
+    var spurn = $("spurning"), form = $("svarform");
+    if(S.fasi === "velja"){
+      spurn.textContent = S.linur.length === 1 ? "Hvað á að reikna fyrst? Smelltu á reikniaðgerðina." : "Hvað á að reikna næst? Smelltu á reikniaðgerðina.";
+      form.classList.add("hidden"); $("abendingTakki").classList.remove("hidden"); merkjaSkref([]);
+    } else if(S.fasi === "reikna"){
+      var n = RK.finna(S.rot, S.valid);
+      spurn.textContent = T(n.a.v) + " " + n.o + " " + T(n.b.v) + " = ?";
+      form.classList.remove("hidden"); $("svar").value = ""; $("svar").focus();
+      $("abendingTakki").classList.remove("hidden");
+    } else {
+      form.classList.add("hidden"); $("abendingTakki").classList.add("hidden"); merkjaSkref([]);
+      var svar = RK.gildi(S.rot);
+      spurn.innerHTML = "Svarið er <span class=\"nidurstada\">" + T(svar) + "</span>";
+      var texti = L.villur === 0 ? "Vel gert! Engin villa." : "Vel gert! Þú kláraðir dæmið.";
+      if(L.d.geyma) L.d.geyma.svar = svar;
+      if(L.d.fyrra && L.d.fyrra.svar !== undefined){
+        texti = L.d.fyrra.svar === svar ? "Svarið er það sama og með sviganum." :
+                "Með sviganum var svarið " + T(L.d.fyrra.svar) + ". Án svigans er svarið " + T(svar) + ". Sviginn breytir svarinu!";
+      }
+      gefa(texti, "rett");
+      RAMMI.skra(L.rod[L.i].efni.id, L.villur === 0);
+      var b = $("naesta");
+      b.textContent = L.i === L.rod.length - 1 ? "Sjá niðurstöður" : "Næsta dæmi";
+      b.classList.remove("hidden"); b.focus();
+    }
+  }
+
+  /* Lýsir upp tölurnar sitt hvorum megin við aðgerðina (ekki ef svigi er á milli) */
+  function lysaNagranna(takki, kveikja){
+    [takki.previousElementSibling, takki.nextElementSibling].forEach(function(el){
+      if(el && el.classList.contains("tala")) el.classList.toggle("nagr", kveikja);
+    });
+  }
+
+  function gefa(texti, tegund){ var e = $("endurgjof"); e.textContent = texti; e.className = "endurgjof " + tegund; }
+
+  function smellt(id, takki){
+    var S = L.S;
+    if(S.fasi !== "velja") return;
+    var r = S.smella(id);
+    if(r.ok){
+      L.rangtIRod = 0; merkjaSkref(stigAdgerdar(S, id));
+      gefa(r.s, "rett"); teikna(); return;
+    }
+    L.villur++; L.rangtIRod++;
+    if(takki){ takki.classList.remove("hrista"); void takki.offsetWidth; takki.classList.add("hrista"); }
+    if(L.rangtIRod >= 3){
+      var k = S.kostir()[0], stig = stigAdgerdar(S, k.id), ab = RK.abending(S.rot);
+      S.smella(k.id); L.rangtIRod = 0; merkjaSkref(stig);
+      gefa(ab + " Hér á að reikna " + RK.texti({t:"op", o:k.o, a:k.a, b:k.b}) + " fyrst.", "uppl"); teikna(); return;
+    }
+    gefa(r.s, "rangt");
+  }
+
+  $("svarform").onsubmit = function(ev){
+    ev.preventDefault();
+    var S = L.S, v = RK.lesaSvar($("svar").value);
+    if(v === null){ gefa("Skrifaðu tölu.", "rangt"); return; }
+    var r = S.svara(v);
+    if(r.ok){ L.rangtIRod = 0; gefa(r.s, "rett"); teikna(); return; }
+    L.villur++; L.rangtIRod++;
+    if(L.rangtIRod >= 3){
+      var n = RK.finna(S.rot, S.valid), rett = S.svarid();
+      var texti = "Svarið er " + T(n.a.v) + " " + n.o + " " + T(n.b.v) + " = " + T(rett) + ".";
+      S.svara(rett); L.rangtIRod = 0; teikna(); if(S.fasi !== "lokid") gefa(texti, "uppl"); return;
+    }
+    gefa(r.s, "rangt"); $("svar").select();
+  };
+
+  $("abendingTakki").onclick = function(){
+    var S = L.S, box = $("abending"), texti = "";
+    if(S.fasi === "velja") texti = RK.abending(S.rot);
+    else if(S.fasi === "reikna"){ var n = RK.finna(S.rot, S.valid); texti = RK.reikniAbending(n.o, n.a.v, n.b.v); }
+    box.textContent = texti; box.classList.remove("hidden");
+  };
+  $("naesta").onclick = naestaDaemi;
+
+  /* ---------- Lok ---------- */
+  function lok(){
+    RAMMI.lok({hnappar:[
+      {texti:"Æfa aftur", adal:true, smellt:function(){ hefja(L.valin); }},
+      {texti:"Velja önnur efni", smellt:function(){ RAMMI.syna("upphaf"); }}
+    ]});
+  }
+
+  /* ---------- Upphafsskjár ---------- */
+  RAMMI.upphaf({
+    titill:"Forgangsröð reikniaðgerða",
+    inngangur:"Smelltu á þá reikniaðgerð sem á að reikna fyrst. Reiknaðu hana og skrifaðu svarið. Þá kemur ný lína, alveg eins og í reikningsbókinni, og dæmið styttist þangað til svarið er komið.",
+    skref:[{heiti:"Svigar", takn:"( )"}, {heiti:"Margföldun og deiling", takn:"· :"}, {heiti:"Samlagning og frádráttur", takn:"+ −"}],
+    efni:EFNI.map(function(e){ return {id:e.id, heiti:e.heiti, lysing:e.lysing, fjoldi:4}; }),
+    sjalfgefid:2,
+    fjoldiTexti:"Í hverju efni eru 4 dæmi. Þau byrja létt og þyngjast.",
+    tengill:{texti:"Veggspjald: Forgangsröð reikniaðgerða", slod:"veggspjald.html?v=forgangsrod"},
+    byrja:function(ids){ hefja(EFNI.filter(function(e){ return ids.indexOf(e.id) !== -1; })); }
+  });
+})();
+</script>
+</body>
+</html>

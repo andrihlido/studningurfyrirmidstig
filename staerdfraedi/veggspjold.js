@@ -5,7 +5,7 @@ window.VEGGSPJOLD = {
   tugakerfid: {
     titill:"Tugakerfið og sætisgildi",
     inngangur:"Gildi tölustafs fer eftir því í hvaða sæti hann er. Hvert sæti er tíu sinnum stærra en sætið hægra megin við það.",
-    aefa:[{heiti:"Tölur", slod:"tolur-og-reikningur.html"}],
+    aefa:[{heiti:"Æfingapróf: Tölur", slod:"tolur-og-reikningur.html"}],
     skref:{daemi:"78 412,564", lidir:[
       {t:"Finndu sætin", x:"Byrjaðu við kommuna. Vinstra megin eru einingar, tugir, hundruð, þúsundir og tugþúsundir. Hægra megin eru tíundu hlutar, hundraðshlutar og þúsundustu hlutar.",
        m:{teg:"saeti", tala:"78412,564"}},
@@ -34,7 +34,7 @@ window.VEGGSPJOLD = {
   negatifar: {
     titill:"Negatífar tölur",
     inngangur:"Negatífar tölur eru minni en 0. Á talnalínu eru þær vinstra megin við 0 og á hitamæli fyrir neðan 0.",
-    aefa:[{heiti:"Tölur", slod:"tolur-og-reikningur.html"}],
+    aefa:[{heiti:"Æfingapróf: Tölur", slod:"tolur-og-reikningur.html"}],
     skref:{daemi:"Hver er mismunurinn á −20° og 15°?", lidir:[
       {t:"Teiknaðu talnalínu", x:"Negatífar tölur eru vinstra megin við 0. Því lengra til vinstri, því minni er talan.",
        m:{teg:"talnalina", fra:-25, til:20, bil:5, merki:[-20,15], w:440}},
@@ -65,7 +65,7 @@ window.VEGGSPJOLD = {
   midsaekni: {
     titill:"Tíðasta gildi, miðgildi og meðaltal",
     inngangur:"Þessi þrjú gildi segja til um hvar „miðjan“ er í safni gagna.",
-    aefa:[{heiti:"Tölfræði og líkur", slod:"tolfraedi-og-likur.html"}],
+    aefa:[{heiti:"Æfingapróf: Tölfræði og líkur", slod:"tolfraedi-og-likur.html"}],
     skref:{daemi:"Börnin mældu kastið hans Jens og fengu 5,47 m, 5,42 m, 5,46 m, 5,42 m og 5,43 m.", lidir:[
       {t:"Tíðasta gildi", x:"Talan sem kemur oftast fyrir. 5,42 kemur tvisvar fyrir.",
        m:{teg:"jofnur", linur:[{s:"5,47 – [5,42] – 5,46 – [5,42] – 5,43"},{s:"Tíðasta gildið er [5,42 m]"}]}},
@@ -96,7 +96,7 @@ window.VEGGSPJOLD = {
   likur: {
     titill:"Líkur",
     inngangur:"Líkur segja til um möguleikana á því að atburður eigi sér stað. Þær eru skráðar með tölu frá 0 upp í 1.",
-    aefa:[{heiti:"Tölfræði og líkur", slod:"tolfraedi-og-likur.html"}],
+    aefa:[{heiti:"Æfingapróf: Tölfræði og líkur", slod:"tolfraedi-og-likur.html"}],
     skref:{daemi:"Í poka eru 12 plómur, 3 gular og 9 rauðar. Hverjar eru líkurnar á að fá gula plómu?", lidir:[
       {t:"Teldu allar plómurnar", x:"Í pokanum eru 12 plómur.", m:{teg:"plomur", gular:3, raudar:9}},
       {t:"Teldu þær sem passa", x:"3 plómur eru gular.", m:{teg:"plomur", gular:3, raudar:9, merkja:true}},
@@ -121,7 +121,7 @@ window.VEGGSPJOLD = {
   margfoldun: {
     titill:"Margföldun – rúðuaðferð",
     inngangur:"Bútaðu dæmið niður í minni hluta sem þú kannt að margfalda, reiknaðu hvern hluta og leggðu svo allt saman.",
-    aefa:[{heiti:"Margföldun og deiling", slod:"margfoldun-og-deiling.html"}],
+    aefa:[{heiti:"Æfingapróf: Margföldun og deiling", slod:"margfoldun-og-deiling.html"}],
     skref:{daemi:"22 · 12", lidir:[
       {t:"Bútaðu aðra töluna niður", x:"12 = 10 + 2. Þá er 22 · 12 sama og 22 · 10 og 22 · 2 lögð saman.",
        m:{teg:"rudunet", a:[22], b:[10,2]}},
@@ -153,7 +153,7 @@ window.VEGGSPJOLD = {
   deiling: {
     titill:"Deiling – Stikuaðferð",
     inngangur:"Þú deilir með því að nota margföldun sem þú kannt. Þú ræður hve stór skrefin eru.",
-    aefa:[{heiti:"Deiling – Stikuaðferð", slod:"deiling-stikuadferd.html"},{heiti:"Margföldun og deiling", slod:"margfoldun-og-deiling.html"}],
+    aefa:[{heiti:"Deiling – Stikuaðferð", slod:"deiling-stikuadferd.html"},{heiti:"Æfingapróf: Margföldun og deiling", slod:"margfoldun-og-deiling.html"}],
     skref:{daemi:"5 215 : 5", lidir:[
       {t:"Uppsetning", x:"Skrifaðu dæmið og dragðu lóðrétta línu. Vinstra megin reiknum við. Hægra megin skráum við hve oft 5 fer í.",
        m:{teg:"deiling", tala:"5215", deilir:5, skref:[1000,40,3], syna:0}},
@@ -214,7 +214,7 @@ window.VEGGSPJOLD = {
   tugabrot: {
     titill:"Tugabrot – margföldun og deiling",
     inngangur:"Reiknaðu eins og með heilar tölur en hafðu sætin í huga: einingar, tíundu hlutar og hundraðshlutar.",
-    aefa:[{heiti:"Margföldun og deiling", slod:"margfoldun-og-deiling.html"}],
+    aefa:[{heiti:"Æfingapróf: Margföldun og deiling", slod:"margfoldun-og-deiling.html"}],
     skref:{daemi:"Froskur hoppar 2,7 cm í hverju hoppi. Hve langt kemst hann í 5 hoppum? 2,7 · 5", lidir:[
       {t:"Bútaðu tugabrotið", x:"2,7 = 2 + 0,7. Reiknaðu heilu töluna og tíundu hlutana hvort fyrir sig.",
        m:{teg:"rudunet", a:[2,0.7], b:[5]}},
@@ -245,7 +245,7 @@ window.VEGGSPJOLD = {
   forgangsrod: {
     titill:"Forgangsröð reikniaðgerða",
     inngangur:"Í dæmum með fleiri en einni reikniaðgerð skiptir máli í hvaða röð er reiknað.",
-    aefa:[{heiti:"Margföldun og deiling", slod:"margfoldun-og-deiling.html"},{heiti:"Tölur", slod:"tolur-og-reikningur.html"}],
+    aefa:[{heiti:"Forgangsröð reikniaðgerða", slod:"forgangsrod.html"},{heiti:"Hvaða tölu táknar x?", slod:"hvada-tolu-taknar-x.html"},{heiti:"Æfingapróf: Margföldun og deiling", slod:"margfoldun-og-deiling.html"},{heiti:"Æfingapróf: Tölur", slod:"tolur-og-reikningur.html"}],
     skref:{daemi:"Reglan", lidir:[
       {t:"Svigar fyrst", x:"Reiknaðu fyrst það sem er inni í sviganum.", m:{teg:"jofnur", jafnt:true, linur:[{s:"68 − [(18 − 14)]"},{s:"68 − 4"},{s:"[64]"}]}},
       {t:"Síðan margföldun og deiling", x:"Ef engir svigar eru er fyrst margfaldað og deilt.", m:{teg:"jofnur", jafnt:true, linur:[{s:"60 + [5 · 4]"},{s:"60 + 20"},{s:"[80]"}]}},
@@ -269,7 +269,7 @@ window.VEGGSPJOLD = {
   hornasumma: {
     titill:"Hornasumma",
     inngangur:"Hornin í þríhyrningi eru alltaf samtals 180° og hornin í ferhyrningi samtals 360°. Þannig finnurðu horn sem vantar.",
-    aefa:[{heiti:"Rúmfræði", slod:"rumfraedi.html"}],
+    aefa:[{heiti:"Æfingapróf: Rúmfræði", slod:"rumfraedi.html"}],
     skref:{daemi:"Í þríhyrningnum ABC er ∠A = 75° og ∠B = 35°. Hve stórt er ∠C?", lidir:[
       {t:"Hornasumma þríhyrnings er 180°", x:"Ef hornin þrjú eru klippt af og lögð hlið við hlið mynda þau beint strik, 180°.",
        m:{teg:"hornasumma", A:75, B:35}},
@@ -301,7 +301,7 @@ window.VEGGSPJOLD = {
   maelikvardi: {
     titill:"Mælikvarði og einslaga myndir",
     inngangur:"Í einslaga myndum eru allar lengdir margfaldaðar með sömu tölu. Hlutfallið segir hve mörgum sinnum lengri eða styttri hliðarnar eru.",
-    aefa:[{heiti:"Rúmfræði", slod:"rumfraedi.html"}],
+    aefa:[{heiti:"Æfingapróf: Rúmfræði", slod:"rumfraedi.html"}],
     skref:{daemi:"Myndirnar 1 og 2 eru einslaga. Hve löng er hliðin FG?", lidir:[
       {t:"Finndu tvær samsvarandi hliðar", x:"AB = 5 cm og EF = 15 cm eru báðar gefnar.",
        m:{teg:"einslaga", a:[5,6,"5 cm","6 cm","h0"], b:[15,18,"15 cm","?","h0"], sc:9}},
@@ -325,5 +325,205 @@ window.VEGGSPJOLD = {
       {t:"Margfaldað þegar á að deila", samhengi:"Hlutfallið milli hrings 1 og hrings 2 er 5 : 1. Geisli hrings 1 er 25 cm.", rangt:["Geisli hrings 2 = 25 · 5 = 125 cm"], rett:["Hringur 2 er minni.","25 : 5 = 5 cm"],
        x:"Athugaðu fyrst hvort myndin sem þú leitar að er stærri eða minni."}
     ]
+  },
+  namundun: {
+    titill:"Námundun og slumpreikningur",
+    inngangur:"Að námunda er að finna tölu sem er nálægt og þægilegra að reikna með. Í slumpreikningi námundum við fyrst og reiknum svo um það bil.",
+    aefa:[{heiti:"Æfingapróf: Tölur", slod:"tolur-og-reikningur.html"}],
+    skref:{daemi:"Námundaðu 3,46 að næsta tíunda hluta.", lidir:[
+      {t:"Finndu sætið", x:"Að námunda að næsta tíunda hluta merkir að svarið á að hafa einn aukastaf. Í 3,46 er 4 í tíundu hlutunum.",
+       m:{teg:"saeti", tala:"3,46", merkt:[2]}},
+      {t:"Skoðaðu næsta tölustaf", x:"Tölustafurinn strax á eftir tíundu hlutunum er 6.",
+       m:{teg:"saeti", tala:"3,46", merkt:[3]}},
+      {t:"Upp eða niður?", x:"Ef tölustafurinn er 0, 1, 2, 3 eða 4 er námundað niður. Ef hann er 5, 6, 7, 8 eða 9 er námundað upp. Hér er hann 6, svo við námundum upp. 3,46 er líka nær 3,5 en 3,4.",
+       m:{teg:"talnalina", fra:340, til:350, bil:1, deilir:100, aukastafir:2, merkiHvert:5, merki:[346], merkiTexti:["3,46"], stokk:[{fra:346, til:350, t:"styttra"}], w:340}},
+      {t:"Skrifaðu svarið", x:"Táknið ≈ merkir „um það bil“.",
+       m:{teg:"jofnur", linur:[{s:"3,46 ≈ [3,5]"}]}}
+    ]},
+    auka:{titill:"Að námunda að ólíkum sætum", x:"Sama tala námundast á ólíkan hátt eftir því að hvaða sæti er námundað.",
+      m:{teg:"tafla", haus:["Námundað að","12 856,239"], radir:[["næsta hundraði","12 900"],["næstu heilu tölu","12 856"],["næsta tíunda hluta","12 856,2"]]}},
+    leidir:{x:"Lísa á 500 kr. Hún vill kaupa húfu á 199 kr. og trefil á 299 kr. Á hún nóga peninga?", lidir:[
+      {t:"Slumpreikningur", x:"Námundaðu að næsta hundraði og reiknaðu.", m:{teg:"jofnur", linur:[{s:"199 ≈ 200 og 299 ≈ 300"},{s:"200 + 300 = [500]"}]}, svar:"Um það bil 500 kr. Mjög nálægt!"},
+      {t:"Reikna nákvæmlega", x:"Leggðu verðin saman.", m:{teg:"jofnur", linur:[{s:"199 + 299 = [498]"},{s:"500 − 498 = 2"}]}, svar:"Hún á nóg. 2 kr. eru eftir"},
+      {t:"Hugsa um hvað munar", x:"Hvort verð er 1 kr. minna en heilt hundrað.", m:{teg:"jofnur", linur:[{s:"200 + 300 = 500"},{s:"500 − 1 − 1 = [498]"}]}, svar:"Hún á nóg. 2 kr. eru eftir"}
+    ], nidur:"Slumpreikningurinn sýnir fljótt að verðið er nálægt 500 kr. Þegar svarið er svona nálægt er gott að reikna nákvæmlega."}
+  },
+
+  talnarunur: {
+    titill:"Talnarunur",
+    inngangur:"Í talnarunu fylgja tölurnar ákveðinni reglu. Þegar þú hefur fundið regluna geturðu fundið næstu tölur.",
+    aefa:[{heiti:"Æfingapróf: Tölur", slod:"tolur-og-reikningur.html"}],
+    skref:{daemi:"Hverjar eru næstu þrjár tölur? 0,001 – 0,004 – 0,007 – 0,010 – …", lidir:[
+      {t:"Skoðaðu tvær fyrstu tölurnar", x:"Hve mikið breytist talan? 0,004 − 0,001 = 0,003.",
+       m:{teg:"runa", tolur:["0,001","0,004"], merki:["+0,003"]}},
+      {t:"Athugaðu hvort reglan gildir", x:"0,004 + 0,003 = 0,007 og 0,007 + 0,003 = 0,010. Reglan er að leggja 0,003 við.",
+       m:{teg:"runa", tolur:["0,001","0,004","0,007","0,010"], merki:["+0,003","+0,003","+0,003"]}},
+      {t:"Haltu áfram með regluna", x:"Leggðu 0,003 við síðustu töluna þrisvar sinnum.",
+       m:{teg:"runa", tolur:["0,010","0,013","0,016","0,019"], merki:["+0,003","+0,003","+0,003"], nytt:1}}
+    ]},
+    auka:{titill:"Ólíkar reglur", x:"Reglan getur verið að leggja sömu tölu við, draga frá eða margfalda. Stundum stækkar bilið í hverju skrefi.",
+      m:[{teg:"runa", tolur:["0,072","0,063","0,054","0,045"], merki:["−0,009","−0,009","−0,009"]},
+         {teg:"runa", tolur:["0,02","0,04","0,08","0,16"], merki:["· 2","· 2","· 2"]},
+         {teg:"runa", tolur:["0,002","0,004","0,008","0,014"], merki:["+0,002","+0,004","+0,006"]}]},
+    leidir:{x:"Hvaða tala verður númer 10 í talnarununni 0,04 – 0,08 – 0,12 – …?", lidir:[
+      {t:"Skref fyrir skref", x:"Leggðu 0,04 við aftur og aftur þar til komin eru 10 tölur.", m:{teg:"jofnur", linur:[{s:"0,04 – 0,08 – 0,12"},{s:"0,16 – 0,20 – 0,24"},{s:"0,28 – 0,32 – 0,36"},{s:"[0,40]", a:"tala nr. 10"}]}, svar:"Tala númer 10 er 0,40"},
+      {t:"Tafla", x:"Skráðu númerið og töluna hlið við hlið.", m:{teg:"tafla", haus:["Nr.","Tala"], radir:[["1","0,04"],["2","0,08"],["3","0,12"],["…","…"],["9","0,36"],["10","?"]], hl:5}, svar:"0,36 + 0,04 = 0,40"},
+      {t:"Sjá mynstrið", x:"Tala númer 1 er 1 · 0,04, númer 2 er 2 · 0,04 og svo framvegis.", m:{teg:"jofnur", linur:[{s:"10 · 0,04 = [0,40]"}]}, svar:"Tala númer 10 er 0,40"}
+    ], nidur:"Allar leiðirnar gefa 0,40. Margföldun er fljótlegust þegar talan er langt úti í rununni."}
+  },
+
+  myndrit: {
+    titill:"Myndrit: súlurit, línurit og skífurit",
+    inngangur:"Myndrit sýna gögn á myndrænan hátt. Súlurit, línurit og skífurit henta hvert sínum gögnum.",
+    aefa:[{heiti:"Æfingapróf: Tölfræði og líkur", slod:"tolfraedi-og-likur.html"}],
+    skref:{daemi:"Búðu til súlurit sem sýnir hvað fólkið gerir á meðan það bíður eftir flugvélinni.", lidir:[
+      {t:"Settu gögnin í töflu", x:"Teldu hve margir eru í hverjum flokki.",
+       m:{teg:"tafla", haus:["Hvað gerir fólkið?","Fjöldi"], radir:[["Rabbar","6"],["Les","3"],["Sefur","2"],["Spilar á spil","1"]]}},
+      {t:"Teiknaðu ásana", x:"Flokkarnir fara á lárétta ásinn (x-ásinn). Fjöldinn fer á lóðrétta ásinn. Hafðu jöfn bil á milli talnanna.",
+       m:{teg:"sulurit", gildi:[0,0,0,0], nofn:["Rabbar","Les","Sefur","Spilar"], max:6}},
+      {t:"Ein súla fyrir hvern flokk", x:"Hæð súlunnar segir til um fjöldann í flokknum. Allar súlurnar eru jafn breiðar.",
+       m:{teg:"sulurit", gildi:[6,3,2,1], nofn:["Rabbar","Les","Sefur","Spilar"], max:6}},
+      {t:"Lestu úr myndritinu", x:"Flestir rabba saman. Fæstir spila á spil. Gefðu myndritinu líka heiti."}
+    ]},
+    auka:{titill:"Línurit", x:"Línurit er svipað og súlurit nema að flokkarnir á x-ásnum eru samhangandi, t.d. ár eða klukkustundir. Ferill er dreginn milli punktanna. Hér er hitinn á vatni í hitakönnu.",
+      m:{teg:"linurit", gildi:[93,78,69,64,61], nofn:["0","3","6","9","12"], min:50, max:100, skref:10, xas:"Klukkustundir", yas:"Hiti (°C)", w:320}},
+    leidir:{x:"Sömu gögn má sýna á ólíkan hátt. Hvaða myndrit hentar best fer eftir því hvað á að sjást.", lidir:[
+      {t:"Tafla", x:"Sýnir nákvæmar tölur.", m:{teg:"tafla", haus:["Flokkur","Fjöldi"], radir:[["Rabbar","6"],["Les","3"],["Sefur","2"],["Spilar","1"]]}, svar:"Samtals 12 manns"},
+      {t:"Súlurit", x:"Gott til að bera saman flokkana.", m:{teg:"sulurit", gildi:[6,3,2,1], nofn:["Rabbar","Les","Sefur","Spilar"], max:6}, svar:"Flestir rabba"},
+      {t:"Skífurit", x:"Gott til að sjá hve stór hver flokkur er af heildinni. Hver geiri táknar einn flokk.", m:{teg:"skifurit", hlutar:[180,90,60,30], nofn:["Rabbar","Les","Sefur","Spilar"]}, svar:"Helmingurinn rabbar"}
+    ], nidur:"Öll myndritin sýna sömu gögn. Súlurit hentar til að bera saman flokka og skífurit til að sjá hlutfallið af heildinni."}
+  },
+
+  hlutfoll: {
+    titill:"Hlutföll",
+    inngangur:"Hlutfall er samanburður á tveimur söfnum. Það segir til um hve mikið er í hvoru safni.",
+    aefa:[{heiti:"Æfingapróf: Margföldun og deiling", slod:"margfoldun-og-deiling.html"}],
+    skref:{daemi:"Í perlukeðju eru 12 rauðar og 8 bláar perlur. Hvert er hlutfallið milli rauðra og blárra perla?", lidir:[
+      {t:"Það sem er nefnt fyrst kemur fyrst", x:"Rauðu perlurnar eru nefndar fyrst. Þess vegna kemur fjöldi rauðra perla fyrst: 12 : 8.",
+       m:{teg:"perlur", r:12, b:8}},
+      {t:"Skiptu í jafna hópa", x:"Settu perlurnar saman fjórar og fjórar. Þá verða 3 hópar af rauðum perlum og 2 hópar af bláum.",
+       m:{teg:"perlur", r:12, b:8, hopur:4}},
+      {t:"Fullstyttu hlutfallið", x:"12 : 8 og 3 : 2 eru jöfn hlutföll. 3 : 2 er hlutfallið skráð á einfaldasta hátt. Þá er það fullstytt.",
+       m:{teg:"jofnur", orvar:true, linur:[{s:"12 : 8"},{s:"[3 : 2]", a:"Deilt með 4 í báðar tölurnar."}]}},
+      {t:"Röðin skiptir máli", x:"Ef spurt er um hlutfallið milli blárra og rauðra perla koma bláu perlurnar fyrst.",
+       m:{teg:"jofnur", linur:[{s:"rauðar : bláar = [3 : 2]"},{s:"bláar : rauðar = [2 : 3]"}]}}
+    ]},
+    leidir:{x:"Í ítalska fánanum er hlutfallið milli breiddar og hæðar 3 : 2. Ítalskur fáni er 20 cm hár. Hve breiður er hann?", lidir:[
+      {t:"Margfalda báðar tölurnar", x:"Hvað þarf að margfalda 2 með til að fá 20? Margfaldaðu 3 með sömu tölu.", m:{teg:"tafla", haus:["","Breidd","Hæð"], radir:[["Hlutfall","3","2"],["Sinnum 10","30 cm","20 cm"]], hl:1}, svar:"3 · 10 = 30 cm"},
+      {t:"Finna einn hlut", x:"Hæðin er 2 hlutar. Einn hlutur er 20 : 2 = 10 cm. Breiddin er 3 hlutar.", m:{teg:"jofnur", linur:[{s:"20 : 2 = 10"},{s:"3 · 10 = [30]"}]}, svar:"30 cm"},
+      {t:"Margfalda með 1,5", x:"3 : 2 merkir að breiddin er {3/2} af hæðinni. {3/2} er sama og 1,5.", m:{teg:"jofnur", linur:[{s:"20 · 1,5 = [30]"}]}, svar:"30 cm"}
+    ], nidur:"Allar leiðirnar gefa 30 cm."}
+  },
+
+  moguleikar: {
+    titill:"Fjöldi möguleika",
+    inngangur:"Við finnum fjölda möguleika á að raða saman hlutum úr tveimur eða fleiri söfnum með því að margfalda saman fjöldann í söfnunum.",
+    aefa:[{heiti:"Æfingapróf: Margföldun og deiling", slod:"margfoldun-og-deiling.html"}],
+    skref:{daemi:"Elín á 2 hálskeðjur og 4 viðhengi. Á hve marga vegu getur hún valið saman eina keðju og eitt viðhengi?", lidir:[
+      {t:"Teldu í hvoru safni", x:"Keðjurnar eru 2 og viðhengin eru 4.",
+       m:{teg:"tafla", haus:["Safn","Fjöldi"], radir:[["Keðjur","2"],["Viðhengi","4"]]}},
+      {t:"Teiknaðu tré", x:"Frá hvorri keðju liggja 4 greinar, ein fyrir hvert viðhengi. Hver grein er einn möguleiki.",
+       m:{teg:"trjamynd", a:["Keðja 1","Keðja 2"], b:["Viðhengi 1","Viðhengi 2","Viðhengi 3","Viðhengi 4"], aw:72, bw:92}},
+      {t:"Margfaldaðu", x:"Í hvora keðju getur hún notað fjögur viðhengi.",
+       m:{teg:"jofnur", linur:[{s:"2 · 4 = [8]", a:"Möguleikarnir eru 8."}]}}
+    ]},
+    auka:{titill:"Fleiri en tvö söfn", x:"Á hamborgarastað má velja milli 4 hamborgara, 4 drykkja og 2 tegunda af kartöflum. Margfaldaðu fjöldann í öllum söfnunum.",
+      m:{teg:"jofnur", linur:[{s:"4 · 4 · 2 = [32]", a:"Matseðlarnir eru 32."}]}},
+    leidir:{x:"Í matsalnum má velja milli 3 brauðtegunda og 4 áleggstegunda. Hve margar ólíkar brauðsneiðar er hægt að fá?", lidir:[
+      {t:"Tré", x:"Ein grein fyrir hverja samsetningu.", m:{teg:"trjamynd", a:["Gróft","Fínt","Rúgbrauð"], b:["Ostur","Skinka","Egg","Kæfa"], lh:20, aw:78, bw:62}, svar:"12 brauðsneiðar"},
+      {t:"Tafla", x:"Áleggið í línunum og brauðið í dálkunum. Hver reitur er ein brauðsneið.", m:{teg:"tafla", haus:["","Gróft","Fínt","Rúgbr."], radir:[["Ostur","✓","✓","✓"],["Skinka","✓","✓","✓"],["Egg","✓","✓","✓"],["Kæfa","✓","✓","✓"]]}, svar:"4 línur · 3 dálkar = 12"},
+      {t:"Margföldun", x:"Margfaldaðu fjöldann í söfnunum tveimur.", m:{teg:"jofnur", linur:[{s:"3 · 4 = [12]"}]}, svar:"12 brauðsneiðar"}
+    ], nidur:"Allar leiðirnar gefa 12. Margföldun er fljótlegust þegar söfnin eru stór."}
+  },
+
+  frumtolur: {
+    titill:"Frumtölur og samsettar tölur",
+    inngangur:"Frumtala er heil tala stærri en 1 sem aðeins er hægt að deila í með tölunni 1 og tölunni sjálfri. Samsetta tölu má skrifa sem margfeldi minni talna, t.d. 51 = 3 · 17.",
+    aefa:[{heiti:"Æfingapróf: Margföldun og deiling", slod:"margfoldun-og-deiling.html"}],
+    skref:{daemi:"Er 51 frumtala eða samsett tala?", lidir:[
+      {t:"Prófaðu að deila með 2", x:"51 er oddatala, svo 2 gengur ekki upp í 51.",
+       m:{teg:"jofnur", linur:[{s:"51 : 2 = 25 og 1 afgangs"}]}},
+      {t:"Prófaðu að deila með 3", x:"3 gengur upp í 51 án afgangs. Þá er 3 þáttur í 51.",
+       m:{teg:"jofnur", linur:[{s:"51 : 3 = [17]"}]}},
+      {t:"Skrifaðu sem margfeldi", x:"51 hefur fleiri þætti en 1 og 51. Þess vegna er 51 samsett tala.",
+       m:{teg:"jofnur", linur:[{s:"51 = [3 · 17]"}]}},
+      {t:"Ef enginn þáttur finnst", x:"Er 23 frumtala? Hvorki 2, 3 né 5 gengur upp í 23. 5 · 5 = 25 er stærra en 23, svo það þarf ekki að prófa fleiri tölur. 23 er frumtala.",
+       m:{teg:"jofnur", linur:[{s:"23 : 2 = 11 og 1 afgangs"},{s:"23 : 3 = 7 og 2 afgangs"},{s:"23 : 5 = 4 og 3 afgangs"}]}}
+    ]},
+    auka:{titill:"Frumtölurnar upp í 50", x:"Talan 2 er minnsta frumtalan. Allar aðrar sléttar tölur eru samsettar tölur því að það má deila í þær með 2. Allar frumtölur nema 2 eru oddatölur.",
+      m:{teg:"talnatafla", til:50, merkt:[2,3,5,7,11,13,17,19,23,29,31,37,41,43,47]}},
+    leidir:{x:"Finndu alla þætti tölunnar 36 sem eru frumtölur.", lidir:[
+      {t:"Byrja á 4 · 9", x:"Skiptu hverri tölu í þætti þar til aðeins frumtölur eru eftir.", m:{teg:"thattatre", tre:{t:36, b:[{t:4, b:[2,2]},{t:9, b:[3,3]}]}}, svar:"36 = 2 · 2 · 3 · 3"},
+      {t:"Byrja á 6 · 6", x:"Önnur byrjun, sama aðferð.", m:{teg:"thattatre", tre:{t:36, b:[{t:6, b:[2,3]},{t:6, b:[2,3]}]}}, svar:"36 = 2 · 2 · 3 · 3"},
+      {t:"Deila með minnstu frumtölunni", x:"Deildu með 2 eins lengi og hægt er, svo með 3.", m:{teg:"jofnur", linur:[{s:"36 : 2 = 18"},{s:"18 : 2 = 9"},{s:"9 : 3 = 3"}]}, svar:"36 = 2 · 2 · 3 · 3"}
+    ], nidur:"Allar leiðirnar enda á sömu frumtölunum. Þættirnir í 36 sem eru frumtölur eru 2 og 3."}
+  },
+
+  jofnur: {
+    titill:"Hvaða tölu táknar x?",
+    inngangur:"x táknar óþekkta tölu. Hyldu hlutann sem x er í og spurðu: Hvaða tala á að vera þarna?",
+    aefa:[{heiti:"Hvaða tölu táknar x?", slod:"hvada-tolu-taknar-x.html"},{heiti:"Forgangsröð reikniaðgerða", slod:"forgangsrod.html"}],
+    skref:{daemi:"(29 − x) : 4 = 6", lidir:[
+      {t:"Hyldu hlutann sem x er í", x:"Sviginn er einn hluti. Hyldu allan svigann.",
+       m:{teg:"jofnur", orvar:true, linur:[{s:"[(29 − x)] : 4 = 6"},{s:"[?] : 4 = 6"}]}},
+      {t:"Finndu töluna undir kassanum", x:"Hvaða tala deilt með 4 er 6? Það er 24, því að 24 : 4 = 6.",
+       m:{teg:"jofnur", linur:[{s:"[24] : 4 = 6"}]}},
+      {t:"Nú veistu hvað er í sviganum", x:"29 − x = 24. Hyldu x: 29 mínus hvaða tala er 24?",
+       m:{teg:"jofnur", orvar:true, linur:[{s:"29 − x = 24"},{s:"29 − [?] = 24"}]}},
+      {t:"Finndu x", x:"29 − 5 = 24. Þá hlýtur x að tákna 5.",
+       m:{teg:"jofnur", linur:[{s:"x = [5]"}]}},
+      {t:"Prófaðu svarið", x:"Settu 5 í staðinn fyrir x og reiknaðu í réttri röð. Ef þú færð 6 er svarið rétt.",
+       m:{teg:"jofnur", jafnt:true, linur:[{s:"(29 − 5) : 4"},{s:"24 : 4"},{s:"[6]"}]}}
+    ]},
+    auka:{titill:"Svigi eða ekki?", x:"Sömu tölur geta gefið ólík svör. Með sviga er allur sviginn hulinn. Án sviga er margfaldað fyrst.",
+      m:[{teg:"jofnur", linur:[{s:"(x + 3) · 2 = 14"},{s:"x + 3 = 7", a:"? · 2 = 14, svo ? = 7"},{s:"x = [4]"}]},
+         {teg:"jofnur", linur:[{s:"x + 3 · 2 = 14"},{s:"x + 6 = 14", a:"3 · 2 = 6"},{s:"x = [8]"}]}]},
+    leidir:{x:"Hvaða tölu táknar x? x : 2 + 13 = 15", lidir:[
+      {t:"Hylja", x:"Hyldu x : 2. Þá er ? + 13 = 15, svo ? = 2. Hvaða tala deilt með 2 er 2?", m:{teg:"jofnur", linur:[{s:"x : 2 = 2"},{s:"x = [4]"}]}, svar:"x = 4"},
+      {t:"Prófa sig áfram", x:"Settu tölur í staðinn fyrir x og athugaðu hvort þú færð 15.", m:{teg:"jofnur", linur:[{s:"2 : 2 + 13 = 14", a:"of lítið"},{s:"4 : 2 + 13 = [15]", a:"rétt"}]}, svar:"x = 4"},
+      {t:"Rekja til baka", x:"Byrjaðu á svarinu og gerðu öfugt við það sem gert var við x.", m:{teg:"jofnur", linur:[{s:"15 − 13 = 2"},{s:"2 · 2 = [4]"}]}, svar:"x = 4"}
+    ], nidur:"Allar leiðirnar gefa x = 4. Prófaðu alltaf svarið með því að setja það í staðinn fyrir x."}
+  },
+
+  hringur: {
+    titill:"Hringurinn",
+    inngangur:"Frá miðju hrings og að hringferlinum er alls staðar jafn langt.",
+    aefa:[{heiti:"Æfingapróf: Rúmfræði", slod:"rumfraedi.html"}],
+    skref:{titill:"Hlutar hringsins", numer:false, lidir:[
+      {t:"Miðja hrings", x:"Punkturinn í miðju hringsins.", m:{teg:"hringur", merkt:"midja"}},
+      {t:"Hringferill", x:"Línan sem myndar hringinn. Hún er alls staðar jafn langt frá miðjunni.", m:{teg:"hringur", merkt:"ferill"}},
+      {t:"Geisli", x:"Fjarlægðin frá miðju hrings að hringferlinum.", m:{teg:"hringur", merkt:"geisli"}},
+      {t:"Þvermál", x:"Lengd miðstrengsins sem gengur gegnum miðju hringsins. Þvermálið er tvöfalt lengra en geislinn.", m:{teg:"hringur", merkt:"thvermal"}},
+      {t:"Geiri", x:"Hluti af hringfletinum. Hann markast af tveimur geislum og hringferlinum.", m:{teg:"hringur", merkt:"geiri"}},
+      {t:"Allt saman", x:"Til að teikna hring með hringfara er bilið á hringfaranum haft jafn langt og geislinn.", m:{teg:"hringur", merkt:"allt"}}
+    ]},
+    auka:{titill:"Geirar og gráður", x:"Heill hringur er 360°. Ef hringnum er skipt í 4 jafn stóra geira er hver geiri 360° : 4 = 90°. Ef honum er skipt í 6 jafn stóra geira er hver geiri 360° : 6 = 60°.",
+      m:[{teg:"geirar", n:4, gildi:"90°"},{teg:"geirar", n:6, gildi:"60°"}]},
+    leidir:{x:"Geisli klukkunnar er 15 cm. Hvert er þvermál hennar?", lidir:[
+      {t:"Tvöfalda geislann", x:"Þvermálið er tvöfalt lengra en geislinn.", m:{teg:"jofnur", linur:[{s:"2 · 15 = [30]"}]}, svar:"30 cm"},
+      {t:"Tveir geislar", x:"Þvermálið nær frá hringferlinum gegnum miðjuna og yfir að hringferlinum hinum megin. Það eru tveir geislar.", m:{teg:"jofnur", linur:[{s:"15 + 15 = [30]"}]}, svar:"30 cm"}
+    ], nidur:"Báðar leiðirnar gefa 30 cm. Til að finna geislann út frá þvermálinu er deilt með 2: 30 : 2 = 15 cm."}
+  },
+
+  formin: {
+    titill:"Þríhyrningar og ferhyrningar",
+    inngangur:"Sumir þríhyrningar og ferhyrningar hafa sérstök heiti. Heitin fara eftir hliðunum og hornunum.",
+    aefa:[{heiti:"Æfingapróf: Rúmfræði", slod:"rumfraedi.html"}],
+    skref:{titill:"Sérstök heiti", numer:false, lidir:[
+      {t:"Rétthyrndur þríhyrningur", x:"Eitt hornið er rétt horn, 90°.", m:{teg:"thri", A:90, B:40, rett:"A", w:260, h:180}},
+      {t:"Jafnhliða þríhyrningur", x:"Allar hliðarnar eru jafn langar og öll hornin eru jafn stór.", m:{teg:"thri", A:60, B:60, jafnar:[0,1,2], w:260, h:190}},
+      {t:"Jafnarma þríhyrningur", x:"Tvær hliðar eru jafn langar og hornin við þriðju hliðina eru jafn stór.", m:{teg:"thri", A:70, B:70, jafnar:[1,2], w:260, h:200}},
+      {t:"Rétthyrningur", x:"Öll hornin eru rétt horn. Gagnstæðar hliðar eru jafn langar.", m:{teg:"form", w:260, h:160, pts:[[30,130],[230,130],[230,30],[30,30]], rett:[0,1,2,3], jafnar:[[0,1],[1,2],[2,1],[3,2]]}},
+      {t:"Ferningur", x:"Öll hornin eru rétt horn og allar hliðarnar eru jafn langar.", m:{teg:"form", w:200, h:170, pts:[[40,145],[160,145],[160,25],[40,25]], rett:[0,1,2,3], jafnar:[[0,1],[1,1],[2,1],[3,1]]}},
+      {t:"Samsíðungur", x:"Tvær og tvær hliðar eru samsíða og jafn langar. Gagnstæð horn eru jafn stór.", m:{teg:"form", w:280, h:150, pts:[[30,125],[200,125],[250,30],[80,30]], samsida:[[0,1],[1,2],[2,1],[3,2]]}},
+      {t:"Tígull", x:"Allar hliðarnar eru jafn langar. Tvær og tvær hliðar eru samsíða.", m:{teg:"form", w:240, h:190, pts:[[120,170],[210,95],[120,20],[30,95]], jafnar:[[0,1],[1,1],[2,1],[3,1]]}},
+      {t:"Trapisa", x:"Tvær hliðar eru samsíða.", m:{teg:"form", w:280, h:150, pts:[[25,125],[255,125],[195,30],[75,30]], samsida:[[0,1],[2,1]]}}
+    ]},
+    auka:{titill:"Hornasumma", x:"Hornin í þríhyrningi eru samtals 180°. Hornin í ferhyrningi eru samtals 360°, því að ferhyrningi má skipta í tvo þríhyrninga: 2 · 180° = 360°.",
+      m:{teg:"form", w:280, h:150, pts:[[30,125],[200,125],[250,30],[80,30]], hornalina:[0,2]}},
+    leidir:{x:"Í jafnarma þríhyrningi er eitt hornið 40°. Hin hornin tvö eru jafn stór. Hve stór eru þau?", lidir:[
+      {t:"Draga frá og deila", x:"Dragðu 40° frá 180° og skiptu afganginum jafnt á milli hornanna tveggja.", m:{teg:"jofnur", linur:[{s:"180° − 40° = 140°"},{s:"140° : 2 = [70°]"}]}, svar:"Hvort horn er 70°"},
+      {t:"Prófa sig áfram", x:"Prófaðu tölu og athugaðu hvort hornin verða samtals 180°.", m:{teg:"jofnur", linur:[{s:"60° + 60° + 40° = 160°", a:"of lítið"},{s:"70° + 70° + 40° = [180°]", a:"rétt"}]}, svar:"Hvort horn er 70°"}
+    ], nidur:"Báðar leiðirnar gefa 70°. Hornin í þríhyrningi eru alltaf samtals 180°."}
   }
 };

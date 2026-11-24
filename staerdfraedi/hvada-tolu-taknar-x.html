@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="is">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hvaða tölu táknar x?</title>
+<link rel="stylesheet" href="../sameiginlegt.css">
+<link rel="stylesheet" href="leikjarammi.css">
+<link rel="stylesheet" href="reikningur.css">
+</head>
+<body class="fag-staerdfraedi">
+<div class="wrap">
+  <a class="heim" href="../index.html">← Forsíða</a>
+
+  <!-- Upphafsskjár (teiknaður af leikjarammi.js) -->
+  <section id="upphaf"></section>
+
+  <!-- Leikskjár -->
+  <section id="leikur" class="hidden">
+    <div class="toppur">
+      <div><span class="heiti" id="efniHeiti"></span> · <span class="stada" id="stada"></span></div>
+      <div class="row"><button type="button" class="btn ghost" id="uppTakki">Upprifjun</button><button type="button" class="btn ghost" id="haetta">Hætta</button></div>
+    </div>
+    <div class="skref" id="skrefLeik">
+      <span class="flis" data-s="1"><span class="nr">1</span>Einfalda</span>
+      <span class="flis" data-s="2"><span class="nr">2</span>Hylja</span>
+      <span class="flis" data-s="3"><span class="nr">3</span>Finna töluna</span>
+      <span class="flis" data-s="4"><span class="nr">4</span>Prófa</span>
+    </div>
+    <div class="vinnusvaedi">
+      <div class="card">
+        <div class="reikningsbok" aria-live="polite">
+          <div class="jofnur" id="bok"></div>
+          <div class="profun hidden" id="profun">
+            <h3>Prófun</h3>
+            <div id="profLinur"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card verkefni">
+        <p class="muted" id="samhengi"></p>
+        <p class="spurning" id="spurning"></p>
+        <form class="svarform hidden" id="svarform" autocomplete="off">
+          <label class="sr-only" for="svar">Svar</label>
+          <input id="svar" inputmode="numeric" aria-describedby="spurning">
+          <button type="submit" class="btn acc">Athuga</button>
+        </form>
+        <div class="endurgjof" id="endurgjof" role="status"></div>
+        <div class="takkar">
+          <button type="button" class="btn ghost" id="abendingTakki">Fá ábendingu</button>
+          <button type="button" class="btn acc hidden" id="naesta">Næsta dæmi</button>
+        </div>
+        <div class="abending hidden" id="abending"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lokaskjár (teiknaður af leikjarammi.js) -->
+  <section id="lok" class="hidden"></section>
+</div>
+
+
+<script src="leikjarammi.js"></script>
+<script src="reikningur.js"></script>
+<script>
+(function(){
+  "use strict";
+  var RK = window.RK;
+  function $(id){ return document.getElementById(id); }
+  function rnd(a, b){ return a + Math.floor(Math.random() * (b - a + 1)); }
+  function T(v){ return RK.tala(v); }
+
+  /* =========================================================
+     Jafna: heldur utan um eitt dæmi frá byrjun til enda.
+     Fasar: einfalda → hylja → finna → (hylja → finna …) → profa → lokid
+     ========================================================= */
+  function Jafna(texti, profa){
+    var p = RK.lesaJofnu(texti);
+    this.texti = texti;
+    this.upph = p;
+    this.xHaegri = p.h.t === "x";            // t.d. (25 + 5) : 5 = x
+    this.v = RK.afrita(p.v); this.h = RK.afrita(p.h);
+    this.linur = [{v:RK.afrita(this.v), h:RK.afrita(this.h)}];
+    this.profa = profa && !this.xHaegri;
+    this.S = null; this.P = null; this.hulid = null; this.x = null;
+    this.byrjaEinfalda();
+  }
+  Jafna.prototype.byrjaEinfalda = function(){
+    if(this.xHaegri){ this.S = new RK.Skref(this.v); this.fasi = "einfalda"; return; }
+    var S = new RK.Skref(this.v, true);
+    if(!S.lokid()){ this.S = S; this.fasi = "einfalda"; } else this.byrjaHylja();
+  };
+  Jafna.prototype.byrjaHylja = function(){
+    this.S = null;
+    if(this.v.t === "x"){ this.x = this.h.v; this.byrjaProfun(); return; }
+    this.fasi = "hylja";
+  };
+  Jafna.prototype.byrjaProfun = function(){
+    if(!this.profa){ this.fasi = "lokid"; return; }
+    var x = this.x;
+    var sett = (function f(h){
+      if(h.t === "x") return RK.nytt({t:"n", v:x, merkt:true});
+      if(h.t !== "op") return RK.afrita(h);
+      var c = RK.afrita(h); c.a = f(h.a); c.b = f(h.b); return c;
+    })(this.upph.v);
+    this.P = new RK.Skref(sett); this.fasi = "profa";
+  };
+  /* Hlutarnir tveir vinstra megin: P er hlutinn sem x er í, N er talan */
+  Jafna.prototype.hlutar = function(){
+    var xa = RK.hefurX(this.v.a);
+    return {P: xa ? this.v.a : this.v.b, N: xa ? this.v.b : this.v.a, vinstri: xa};
+  };
+  Jafna.prototype.virktSkref = function(){ return this.fasi === "einfalda" ? this.S : this.fasi === "profa" ? this.P : null; };
+  Jafna.prototype.undirfasi = function(){ var S = this.virktSkref(); return S ? S.fasi : this.fasi; };
+
+  Jafna.prototype.smella = function(id){ return this.virktSkref().smella(id); };
+  Jafna.prototype.hylja = function(id){
+    var h = this.hlutar();
+    if(id !== h.P.id) return {ok:false, s:"Þarna er ekkert x. Hyldu hlutann sem x er í."};
+    this.hulid = id; this.fasi = "finna";
+    return {ok:true, s: h.P.t === "x" ? "Rétt! Nú er x hulið." : "Rétt! Nú er hlutinn með x hulinn."};
+  };
+  Jafna.prototype.spurning = function(){
+    var h = this.hlutar(), o = this.v.o, n = T(h.N.v), R = T(this.h.v);
+    var ord = o === "+" ? "plús" : o === "−" ? "mínus" : o === "·" ? "sinnum" : "deilt með";
+    if(h.vinstri) return "Hvaða tala " + ord + " " + n + " er " + R + "?";
+    return n + " " + ord + " hvaða " + (o === ":" ? "tölu" : "tala") + " er " + R + "?";
+  };
+  Jafna.prototype.hulidGildi = function(){
+    var h = this.hlutar(), o = this.v.o, n = h.N.v, R = this.h.v;
+    if(o === "+") return R - n;
+    if(o === "−") return h.vinstri ? R + n : n - R;
+    if(o === "·") return R / n;
+    return h.vinstri ? R * n : n / R;
+  };
+  Jafna.prototype.finnaAbending = function(){
+    var h = this.hlutar(), o = this.v.o, n = T(h.N.v), R = T(this.h.v), s;
+    if(o === "+") s = R + " − " + n;
+    else if(o === "−") s = h.vinstri ? R + " + " + n : n + " − " + R;
+    else if(o === "·") s = R + " : " + n;
+    else s = h.vinstri ? R + " · " + n : n + " : " + R;
+    return "Hugsaðu: Hvað er " + s + "? Þú getur líka prófað þig áfram: settu tölu í kassann og reiknaðu.";
+  };
+  Jafna.prototype.kassaTexti = function(w){
+    var h = this.hlutar(), o = this.v.o, k = w === undefined ? "?" : T(w);
+    return (h.vinstri ? k + " " + o + " " + T(h.N.v) : T(h.N.v) + " " + o + " " + k) + " = " + T(this.h.v);
+  };
+  Jafna.prototype.svara = function(w){
+    if(this.fasi === "finna") return this.svaraFinna(w);
+    var S = this.virktSkref(), n = RK.finna(S.rot, S.valid);
+    var skyring = T(n.a.v) + " " + n.o + " " + T(n.b.v) + " = " + T(S.svarid());
+    var r = S.svara(w);
+    if(!r.ok) return r;
+    if(this.fasi === "einfalda"){
+      this.v = RK.afrita(S.rot);
+      this.linur.push({v:RK.afrita(S.rot), h:RK.afrita(this.h), skyring:skyring});
+      if(S.fasi === "lokid"){
+        if(this.xHaegri){ this.x = RK.gildi(S.rot); this.linur.push({v:RK.nytt({t:"x"}), h:RK.nytt({t:"n", v:this.x}), skyring:T(this.x) + " = x er það sama og x = " + T(this.x)}); this.fasi = "lokid"; }
+        else this.byrjaHylja();
+      }
+    } else if(S.fasi === "lokid") this.fasi = "lokid";
+    return r;
+  };
+  Jafna.prototype.svaraFinna = function(w){
+    var rett = this.hulidGildi(), h = this.hlutar(), o = this.v.o;
+    if(w !== rett){
+      var a = h.vinstri ? w : h.N.v, b = h.vinstri ? h.N.v : w, g = null;
+      if(o !== ":" || (b !== 0 && a % b === 0)) g = RK.reikna(o, a, b);
+      return {ok:false, s: g === null || g < 0 ? "Ekki alveg. Prófaðu aftur." :
+        "Ekki alveg. Ef " + T(w) + " væri í kassanum þá væri " + T(a) + " " + o + " " + T(b) + " = " + T(g) + ", ekki " + T(this.h.v) + "."};
+    }
+    var P = RK.afrita(h.P); P.sv = false;
+    var skyring = this.kassaTexti() + ", svo ? = " + T(rett);
+    var stadfest = this.kassaTexti(rett);
+    this.v = P; this.h = RK.nytt({t:"n", v:rett}); this.hulid = null;
+    this.linur.push({v:RK.afrita(P), h:RK.afrita(this.h), skyring:skyring});
+    this.byrjaEinfalda();
+    return {ok:true, s:"Rétt! " + stadfest + "."};
+  };
+  Jafna.prototype.rettSkref = function(){
+    var f = this.undirfasi();
+    if(this.fasi === "hylja") return this.hylja(this.hlutar().P.id);
+    if(this.fasi === "finna") return this.svaraFinna(this.hulidGildi());
+    if(f === "velja") return this.smella(this.virktSkref().kostir()[0].id);
+    if(f === "reikna") return this.svara(this.virktSkref().svarid());
+    return null;
+  };
+
+  /* =========================================================
+     Efni og dæmi
+     ========================================================= */
+  var EFNI = [
+    { id:"ein", heiti:"Ein aðgerð", lysing:"x + 12 = 30 og 6 · x = 48",
+      reglur:["x táknar óþekkta tölu.", "Hyldu x og spurðu: Hvaða tala á að vera undir kassanum?", "Prófaðu svo svarið: settu töluna í staðinn fyrir x og reiknaðu."],
+      daemi:["x + 12 = 30"],
+      buatil:function(){ return [
+        function(){ var x = rnd(3, 20), a = rnd(5, 30); return {d:"x + " + a + " = " + (x + a)}; },
+        function(){ var a = rnd(3, 14), x = rnd(a + 5, 60); return {d:"x − " + a + " = " + (x - a)}; },
+        function(){ var a = rnd(3, 9), x = rnd(3, 12); return {d:a + " · x = " + (a * x)}; },
+        function(){ var a = rnd(3, 9), b = rnd(11, 40); return {d:"x : " + a + " = " + b}; }
+      ]; }},
+    { id:"svarid", heiti:"x er svarið", lysing:"(25 + 5) : 5 = x",
+      reglur:["Hér er x eitt sér hægra megin við jafnaðarmerkið.", "Reiknaðu vinstri hliðina í réttri röð: svigar, margföldun og deiling, samlagning og frádráttur.", "Talan sem þú færð er x."],
+      daemi:["(25 + 5) : 5 = x"],
+      buatil:function(){ return [
+        function(){ var c = rnd(2, 9), q = rnd(2, 9), a = rnd(1, c * q - 1); return {d:"(" + a + " + " + (c * q - a) + ") : " + c + " = x"}; },
+        function(){ return {d:rnd(3, 20) + " + " + rnd(2, 9) + " · " + rnd(2, 9) + " = x"}; },
+        function(){ var c = rnd(2, 9); return {d:rnd(2, 9) + " · (" + rnd(c + 2, 20) + " − " + c + ") = x"}; },
+        function(){ var c = rnd(3, 9), d = rnd(3, 9), b = rnd(5, 30); return {d:(rnd(Math.ceil((b + c * d) / 10) + 1, 20) * 10) + " − (" + b + " + " + c + " · " + d + ") = x"}; }
+      ]; }},
+    { id:"tvaer", heiti:"Tvær aðgerðir", lysing:"x · 4 − 5 = 27 og 40 − 3 · x = 19",
+      reglur:["Finndu hlutann sem x er í og hyldu hann.", "Þá er bara ein aðgerð eftir, t.d. ? − 5 = 27.", "Finndu hvaða tala er undir kassanum. Haltu áfram þangað til x er eitt eftir."],
+      daemi:["x · 4 − 5 = 27"],
+      buatil:function(){ return [
+        function(){ var x = rnd(2, 12), a = rnd(2, 9), b = rnd(1, x * a - 1); return {d:"x · " + a + " − " + b + " = " + (x * a - b)}; },
+        function(){ var a = rnd(2, 9), q = rnd(2, 12), b = rnd(2, 20); return {d:"x : " + a + " + " + b + " = " + (q + b)}; },
+        function(){ var a = rnd(3, 30), x = rnd(2, 12), b = rnd(2, 9); return {d:a + " + x · " + b + " = " + (a + x * b)}; },
+        function(){ var b = rnd(2, 9), x = rnd(2, 9), c = rnd(2, 30); return {d:(b * x + c) + " − " + b + " · x = " + c}; }
+      ]; }},
+    { id:"svigar", heiti:"Svigar", lysing:"(x + 3) · 4 = 36 og (45 − x) : 5 = 7",
+      reglur:["Sviginn er einn hluti. Hyldu allan svigann.", "Þegar þú veist hvað er í sviganum hverfur sviginn.", "Haltu svo áfram með það sem var inni í sviganum."],
+      daemi:["(x + 3) · 4 = 36"],
+      buatil:function(){ return [
+        function(){ var x = rnd(2, 12), a = rnd(2, 9), b = rnd(2, 9); return {d:"(x + " + a + ") · " + b + " = " + ((x + a) * b)}; },
+        function(){ var a = rnd(2, 9), x = rnd(a + 1, a + 12), b = rnd(2, 9); return {d:"(x − " + a + ") · " + b + " = " + ((x - a) * b)}; },
+        function(){ var b = rnd(2, 9), c = rnd(2, 9), x = rnd(2, 20); return {d:"(" + (b * c + x) + " − x) : " + b + " = " + c}; },
+        function(){ var a = rnd(2, 9), b = rnd(2, 15), x = rnd(2, 15); return {d:a + " · (" + b + " + x) = " + (a * (b + x))}; }
+      ]; }},
+    { id:"svigiEda", heiti:"Svigi eða ekki?", lysing:"(x + 3) · 4 = 36 og x + 3 · 4 = 36",
+      reglur:["Með sviga: hyldu allan svigann.", "Án sviga: margföldun og deiling koma á undan samlagningu og frádrætti. Reiknaðu fyrst það sem er bara tölur.", "Sömu tölur geta gefið ólík svör. Það fer eftir því hvar sviginn er."],
+      daemi:["(x + 3) · 4 = 36", "x + 3 · 4 = 36"],
+      buatil:function(){
+        var x1 = rnd(2, 9), a = rnd(2, 9), b = rnd(2, 6), c = (x1 + a) * b;
+        var bb = rnd(2, 4), k = rnd(bb + 1, 7), aa = bb + k, y2 = rnd(2, Math.floor((aa - 1) / bb)), y1 = rnd(3, 9), dd = aa - bb * y2;
+        if(y1 === y2) y1 = y2 + 1;
+        var cc = k * y1;
+        var f1 = {}, f2 = {};
+        return [
+          function(){ return {d:"(x + " + a + ") · " + b + " = " + c, geyma:f1}; },
+          function(){ return {d:"x + " + a + " · " + b + " = " + c, fyrra:f1, samhengi:"Sömu tölur og í dæminu á undan, en nú er enginn svigi."}; },
+          function(){ return {d:"(" + aa + " − " + bb + ") · x = " + cc, geyma:f2}; },
+          function(){ return {d:aa + " − " + bb + " · x = " + dd, fyrra:f2, samhengi:"Næstum sömu tölur og í dæminu á undan, en nú er enginn svigi."}; }
+        ];
+      }},
+    { id:"deilt", heiti:"Deilt með sviga", lysing:"48 : (x + 2) = 6",
+      reglur:["Hyldu svigann: 48 : ? = 6.", "Spurðu: 48 deilt með hvaða tölu er 6?", "Haltu svo áfram með það sem var inni í sviganum."],
+      daemi:["48 : (x + 2) = 6"],
+      buatil:function(){ return [
+        function(){ var c = rnd(2, 9), m = rnd(3, 12), b = rnd(1, m - 2); return {d:(c * m) + " : (x + " + b + ") = " + c}; },
+        function(){ var c = rnd(2, 9), m = rnd(4, 12), b = rnd(1, m - 2); return {d:(c * m) + " : (" + b + " + x) = " + c}; },
+        function(){ return {d:"x : (" + rnd(2, 9) + " + " + rnd(2, 9) + ") = " + rnd(2, 12)}; },
+        function(){ var c = rnd(2, 9), m = rnd(2, 12), b = rnd(2, 15); return {d:(c * m) + " : (x − " + b + ") = " + c}; }
+      ]; }}
+  ];
+
+  var L = null;
+  window.__leikur = function(){ return L; };
+  window.__efni = EFNI;
+  window.__Jafna = Jafna;
+
+  function hefja(valin){
+    var rodd = [], prof = document.getElementById("profaVal");
+    valin.forEach(function(e){ e.buatil().forEach(function(f, i){ rodd.push({efni:e, nr:i, buatil:f}); }); });
+    L = {valin:valin, rod:rodd, i:-1, profa: prof ? prof.checked : true};
+    RAMMI.hefja(rodd.map(function(r){ return r.efni.id; }));
+    RAMMI.syna("leikur");
+    naestaDaemi();
+  }
+  $("haetta").onclick = function(){ RAMMI.syna("upphaf"); };
+  $("uppTakki").onclick = function(){ synaUpprifjun(L.rod[L.i].efni, null); };
+
+  /* ---------- Teikning ---------- */
+  function rod(v, h, cls, sk){
+    cls = cls ? " " + cls : "";
+    return "<div class=\"v" + cls + "\">" + v + "</div><div class=\"j" + cls + "\">=</div><div class=\"h" + cls + "\">" + h + "</div>" +
+           (sk !== undefined ? "<div class=\"sk\">" + sk + "</div>" : "");
+  }
+
+  /* ---------- Upprifjun ---------- */
+  function lausnTeikning(texti){
+    var J = new Jafna(texti, true), n = 0;
+    while(J.fasi !== "lokid" && n++ < 60) J.rettSkref();
+    var html = "<div class=\"jofnur med-skyringu\">" + J.linur.map(function(l, i){
+      return rod(RK.teikna(l.v), RK.teikna(l.h), i === J.linur.length - 1 ? "svar-lina" : "", l.skyring || "");
+    }).join("") + "</div>";
+    if(J.P) html += "<p class=\"profun-lina\"><b>Prófun:</b> " + J.P.linur.map(function(l){ return RK.texti(l); }).join(" = ") +
+                    " <span class=\"ok\">✓</span> Sama tala og hægra megin.</p>";
+    return html;
+  }
+  function synaUpprifjun(e, afram){
+    RAMMI.upprifjun({titill:e.heiti, atridi:e.reglur,
+      mynd:"<div class=\"reikningsbok\">" + e.daemi.map(lausnTeikning).join("<div style=\"height:16px\"></div>") + "</div>",
+      hnappur: afram ? "Byrja á dæmunum" : "Loka upprifjun", eftir:afram});
+  }
+
+  /* ---------- Hvert dæmi ---------- */
+  function naestaDaemi(){
+    L.i++;
+    if(L.i >= L.rod.length) return lok();
+    var r = L.rod[L.i], gogn = r.buatil();
+    L.d = gogn; L.J = new Jafna(gogn.d, L.profa); L.villur = 0; L.rangtIRod = 0; L.profunHafin = false;
+    $("efniHeiti").textContent = r.efni.heiti;
+    $("stada").textContent = "Dæmi " + (r.nr + 1) + " af 4";
+    $("samhengi").textContent = gogn.samhengi || "";
+    gefa("", "");
+    $("naesta").classList.add("hidden");
+    if(r.nr === 0) synaUpprifjun(r.efni, teikna); else teikna();
+  }
+
+  function merkjaSkref(){
+    var f = L.J.fasi, s = f === "einfalda" ? 1 : f === "hylja" ? 2 : f === "finna" ? 3 : f === "profa" ? 4 : 0;
+    $("skrefLeik").querySelectorAll(".flis").forEach(function(el){ el.classList.toggle("nuna", Number(el.dataset.s) === s); });
+  }
+
+  function teikna(){
+    var J = L.J, uf = J.undirfasi(), html = "";
+    J.linur.forEach(function(lina, i){
+      var sidust = i === J.linur.length - 1;
+      if(!sidust){ html += rod(RK.teikna(lina.v), RK.teikna(lina.h), "fyrri"); return; }
+      var h = RK.teikna(lina.h);
+      if(J.fasi === "einfalda"){
+        if(uf === "velja") html += rod(RK.teikna(J.S.rot, {takkar:true}), h, "nuverandi");
+        else {
+          html += rod(RK.teikna(J.S.rot, {valid:J.S.valid}), h, "nuverandi");
+          html += rod(RK.teikna(J.S.rot, {kassi:J.S.valid}), h, "naesta");
+        }
+      }
+      else if(J.fasi === "hylja") html += rod(RK.teikna(J.v, {hylja:[J.v.a.id, J.v.b.id]}), h, "nuverandi");
+      else if(J.fasi === "finna") html += rod(RK.teikna(J.v, {kassi:J.hulid}), h, "nuverandi");
+      else html += rod(RK.teikna(lina.v), h, "svar-lina");
+    });
+    $("bok").innerHTML = html;
+
+    // Prófun
+    var pr = $("profun");
+    if(J.P){
+      pr.classList.remove("hidden");
+      var P = J.P, ph = "";
+      P.linur.forEach(function(lina, i){
+        var sidust = i === P.linur.length - 1, jafnt = "<span class=\"jafnt\">" + (i > 0 ? "=" : "") + "</span>";
+        if(!sidust){ ph += "<div class=\"lina fyrri\">" + jafnt + RK.teikna(lina) + "</div>"; return; }
+        if(P.fasi === "velja") ph += "<div class=\"lina nuverandi\">" + jafnt + RK.teikna(P.rot, {takkar:true}) + "</div>";
+        else if(P.fasi === "reikna"){
+          ph += "<div class=\"lina nuverandi\">" + jafnt + RK.teikna(P.rot, {valid:P.valid}) + "</div>";
+          ph += "<div class=\"lina naesta\"><span class=\"jafnt\">=</span>" + RK.teikna(P.rot, {kassi:P.valid}) + "</div>";
+        }
+        else ph += "<div class=\"lina rett-lok\">" + jafnt + RK.teikna(P.rot) + "&nbsp;✓</div>";
+      });
+      $("profLinur").innerHTML = ph;
+    } else pr.classList.add("hidden");
+
+    document.querySelectorAll("#bok .opk, #profLinur .opk").forEach(function(b){
+      b.onclick = function(){ smellt(Number(b.dataset.id), b); };
+      b.onmouseenter = b.onfocus = function(){ lysaNagranna(b, true); };
+      b.onmouseleave = b.onblur = function(){ lysaNagranna(b, false); };
+    });
+    document.querySelectorAll("#bok .hylkostur").forEach(function(b){
+      b.onclick = function(){ hyljaSmellt(Number(b.dataset.hid), b); };
+    });
+
+    merkjaSkref();
+    $("abending").classList.add("hidden");
+    var spurn = $("spurning"), form = $("svarform"), synaForm = false;
+    $("abendingTakki").classList.remove("hidden");
+    if(J.fasi === "einfalda" && uf === "velja"){
+      spurn.textContent = J.xHaegri ? "Reiknaðu vinstri hliðina. Hvað á að reikna " + (J.linur.length === 1 ? "fyrst" : "næst") + "? Smelltu á reikniaðgerðina."
+                                    : "Er eitthvað sem er bara tölur? Það má reikna strax. Smelltu á reikniaðgerðina.";
+    } else if(J.fasi === "hylja"){
+      spurn.textContent = "Smelltu á hlutann sem x er í til að hylja hann.";
+    } else if(J.fasi === "finna"){
+      spurn.innerHTML = J.spurning() + "<br><span class=\"muted\" style=\"font-size:17px;font-weight:400\">Kassinn stendur fyrir " + RK.texti(J.hlutar().P) + ".</span>";
+      synaForm = true;
+    } else if(uf === "reikna"){
+      var S = J.virktSkref(), n = RK.finna(S.rot, S.valid);
+      spurn.textContent = T(n.a.v) + " " + n.o + " " + T(n.b.v) + " = ?";
+      synaForm = true;
+    } else if(J.fasi === "profa"){
+      spurn.textContent = "Prófun: Hvað á að reikna " + (J.P.linur.length === 1 ? "fyrst" : "næst") + "? Smelltu á reikniaðgerðina.";
+    } else {
+      lokid(); return;
+    }
+    form.classList.toggle("hidden", !synaForm);
+    if(synaForm){ $("svar").value = ""; $("svar").focus(); }
+  }
+
+  function lokid(){
+    var J = L.J;
+    $("svarform").classList.add("hidden"); $("abendingTakki").classList.add("hidden");
+    $("spurning").innerHTML = "Svarið er <span class=\"nidurstada\">x = " + T(J.x) + "</span>";
+    var texti = J.P ? "Prófun: " + T(RK.gildi(J.P.rot)) + " = " + T(J.upph.h.v) + ". Svarið x = " + T(J.x) + " er rétt!" :
+                (L.villur === 0 ? "Vel gert! Engin villa." : "Vel gert! Þú kláraðir dæmið.");
+    if(L.d.geyma) L.d.geyma.x = J.x;
+    if(L.d.fyrra && L.d.fyrra.x !== undefined && L.d.fyrra.x !== J.x)
+      texti = "Með sviganum var x = " + T(L.d.fyrra.x) + ". Án svigans er x = " + T(J.x) + ". Sviginn breytir svarinu!";
+    gefa(texti, "rett");
+    RAMMI.skra(L.rod[L.i].efni.id, L.villur === 0);
+    var b = $("naesta");
+    b.textContent = L.i === L.rod.length - 1 ? "Sjá niðurstöður" : "Næsta dæmi";
+    b.classList.remove("hidden"); b.focus();
+  }
+
+  function lysaNagranna(takki, kveikja){
+    [takki.previousElementSibling, takki.nextElementSibling].forEach(function(el){
+      if(el && el.classList.contains("tala")) el.classList.toggle("nagr", kveikja);
+    });
+  }
+  function gefa(texti, tegund){ var e = $("endurgjof"); e.textContent = texti; e.className = "endurgjof " + tegund; }
+  function hrista(el){ if(!el) return; el.classList.remove("hrista"); void el.offsetWidth; el.classList.add("hrista"); }
+  function rangt(s, el){ L.villur++; L.rangtIRod++; hrista(el); gefa(s, "rangt"); return L.rangtIRod >= 3; }
+
+  /* Skilaboð þegar fasi breytist eftir rétt svar */
+  function eftirRett(r, fyrriFasi){
+    L.rangtIRod = 0;
+    var J = L.J, s = r.s;
+    if(fyrriFasi !== "profa" && J.fasi === "profa") s += " x = " + T(J.x) + ". Nú prófar þú svarið: settu " + T(J.x) + " í staðinn fyrir x og reiknaðu.";
+    else if(fyrriFasi === "einfalda" && J.fasi === "hylja") s += " Nú er ekkert eftir sem er bara tölur.";
+    teikna();
+    if(J.fasi !== "lokid") gefa(s, "rett");
+  }
+
+  function smellt(id, takki){
+    var J = L.J;
+    if(J.undirfasi() !== "velja") return;
+    var r = J.smella(id);
+    if(r.ok){ eftirRett(r, J.fasi); return; }
+    if(rangt(r.s, takki)){
+      var S = J.virktSkref(), k = S.kostir()[0];
+      J.smella(k.id); L.rangtIRod = 0; teikna();
+      gefa("Hér á að reikna " + RK.texti({t:"op", o:k.o, a:k.a, b:k.b}) + " fyrst.", "uppl");
+    }
+  }
+  function hyljaSmellt(id, takki){
+    var J = L.J;
+    if(J.fasi !== "hylja") return;
+    var r = J.hylja(id);
+    if(r.ok){ eftirRett(r, "hylja"); return; }
+    if(rangt(r.s, takki)){
+      var P = J.hlutar().P; J.hylja(P.id); L.rangtIRod = 0; teikna();
+      gefa("x er í hlutanum " + RK.texti(P) + ". Hann er nú hulinn.", "uppl");
+    }
+  }
+  $("svarform").onsubmit = function(ev){
+    ev.preventDefault();
+    var J = L.J, v = RK.lesaSvar($("svar").value), fyrri = J.fasi;
+    if(v === null){ gefa("Skrifaðu tölu.", "rangt"); return; }
+    var r = J.svara(v);
+    if(r.ok){ eftirRett(r, fyrri); return; }
+    if(rangt(r.s)){
+      var texti;
+      if(J.fasi === "finna") texti = "Í kassanum á að vera " + T(J.hulidGildi()) + ", því að " + J.kassaTexti(J.hulidGildi()) + ".";
+      else { var S = J.virktSkref(), n = RK.finna(S.rot, S.valid); texti = "Svarið er " + T(n.a.v) + " " + n.o + " " + T(n.b.v) + " = " + T(S.svarid()) + "."; }
+      J.rettSkref(); L.rangtIRod = 0; teikna();
+      if(J.fasi !== "lokid") gefa(texti, "uppl");
+      return;
+    }
+    $("svar").select();
+  };
+
+  $("abendingTakki").onclick = function(){
+    var J = L.J, uf = J.undirfasi(), texti = "";
+    if(J.fasi === "hylja"){
+      var h = J.hlutar();
+      texti = "Vinstra megin eru tveir hlutar: " + RK.texti(J.v.a) + " og " + RK.texti(J.v.b) + ". Í hvorum hlutanum er x? Hyldu þann hluta.";
+    }
+    else if(J.fasi === "finna") texti = J.finnaAbending();
+    else if(uf === "velja") texti = (J.fasi === "einfalda" && !J.xHaegri) ? "Leitaðu að reikniaðgerð þar sem eru tölur báðum megin, en ekkert x." : RK.abending(J.virktSkref().rot);
+    else if(uf === "reikna"){ var S = J.virktSkref(), n = RK.finna(S.rot, S.valid); texti = RK.reikniAbending(n.o, n.a.v, n.b.v); }
+    var box = $("abending"); box.textContent = texti; box.classList.remove("hidden");
+  };
+  $("naesta").onclick = naestaDaemi;
+
+  /* ---------- Lok ---------- */
+  function lok(){
+    RAMMI.lok({hnappar:[
+      {texti:"Æfa aftur", adal:true, smellt:function(){ hefja(L.valin); }},
+      {texti:"Velja önnur efni", smellt:function(){ RAMMI.syna("upphaf"); }}
+    ]});
+  }
+
+  /* ---------- Upphafsskjár ---------- */
+  RAMMI.upphaf({
+    titill:"Hvaða tölu táknar x?",
+    inngangur:"x táknar óþekkta tölu. Þú finnur hana skref fyrir skref: reiknar það sem er bara tölur, hylur hlutann sem x er í og finnur hvaða tala á að vera undir kassanum. Að lokum prófar þú svarið.",
+    skref:[{heiti:"Einfalda"}, {heiti:"Hylja"}, {heiti:"Finna töluna"}, {heiti:"Prófa"}],
+    efni:EFNI.map(function(e){ return {id:e.id, heiti:e.heiti, lysing:e.lysing, fjoldi:4}; }),
+    sjalfgefid:2,
+    fjoldiTexti:"Í hverju efni eru 4 dæmi. Þau byrja létt og þyngjast.",
+    stillingar:"<label class=\"r-stilling\"><input type=\"checkbox\" id=\"profaVal\" checked> Prófa svarið í lok hvers dæmis</label>",
+    tengill:{forskeyti:"Viltu æfa forgangsröðina fyrst?", texti:"Aðferð: Forgangsröð reikniaðgerða", slod:"forgangsrod.html"},
+    byrja:function(ids){ hefja(EFNI.filter(function(e){ return ids.indexOf(e.id) !== -1; })); }
+  });
+})();
+</script>
+</body>
+</html>
